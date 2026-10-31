@@ -1,2 +1,114 @@
-# kerogo-tools-academy
-Kerogo Tools Academy – page de l’Académie
+# Kerogo Tools Academy
+
+L'académie IA du groupe Kerogo : les bons réflexes IA, 5 minutes par jour.
+
+Les collaborateurs suivent un parcours de 6 mois : 6 niveaux, un par mois, de 4 missions courtes chacun (24 missions). Ils font aussi le quiz du mois, gagnent des XP pour leur site et téléchargent leur attestation de formation depuis leur profil. L'équipe Dev Ops pilote le tout depuis l'espace admin, et les managers suivent leurs équipes.
+
+**Adresse :** https://dev-ops-kerogo.github.io/kerogo-tools-academy/
+
+Projet porté par l'équipe Dev Ops du groupe Kerogo.
+
+## Le parcours
+
+| Niveau | Thème | Badge | État |
+|---|---|---|---|
+| 1 | Les bons réflexes | Découvreur | 4 missions et 4 capsules vidéo prêtes |
+| 2 | Bien demander | Utilisateur | 4 missions prêtes, capsules en préparation |
+| 3 | Slackbot au quotidien | Efficace | En préparation |
+| 4 | Les compétences | Autonome | En préparation |
+| 5 | L'IA dans ton métier | Expert | En préparation |
+| 6 | Créateurs | Créateur | En préparation |
+
+- Les missions se font dans l'ordre : chacune s'ouvre quand la précédente est validée.
+- Chaque niveau s'ouvre à la date réglée dans l'admin (onglet **Missions** > « Calendrier des niveaux »). Avant cette date, il reste visible avec « Ouvre le … ». Sans date, il s'ouvre dès que ses missions sont prêtes.
+- Une mission validée rapporte 50 XP, un niveau terminé 100 XP et un badge. Le quiz du mois rapporte 10 XP par bonne réponse, et un webinaire suivi 30 XP.
+- Chaque collaborateur télécharge son attestation de formation depuis **Mon profil**. L'export collectif se fait depuis l'admin ou la page **Mon équipe**.
+
+## Comment ça fonctionne
+
+| Élément | Rôle | Où il se trouve |
+|---|---|---|
+| Page de l'Académie | Ce que voient les collaborateurs (accueil, missions, classement, profil, admin) | Ce dépôt : `index.html`, publié par GitHub Pages |
+| Connexion | Compte Google professionnel (Google Identity Services) | Projet Google Cloud « Kerogo Tools Academy » |
+| Serveur | Vérifie l'identité, lit et enregistre la progression, publie dans Slack | Google Apps Script (`Code.gs`), déployé en application web |
+| Données | Collaborateurs, progression, quiz, calendrier, retours | Tableur Google « Kerogo Tools Academy — suivi » |
+| Messages Slack | Publications dans #kerogo-tools, relances, invitations | Application Slack « Kerogo Tools Academy » |
+| Rédaction automatique | Brouillons mensuels (article, focus compétence, quiz) | API Claude, appelée par le serveur |
+
+La page ne contient **aucune donnée** ni aucun secret. Le navigateur envoie le jeton de connexion Google au serveur Apps Script, qui le vérifie (identifiant client et domaine de l'adresse) avant de répondre. L'identifiant client et l'adresse du serveur présents dans `index.html` sont publics par nature.
+
+## Mettre à jour la page
+
+1. Dans ce dépôt, cliquer sur **Add file** puis **Upload files**.
+2. Déposer le nouveau `index.html` (le nom doit être exactement celui-ci).
+3. Choisir **Commit directly to the `main` branch**, puis **Commit changes**.
+4. Attendre une minute : GitHub Pages publie la nouvelle version.
+
+La version affichée en bas des messages d'erreur (« Version de la page ») permet de vérifier que la bonne version est en ligne. Le fichier vide `.nojekyll` indique à GitHub de publier la page telle quelle.
+
+## Mettre à jour le serveur
+
+1. Ouvrir le projet Apps Script, remplacer `Code.gs` et `Index.html`.
+2. **Déployer → Gérer les déploiements**, puis publier une nouvelle version sur les deux déploiements :
+   - « API version hébergée » (accès : tout le monde), utilisé par cette page ;
+   - le déploiement d'origine, utilisé par les boutons Slack tant que `URL_APP` pointe dessus.
+
+Les réglages sensibles sont dans les **propriétés du script** (Paramètres du projet), jamais dans le code :
+
+| Propriété | Contenu |
+|---|---|
+| `CLIENT_ID_GOOGLE` | Identifiant client OAuth du projet Google Cloud |
+| `URL_APP` | Adresse de l'Académie utilisée par les boutons Slack |
+| `SLACK_ACADEMIE_TOKEN` | Jeton du bot Slack |
+| `ANTHROPIC_API_KEY` | Clé de l'API Claude pour la rédaction automatique |
+
+Les administrateurs, managers et domaines autorisés se gèrent dans l'espace admin, onglet **Accès**. Les dates d'ouverture des niveaux se règlent dans l'onglet **Missions**.
+
+`index.html` (ce dépôt) et `Index.html` (Apps Script) sont la même page : la première se connecte avec Google, la seconde passe par Apps Script. Une modification de la page se reporte dans les deux fichiers, qui sont livrés ensemble.
+
+## Ajouter une mission
+
+Toutes les missions à partir du niveau 2 suivent le même modèle : les notions à comprendre, un exemple avant/après si besoin, un exercice corrigé, puis 2 ou 3 questions.
+
+1. **Contenu** : une fiche dans `MISSIONS_DEF` (page), avec le titre, l'introduction, les notions, l'exercice, les questions et le seuil de réussite. Ajouter son identifiant dans `MISSIONS_JOUABLES`.
+2. **Serveur** : dans `MISSIONS` (`Code.gs`), passer la mission à `dispo: true` et renseigner `seuil` et `total` (bonnes réponses à l'exercice + aux questions). Le seuil doit être le même des deux côtés.
+3. **Vidéo** : exporter la capsule en MP4, la déposer sur Google Drive (partagée en lecture avec le groupe), puis coller son lien dans l'admin, onglet **Missions**.
+4. **Tester** : dans l'onglet **Missions**, le bouton « Tester » ouvre n'importe quelle mission, même verrouillée. Le quiz du mois se teste aussi depuis son onglet, brouillons compris. En test, rien n'est enregistré.
+
+## Ajouter une adresse d'hébergement
+
+Si la page est publiée à une nouvelle adresse, l'ajouter dans Google Cloud : **API et services → Identifiants → client « Académie » → Origines JavaScript autorisées**. On saisit l'origine seule, sans chemin ni barre oblique finale (par exemple `https://dev-ops-kerogo.github.io`). La prise en compte demande quelques minutes.
+
+## Accès des collaborateurs
+
+- Seules les adresses des domaines autorisés (onglet Accès de l'admin) peuvent se connecter.
+- Un domaine géré dans une autre organisation Google demande que l'écran de connexion OAuth du projet Google Cloud soit en mode « Externe ».
+- Un collaborateur bloqué voit le message « Cette adresse n'a pas encore accès à l'Académie » avec le domaine concerné : il suffit d'ajouter ce domaine dans l'admin.
+
+## Relances Slack
+
+- Charte non validée 4 jours ouvrés après l'inscription, puis une fois par semaine.
+- Aucune visite depuis 4 jours ouvrés, puis une fois par semaine.
+- Les week-ends et les jours fériés français ne comptent pas.
+- En mode test (onglet **Réglages**), relances, invitations et publications partent uniquement vers l'adresse de test.
+
+## Fichiers du dépôt
+
+| Fichier | Rôle |
+|---|---|
+| `index.html` | La page de l'Académie |
+| `README.md` | Ce document |
+| `.nojekyll` | Indique à GitHub Pages de publier la page telle quelle |
+
+## En cas de problème
+
+| Symptôme | Piste |
+|---|---|
+| La fenêtre Google affiche « origin_mismatch » | L'adresse de la page n'est pas dans les origines JavaScript autorisées |
+| « Jeton non reconnu » | `CLIENT_ID_GOOGLE` absent ou différent de celui de la page |
+| La page charge sans fin | Le déploiement « API version hébergée » n'est pas à jour ou n'est pas ouvert à « tout le monde » |
+| Les boutons Slack ouvrent l'ancienne adresse | Mettre à jour la propriété `URL_APP` |
+| Une mission reste « Verrouillée » | La mission précédente n'est pas validée, ou le niveau n'est pas encore ouvert (calendrier) |
+| Un manager ne voit pas « Mon équipe » | Son adresse n'est pas dans l'onglet **Accès**, ou il doit recharger la page |
+
+Une question : #kerogo-tools.
