@@ -2,10 +2,19 @@
 <html lang="fr" data-theme="sombre">
 <head>
 <base target="_top">
+<title>Kerogo Tools Academy · Les bons réflexes IA, 5 minutes par jour</title>
+<script>
+/* ====== À RENSEIGNER (deux lignes) ====== */
+var KTA_CONFIG = {
+  API_URL: 'https://script.google.com/macros/s/AKfycbwThh_meHSDGaYn7in9AnY2-4-KeQZTpkAMgbdcjPv-XA88he4zAnhD4AxlzPosMsvoIQ/exec',
+  CLIENT_ID: '115983769399-mk3pgclco86g5r9nruou7vj5ku7u3nvm.apps.googleusercontent.com'
+};
+</script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
-var KTA_VERSION = '01/11 · 3';
+var KTA_VERSION = 'hébergée 01/11 · 4';
 var KTA_ERREURS = [];
 window.addEventListener('error', function (e) {
   KTA_ERREURS.push((e && e.message ? e.message : 'Erreur inconnue') + (e && e.lineno ? ' (ligne ' + e.lineno + ')' : ''));
@@ -63,7 +72,8 @@ p{margin:0}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:0 26px;border-radius:18px;border:0;font-weight:800;font-size:16px;text-decoration:none}
 .btn-citron{background:var(--citron);color:var(--encre);box-shadow:0 5px 0 0 var(--citron-ombre)}
 .btn-citron:active{transform:translateY(3px);box-shadow:0 2px 0 0 var(--citron-ombre)}
-.btn-contour{background:var(--carte);color:var(--texte);border:1px solid var(--ligne-forte)}
+.btn-contour{background:var(--carte);color:var(--texte);border:2px solid color-mix(in srgb,var(--texte) 45%,transparent)}
+.btn-contour:hover:not([disabled]){border-color:var(--texte)}
 .btn-fort{background:var(--inverse);color:var(--inverse-texte)}
 .btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
 :focus-visible{outline:3px solid var(--violet);outline-offset:3px}
@@ -254,7 +264,9 @@ legend{font-size:18px;font-weight:700;margin-bottom:12px}
 .statut-ok .pastille-statut{background:var(--citron);color:var(--encre)}
 .statut-afaire{border-color:var(--violet)}
 .statut-afaire .pastille-statut{background:var(--violet);color:#fff}
-.statut-verrou,.statut-bientot{opacity:.72}
+.statut-verrou,.statut-bientot{border-style:dashed}
+.statut-verrou>:not(.btn),.statut-bientot>:not(.btn){opacity:.62}
+.mission-carte .btn-contour{border-color:var(--violet)}
 .niveau-entete{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 24px;margin-bottom:18px}
 .niveau-avance{display:flex;align-items:center;gap:12px;min-width:min(100%,320px);font-weight:700;font-size:14px}
 .niveau-avance .barre{flex:1 1 auto}
@@ -381,6 +393,15 @@ legend{font-size:18px;font-weight:700;margin-bottom:12px}
 
 <div class="toast" id="toast" role="status" hidden></div>
 
+<div class="modale" id="connexion" hidden>
+  <div class="carte entre" role="dialog" aria-modal="true" aria-labelledby="titre-connexion" style="align-items:flex-start">
+    <p class="surtitre">Kerogo Tools Academy</p>
+    <h2 class="titre" id="titre-connexion" style="font-size:34px">Connecte-toi avec ton compte Google Kerogo</h2>
+    <p class="doux" style="line-height:1.55">Une seule fois : l’Académie se souviendra de toi ensuite. Ta progression et tes XP sont rattachés à ton adresse professionnelle.</p>
+    <div id="bouton-google" style="min-height:44px"></div>
+  </div>
+</div>
+
 <div class="visite" id="visite" hidden>
   <div class="visite-trou" id="visite-trou"></div>
   <div class="visite-bulle" id="visite-bulle" role="dialog" aria-modal="true" aria-labelledby="visite-titre">
@@ -446,7 +467,46 @@ const boutonQuitter = '<button type="button" class="retour" data-aller="accueil"
 const vue = document.getElementById('vue');
 
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const appel = (fn, ...args) => new Promise((ok, ko) => google.script.run.withSuccessHandler(ok).withFailureHandler(ko)[fn](...args));
+let JETON = null, ATTENTE_JETON = [], GIS_PRET = false;
+function jetonValide(j) {
+  try { const p = JSON.parse(atob(j.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))); return p.exp * 1000 > Date.now() + 60000; }
+  catch (e) { return false; }
+}
+function obtenirJeton() {
+  if (JETON && jetonValide(JETON)) return Promise.resolve(JETON);
+  let garde = null;
+  try { garde = localStorage.getItem('kta-jeton'); } catch (e) { garde = null; }
+  if (garde && jetonValide(garde)) { JETON = garde; return Promise.resolve(JETON); }
+  return new Promise((ok) => { ATTENTE_JETON.push(ok); demanderConnexion(); });
+}
+function recevoirJeton(rep) {
+  JETON = rep.credential;
+  try { localStorage.setItem('kta-jeton', JETON); } catch (e) { }
+  document.getElementById('connexion').hidden = true;
+  const enAttente = ATTENTE_JETON; ATTENTE_JETON = [];
+  enAttente.forEach((f) => f(JETON));
+}
+function demanderConnexion() {
+  const lancer = () => {
+    if (!GIS_PRET) {
+      google.accounts.id.initialize({ client_id: KTA_CONFIG.CLIENT_ID, callback: recevoirJeton, auto_select: true, cancel_on_tap_outside: false });
+      GIS_PRET = true;
+    }
+    google.accounts.id.prompt();
+    if (!ETAT) document.getElementById('connexion').hidden = false;
+    google.accounts.id.renderButton(document.getElementById('bouton-google'), { theme: 'filled_blue', size: 'large', text: 'signin_with', shape: 'pill', locale: 'fr' });
+  };
+  if (window.google && google.accounts && google.accounts.id) lancer();
+  else { const t = setInterval(() => { if (window.google && google.accounts && google.accounts.id) { clearInterval(t); lancer(); } }, 100); }
+}
+const appel = (fn, ...args) => obtenirJeton()
+  .then((j) => fetch(KTA_CONFIG.API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: fn, args: args, jeton: j }) }))
+  .then((r) => r.json())
+  .then((r) => {
+    if (r.ok) return r.data;
+    if (/Session expirée|Connexion requise|Jeton non reconnu/.test(r.erreur)) { JETON = null; try { localStorage.removeItem('kta-jeton'); } catch (e) { } }
+    throw new Error(r.erreur);
+  });
 const nbr = (n) => Number(n || 0).toLocaleString('fr-FR');
 const accord = (n, un, plusieurs) => (Number(n) > 1 ? plusieurs : un);
 
@@ -685,16 +745,21 @@ function blocNiveau(n, i) {
 
 /* ------------------------------ Classement ------------------------------ */
 
+function resteAvant(fin) {
+  const ms = Math.max(0, new Date(fin) - Date.now()), j = Math.floor(ms / 86400000), h = Math.floor((ms % 86400000) / 3600000);
+  const pl = (n, mot) => n + ' ' + mot + (n > 1 ? 's' : '');
+  return j ? pl(j, 'jour') + (h ? ' et ' + pl(h, 'heure') : '') : (h ? pl(h, 'heure') : 'moins d’une heure');
+}
+
 function rendreClassement() {
   arreterMinuteur();
   navActive('classement');
   const lignes = lignesClassement(), max = Math.max(1, ...lignes.map((x) => x.xp));
-  const fin = new Date(ETAT.finSemaine), reste = Math.max(0, fin - Date.now());
   const k = ETAT.kerogoat, s = ETAT.semaine || { missions: 0, chartes: 0, actifs: 0 };
   const mois = new Date().toLocaleDateString('fr-FR', { month: 'long' }), de = /^[aeiouâéè]/i.test(mois) ? 'd’' : 'de ';
   vue.innerHTML = `<div class="pile">
     <section class="carte entre ch-entete" style="gap:14px">
-      <p class="surtitre">Semaine en cours · fin dans ${Math.floor(reste / 86400000)} j ${Math.floor((reste % 86400000) / 3600000)} h</p>
+      <p class="surtitre">Semaine en cours · encore ${resteAvant(ETAT.finSemaine)}</p>
       <h1 class="grand" style="font-size:56px">Classement des sites</h1>
       <p class="chapo" style="max-width:720px">Chaque XP gagné cette semaine par un collaborateur compte pour son site. Le classement repart à zéro chaque lundi.</p>
     </section>
@@ -1585,14 +1650,14 @@ function rendreGuide() {
     <section class="carte entre ch-entete">
       <p class="surtitre">Bienvenue dans la ${esc(ETAT.nom || 'Kerogo Tools Academy')}</p>
       <h1 class="grand" style="font-size:64px">Comment ça marche</h1>
-      <p class="chapo" style="max-width:680px">L’Académie t’aide à prendre les bons réflexes avec l’IA au travail, 5 minutes à la fois : des missions courtes, des défis concrets et un classement entre sites. Rien à installer : ton compte Google suffit.</p>
+      <p class="chapo" style="max-width:680px">L’Académie t’aide à prendre les bons réflexes avec l’IA au travail, 5 minutes à la fois : des missions courtes, des exercices concrets et un classement entre sites. Rien à installer : ton compte Google suffit.</p>
       <div class="boutons">${ETAT.prochaine ? `<button type="button" class="btn btn-citron" data-mission="${ETAT.prochaine.id}">Commencer ma prochaine mission</button>` : ''}<button type="button" class="btn btn-contour" id="lancer-visite">Faire la visite guidée</button><button type="button" class="btn btn-contour" data-aller="accueil">Aller à l’accueil</button></div>
     </section>
     <section class="carte ch-corps">
       <div class="ch-section">
         <p class="surtitre">Le principe</p><h2 class="titre ch-h2">Des missions, des niveaux, des badges</h2>
         <div class="ch-trio">
-          <div class="ch-carte"><span class="ch-marque" style="background:var(--citron)">1</span><p class="titre" style="font-size:20px">Des missions courtes</p><p class="doux" style="line-height:1.55">On lit, on coche, on joue : chaque mission prend environ 5 minutes et se termine par un quiz ou un jeu.</p></div>
+          <div class="ch-carte"><span class="ch-marque" style="background:var(--citron)">1</span><p class="titre" style="font-size:20px">Des missions courtes</p><p class="doux" style="line-height:1.55">On lit, on s’entraîne, on valide : chaque mission prend environ 5 minutes et se termine par un exercice ou un quiz.</p></div>
           <div class="ch-carte"><span class="ch-marque" style="background:var(--soleil)">2</span><p class="titre" style="font-size:20px">6 niveaux, 24 missions</p><p class="doux" style="line-height:1.55">Un niveau s’ouvre chaque mois : Les bons réflexes, Bien demander, Slackbot au quotidien, Les compétences, L’IA dans ton métier, puis Créateurs. Les missions se font dans l’ordre, et chaque niveau terminé te donne un badge.</p></div>
           <div class="ch-carte"><span class="ch-marque" style="background:var(--ciel)">3</span><p class="titre" style="font-size:20px">Tout s’enregistre seul</p><p class="doux" style="line-height:1.55">Pas d’inscription : l’Académie te reconnaît avec ton compte Google et garde ta progression.</p></div>
         </div>
@@ -2150,8 +2215,8 @@ function ouvrirPageDemandee() {
   if (PAGE_DEMANDEE_FAITE) return;
   PAGE_DEMANDEE_FAITE = true;
   try {
-    google.script.url.getLocation((loc) => {
-      const page = loc && loc.parameter ? loc.parameter.page : '';
+    (() => {
+      const page = new URLSearchParams(location.search).get('page') || '';
       if (!page || !ETAT) return;
       if (page === 'quiz' && ETAT.quiz) rendreQuizMois();
       else if (page.indexOf('mission-') === 0) ouvrirMission(page.slice(8));
@@ -2161,8 +2226,8 @@ function ouvrirPageDemandee() {
       else if (page === 'ligue' || page === 'classement') rendreClassement();
       else if (page === 'profil') rendreProfil();
       else if (page === 'equipe' && ETAT.manager) rendreEquipe();
-    });
-  } catch (e) { /* hors Apps Script : rien à faire */ }
+    })();
+  } catch (e) { /* adresse illisible : rien à faire */ }
 }
 
 function installerEtat(premierAffichage) {
@@ -2193,9 +2258,13 @@ function afficherPanne(titre, detail) {
 }
 window.addEventListener('error', (e) => afficherPanne('Un problème est survenu', (e && e.message) || 'Erreur inconnue'));
 window.addEventListener('unhandledrejection', (e) => afficherPanne('Un problème est survenu', messageErreur(e && e.reason)));
-setTimeout(() => { if (!ETAT) afficherPanne('Le chargement prend plus de temps que prévu', 'Le serveur de l’Académie n’a pas encore répondu après 20 secondes.'); }, 20000);
+setTimeout(() => { if (!ETAT && document.getElementById('connexion').hidden) afficherPanne('Le chargement prend plus de temps que prévu', 'Le serveur de l’Académie n’a pas encore répondu après 20 secondes.'); }, 20000);
 
 (async function demarrer() {
+  if (!window.KTA_CONFIG && !(window.google && window.google['scr' + 'ipt'])) {
+    afficherPanne('Ce n’est pas le bon fichier', 'Cette page est la version Apps Script de l’Académie : elle ne fonctionne que dans Apps Script. Sur GitHub, déposez le fichier index.html de la version hébergée.');
+    return;
+  }
   // 0. La page est arrivée avec les données (cas le plus courant) : affichage immédiat, aucun appel
   if (window.ETAT_INITIAL && window.ETAT_INITIAL.joueur) {
     try {
@@ -2217,7 +2286,7 @@ setTimeout(() => { if (!ETAT) afficherPanne('Le chargement prend plus de temps q
     // 2. Données fraîches en arrière-plan ; l'accueil est redessiné sans animation s'il a changé
     const frais = await appel('getEtat');
     const change = JSON.stringify(frais) !== JSON.stringify(ETAT);
-    const surAccueil = vueAccueil && document.querySelector('#carte') !== null;
+    const surAccueil = vueAccueil && document.querySelector('#prochaine') !== null;
     ETAT = frais;
     if (!vueAccueil) installerEtat(true);
     else {
@@ -2227,7 +2296,7 @@ setTimeout(() => { if (!ETAT) afficherPanne('Le chargement prend plus de temps q
     if (!ETAT.joueur.site) ouvrirModaleSite(); else { ouvrirPageDemandee(); proposerVisite(); }
     appel('noterVisite').catch(() => {});
   } catch (e) {
-    if (vueAccueil) { toast('Connexion difficile', 'Tes données seront mises à jour au prochain chargement.'); return; }
+    if (vueAccueil) { toast('Serveur injoignable', 'Tu vois les données de ta dernière visite. Recharge la page dans un instant.'); return; }
     afficherPanne('L’Académie n’a pas pu se charger', messageErreur(e));
   }
 })();
