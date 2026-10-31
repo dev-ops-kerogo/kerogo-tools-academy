@@ -14,7 +14,7 @@ var KTA_CONFIG = {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
-var KTA_VERSION = 'hébergée 01/11 · 4';
+var KTA_VERSION = 'hébergée 01/11 · 6';
 var KTA_ERREURS = [];
 window.addEventListener('error', function (e) {
   KTA_ERREURS.push((e && e.message ? e.message : 'Erreur inconnue') + (e && e.lineno ? ' (ligne ' + e.lineno + ')' : ''));
@@ -325,9 +325,10 @@ legend{font-size:18px;font-weight:700;margin-bottom:12px}
 #attestation h1{font-family:var(--titre);font-size:40px;margin:0;letter-spacing:-.02em}
 #attestation .att-boutons{display:flex;gap:10px;justify-content:flex-end}
 @media print{
-  body *{visibility:hidden}
-  #attestation,#attestation *{visibility:visible}
-  #attestation{position:absolute;left:0;top:0;width:100%;max-width:none;border-radius:0;padding:40px}
+  @page{size:A4;margin:0}
+  body > :not(#attestation-fond){display:none !important}
+  .attestation-fond{position:static;padding:0;background:none;overflow:visible}
+  #attestation{max-width:none;border-radius:0;padding:20mm}
   #attestation .att-boutons{display:none}
 }
 .confetti{position:absolute;top:0;width:12px;height:18px;border-radius:3px;animation:confetti 1.8s ease-in both}
@@ -571,6 +572,7 @@ const MISSIONS_JOUABLES = ['1.1', '1.2', '1.3', '1.4', '2.1', '2.2', '2.3', '2.4
 const dateCourte = (iso) => iso ? new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
 const dateOuverture = (jour) => new Date(jour + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }).replace(/^1 /, '1er ');
 const pourcent = (a, b) => (b ? Math.round(100 * a / b) : 0);
+const nomComplet = (p) => ((p.prenom || '') + ' ' + (p.nom || '')).trim();
 
 function statutMission(m) {
   const test = ETAT.admin && MISSIONS_JOUABLES.indexOf(m.id) !== -1;
@@ -797,7 +799,7 @@ function rendreProfil() {
   vue.innerHTML = `<div class="pile" style="max-width:1040px;margin:0 auto">
     <section class="carte entre profil-entete">
       <span class="avatar avatar-grand" aria-hidden="true">${esc((j.prenom || '?').charAt(0).toUpperCase())}</span>
-      <div style="flex:1 1 240px;display:flex;flex-direction:column;gap:6px"><p class="surtitre">Mon profil</p><h1 class="titre" style="font-size:40px">${esc(j.prenom)}</h1>
+      <div style="flex:1 1 240px;display:flex;flex-direction:column;gap:6px"><p class="surtitre">Mon profil</p><h1 class="titre" style="font-size:40px">${esc(nomComplet(j))}</h1>
         <p class="doux">${j.site ? esc(j.site) + ' · ' : ''}Niveau ${n.num} · ${esc(n.titre)}</p></div>
       <div class="boutons"><button type="button" class="btn btn-contour" data-changer-site>Changer de site</button>
         <div class="theme" role="group" aria-label="Thème" style="display:flex">
@@ -820,7 +822,7 @@ function rendreProfil() {
     </section>
     <section class="carte entre" style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
       <div style="flex:1 1 360px;display:flex;flex-direction:column;gap:6px"><h2 class="titre" style="font-size:24px">Mon attestation</h2>
-        <p class="doux" style="line-height:1.55">Une attestation de formation à imprimer ou enregistrer en PDF : validation de la charte et missions validées.</p></div>
+        <p class="doux" style="line-height:1.55">Ton attestation de formation en PDF : validation de la charte et missions validées.</p></div>
       <button type="button" class="btn btn-citron" id="voir-attestation" ${j.charte ? '' : 'disabled title="Valide d’abord la charte (mission 1.1)"'}>Afficher mon attestation</button>
     </section>
   </div>`;
@@ -829,29 +831,85 @@ function rendreProfil() {
   window.scrollTo(0, 0);
 }
 
-function afficherAttestation() {
+/* Attestation : aperçu à l'écran, puis vrai fichier PDF téléchargé (logo Kerogo, une page) */
+const dateLongue = (iso) => new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).replace(/^1 /, '1er ');
+function donneesAttestation() {
   const j = ETAT.joueur, faites = toutesMissions().filter((m) => m.reussie);
   const charte = toutesMissions().find((m) => m.id === '1.1');
+  return {
+    nom: nomComplet(j),
+    phrase: 'Nous attestons que ' + nomComplet(j) + ' a pris connaissance de la charte d’usage de l’IA du groupe Kerogo et s’est engagé·e à la respecter' + (charte && charte.reussieLe ? ' le ' + dateLongue(charte.reussieLe) : '') + '.',
+    missions: faites.map((m) => 'Mission ' + m.id + ' · ' + m.titre + (m.reussieLe ? ' (' + dateLongue(m.reussieLe) + ')' : '')),
+    note: 'Cette formation contribue à l’obligation de maîtrise de l’IA prévue par la loi européenne sur l’IA (article 4).',
+    fait: 'Fait à Paris, le ' + dateLongue(new Date().toISOString()) + '.'
+  };
+}
+
+function afficherAttestation() {
+  const d = donneesAttestation(), logo = document.querySelector('.logo-jour');
   let fond = document.getElementById('attestation-fond');
   if (!fond) { fond = document.createElement('div'); fond.id = 'attestation-fond'; fond.className = 'attestation-fond'; document.body.appendChild(fond); }
   fond.innerHTML = `<div id="attestation">
-    <div class="att-boutons"><button type="button" class="btn btn-contour" id="att-fermer">Fermer</button><button type="button" class="btn btn-citron" id="att-imprimer">Imprimer ou enregistrer en PDF</button></div>
-    <p style="font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:13px;color:#6345F0">Kerogo Tools Academy · groupe Kerogo</p>
+    <div class="att-boutons"><button type="button" class="btn btn-contour" id="att-fermer">Fermer</button><button type="button" class="btn btn-citron" id="att-telecharger">Télécharger en PDF</button></div>
+    ${logo ? `<img src="${logo.src}" alt="Kerogo" style="height:44px;width:auto;align-self:flex-start">` : ''}
+    <p style="font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:13px;color:#6345F0;border-top:2px solid #6345F0;padding-top:16px">Kerogo Tools Academy</p>
     <h1>Attestation de formation à l’usage de l’IA</h1>
-    <p>Nous attestons que <strong>${esc(j.prenom)}</strong>${j.site ? ' (site de ' + esc(j.site) + ')' : ''} a pris connaissance de la charte d’usage de l’IA du groupe Kerogo et s’est engagé·e à la respecter${charte && charte.reussieLe ? ', le ' + dateCourte(charte.reussieLe) : ''}.</p>
+    <p>${esc(d.phrase)}</p>
     <p><strong>Missions validées :</strong></p>
-    <ul style="margin:0;padding-left:20px">${faites.map((m) => `<li>Mission ${m.id} · ${esc(m.titre)}${m.reussieLe ? ' (' + dateCourte(m.reussieLe) + ')' : ''}</li>`).join('')}</ul>
-    <p style="font-size:14px;color:#55537A">Cette formation contribue à l’obligation de maîtrise de l’IA prévue par la loi européenne sur l’IA (article 4).</p>
-    <p style="margin-top:12px">Édité le ${dateCourte(new Date().toISOString())} · Équipe Dev Ops</p>
+    <ul style="margin:0;padding-left:20px">${d.missions.map((m) => `<li>${esc(m)}</li>`).join('')}</ul>
+    <p style="font-size:14px;color:#55537A">${esc(d.note)}</p>
+    <p style="margin-top:12px">${esc(d.fait)}</p>
   </div>`;
   fond.hidden = false;
   document.getElementById('att-fermer').onclick = () => { fond.hidden = true; };
-  document.getElementById('att-imprimer').onclick = () => window.print();
+  document.getElementById('att-telecharger').onclick = (ev) => telechargerAttestation(ev.currentTarget);
+}
+
+function chargerJsPDF() {
+  if (window.jspdf && window.jspdf.jsPDF) return Promise.resolve(window.jspdf.jsPDF);
+  return new Promise((ok, ko) => {
+    const sc = document.createElement('script');
+    sc.src = 'https:' + '/' + '/cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    sc.onload = () => ok(window.jspdf.jsPDF);
+    sc.onerror = () => ko(new Error('Le module PDF n’a pas pu se charger. Vérifie ta connexion.'));
+    document.head.appendChild(sc);
+  });
+}
+
+async function telechargerAttestation(bouton) {
+  const texte = bouton.textContent;
+  bouton.disabled = true; bouton.textContent = 'Préparation du PDF…';
+  try {
+    const JsPDF = await chargerJsPDF(), d = donneesAttestation();
+    const propre = (t) => String(t).replace(/[’‘]/g, "'").replace(/[“”]/g, '"');
+    const doc = new JsPDF({ unit: 'mm', format: 'a4' });
+    const logo = document.querySelector('.logo-jour');
+    if (logo && logo.naturalWidth) doc.addImage(logo.src, 'PNG', 20, 18, 11 * logo.naturalWidth / logo.naturalHeight, 11);
+    doc.setDrawColor(99, 69, 240); doc.setLineWidth(0.6); doc.line(20, 38, 190, 38);
+    let y = 50;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(99, 69, 240); doc.text('KEROGO TOOLS ACADEMY', 20, y); y += 12;
+    doc.setFontSize(22); doc.setTextColor(21, 20, 47);
+    const titre = doc.splitTextToSize(propre('Attestation de formation à l’usage de l’IA'), 170); doc.text(titre, 20, y); y += titre.length * 9 + 6;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(12);
+    const phrase = doc.splitTextToSize(propre(d.phrase), 170); doc.text(phrase, 20, y); y += phrase.length * 6 + 6;
+    if (d.missions.length) {
+      doc.setFont('helvetica', 'bold'); doc.text('Missions validées :', 20, y); y += 7; doc.setFont('helvetica', 'normal');
+      d.missions.forEach((m) => { const l = doc.splitTextToSize(propre(m), 160); doc.text('•', 23, y); doc.text(l, 28, y); y += l.length * 6 + 1; });
+      y += 5;
+    }
+    doc.setFontSize(10); doc.setTextColor(85, 83, 122);
+    const note = doc.splitTextToSize(propre(d.note), 170); doc.text(note, 20, y); y += note.length * 5 + 14;
+    doc.setFontSize(12); doc.setTextColor(21, 20, 47); doc.text(propre(d.fait), 20, Math.max(y, 120));
+    const fichier = 'attestation-ia-' + d.nom.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.pdf';
+    doc.save(fichier);
+    toast('Attestation téléchargée', fichier);
+  } catch (e) { toast('Téléchargement impossible', messageErreur(e)); }
+  bouton.disabled = false; bouton.textContent = texte;
 }
 
 /* ------------------------------ Mon équipe (managers) ------------------------------ */
 
-let EQUIPE = null, EQUIPE_SITE = '';
+let EQUIPE = null, EQUIPE_SITE = '', EQUIPE_MANAGER = '';
 async function rendreEquipe() {
   arreterMinuteur();
   navActive('equipe');
@@ -862,36 +920,58 @@ async function rendreEquipe() {
 
 function dessinerEquipe() {
   const E = EQUIPE, defil = window.scrollY;
-  const c = E.collaborateurs.filter((x) => !EQUIPE_SITE || x.site === EQUIPE_SITE);
-  const charte = c.filter((x) => x.charte).length, actifs = c.filter((x) => x.visite && Date.now() - new Date(x.visite) < 7 * 86400000).length;
-  const moy = c.length ? (c.reduce((a, x) => a + x.missions.length, 0) / c.length).toFixed(1).replace('.', ',') : '0';
+  const sites = [...new Set(E.collaborateurs.map((x) => x.site).filter(Boolean))].sort();
+  const managers = [...new Set(E.collaborateurs.map((x) => x.manager).filter(Boolean))].sort();
+  const c = E.collaborateurs.filter((x) => (!EQUIPE_SITE || x.site === EQUIPE_SITE) && (!EQUIPE_MANAGER || x.manager === EQUIPE_MANAGER));
+  const inscrits = c.filter((x) => x.inscrit), charte = c.filter((x) => x.charte).length;
+  const actifs = c.filter((x) => x.visite && Date.now() - new Date(x.visite) < 7 * 86400000).length;
+  const moy = inscrits.length ? (inscrits.reduce((a, x) => a + x.missions.length, 0) / inscrits.length).toFixed(1).replace('.', ',') : '0';
   vue.innerHTML = `<div class="pile">
     <section class="carte entre" style="display:flex;flex-direction:column;gap:18px">
-      <div class="carte-titre"><div style="display:flex;flex-direction:column;gap:6px"><p class="surtitre">${E.tous ? 'Tous les sites' : 'Mes sites : ' + esc(E.sites.join(', '))}</p><h1 class="titre" style="font-size:40px">Mon équipe</h1></div>
-        <div class="boutons">${E.sites.length > 1 ? `<label class="champ" style="min-width:200px">Site<select id="equipe-site"><option value="">Tous</option>${E.sites.map((s) => `<option ${s === EQUIPE_SITE ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select></label>` : ''}
-          <button type="button" class="btn btn-contour" id="exporter-equipe" style="align-self:flex-end">Exporter les attestations</button></div></div>
+      <div class="carte-titre"><div style="display:flex;flex-direction:column;gap:6px"><p class="surtitre">${E.tous ? 'Tous les collaborateurs' : (E.equipe ? 'Ton équipe, d’après l’organigramme' : 'Tes sites')}</p><h1 class="titre" style="font-size:40px">Mon équipe</h1></div>
+        <button type="button" class="btn btn-contour" id="telecharger-equipe" style="min-height:46px">Télécharger la liste</button></div>
+      <div class="ligne-form">
+        ${sites.length > 1 ? `<label class="champ" style="flex:0 1 220px">Site<select id="equipe-site"><option value="">Tous</option>${sites.map((x) => `<option ${x === EQUIPE_SITE ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select></label>` : ''}
+        ${managers.length > 1 ? `<label class="champ" style="flex:0 1 260px">Manager<select id="equipe-manager"><option value="">Tous</option>${managers.map((x) => `<option ${x === EQUIPE_MANAGER ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select></label>` : ''}
+      </div>
       <div class="tuiles">
-        <p class="tuile"><strong>${nbr(c.length)}</strong><span class="doux">${accord(c.length, 'collaborateur inscrit', 'collaborateurs inscrits')}</span></p>
-        <p class="tuile"><strong>${pourcent(charte, c.length)} %</strong><span class="doux">ont validé la charte (${nbr(charte)})</span></p>
+        <p class="tuile"><strong>${nbr(inscrits.length)}${c.length !== inscrits.length ? ' / ' + nbr(c.length) : ''}</strong><span class="doux">${c.length !== inscrits.length ? 'inscrits dans l’Académie' : accord(c.length, 'collaborateur inscrit', 'collaborateurs inscrits')}</span></p>
+        <p class="tuile"><strong>${pourcent(charte, c.length)} %</strong><span class="doux">ont validé la charte (${nbr(charte)} sur ${nbr(c.length)})</span></p>
         <p class="tuile"><strong>${moy}</strong><span class="doux">missions validées en moyenne</span></p>
         <p class="tuile"><strong>${nbr(actifs)}</strong><span class="doux">${accord(actifs, 'actif', 'actifs')} ces 7 derniers jours</span></p>
       </div>
     </section>
     <div class="graphiques">
-      <div class="graphique"><h3>Charte validée</h3>${graphAnneau(charte, c.length, nbr(charte) + ' sur ' + nbr(c.length) + ' collaborateurs')}</div>
-      <div class="graphique"><h3>Avancement par mission</h3>${graphBarres(E.missions.map((m) => ({ label: m.id + ' · ' + m.titre, valeur: c.filter((x) => x.missions.indexOf(m.id) !== -1).length, max: c.length || 1, texte: pourcent(c.filter((x) => x.missions.indexOf(m.id) !== -1).length, c.length) + ' %' })))}</div>
+      <div class="graphique"><h3>Charte validée</h3>${graphAnneau(charte, c.length, nbr(charte) + ' sur ' + nbr(c.length) + ' personnes')}</div>
+      <div class="graphique"><h3>Avancement par mission</h3>${graphBarres(E.missions.map((m) => { const f = c.filter((x) => x.missions.indexOf(m.id) !== -1).length; return { label: m.id + ' · ' + m.titre, valeur: f, max: c.length || 1, texte: pourcent(f, c.length) + ' %' }; }))}</div>
     </div>
     <section class="carte" style="display:flex;flex-direction:column;gap:14px">
       <h2 class="titre" style="font-size:24px">Collaborateurs</h2>
-      <div class="tableau-defilant"><table class="table-admin"><thead><tr><th>Prénom</th><th>Site</th><th>Charte</th><th>Missions</th><th>XP</th><th>Dernière visite</th></tr></thead><tbody>
-        ${c.sort((a, b) => (a.prenom || '').localeCompare(b.prenom || '')).map((x) => `<tr><td>${esc(x.prenom)}</td><td>${esc(x.site)}</td><td>${x.charte ? dateCourte(x.charte) : '<span class="doux">—</span>'}</td><td>${x.missions.length}</td><td>${nbr(x.xp)}</td><td>${x.visite ? dateCourte(x.visite) : '—'}</td></tr>`).join('') || '<tr><td colspan="6" class="doux">Aucun collaborateur inscrit pour l’instant.</td></tr>'}
+      <div class="tableau-defilant"><table class="table-admin"><thead><tr><th>Nom</th><th>Manager</th><th>Site</th><th>Charte</th><th>Missions</th><th>XP</th><th>Dernière visite</th></tr></thead><tbody>
+        ${c.sort((a, b) => (Number(b.inscrit) - Number(a.inscrit)) || nomComplet(a).localeCompare(nomComplet(b))).map((x) => `<tr><td><strong>${esc(nomComplet(x))}</strong>${x.poste ? `<br><span class="doux" style="font-size:12px">${esc(x.poste)}</span>` : ''}</td><td>${esc(x.manager || '—')}</td>
+          <td>${x.inscrit ? esc(x.site || '—') : '<span class="pastille-statut">Pas encore inscrit</span>'}</td><td>${x.charte ? dateCourte(x.charte) : '<span class="doux">—</span>'}</td>
+          <td>${x.inscrit ? x.missions.length : '—'}</td><td>${x.inscrit ? nbr(x.xp) : '—'}</td><td>${x.visite ? dateCourte(x.visite) : '—'}</td></tr>`).join('') || '<tr><td colspan="7" class="doux">Personne dans ce périmètre pour l’instant.</td></tr>'}
       </tbody></table></div>
     </section>
   </div>`;
   window.scrollTo(0, defil);
   const sel = document.getElementById('equipe-site');
   if (sel) sel.onchange = () => { EQUIPE_SITE = sel.value; dessinerEquipe(); };
-  document.getElementById('exporter-equipe').onclick = (ev) => exporterAttestations(ev.currentTarget);
+  const man = document.getElementById('equipe-manager');
+  if (man) man.onchange = () => { EQUIPE_MANAGER = man.value; dessinerEquipe(); };
+  document.getElementById('telecharger-equipe').onclick = () => telechargerEquipe(c);
+}
+
+/* Liste du périmètre filtré, en fichier CSV lisible par Excel */
+function telechargerEquipe(liste) {
+  const cel = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  const entete = ['Prénom', 'Nom', 'Email', 'Poste', 'Manager', 'Site', 'Inscrit', 'Charte validée le', 'Missions validées', 'XP', 'Dernière visite'];
+  const lignes = liste.map((x) => [x.prenom, x.nom, x.email, x.poste, x.manager, x.site, x.inscrit ? 'oui' : 'non', x.charte ? dateCourte(x.charte) : '', x.missions.join(' '), x.xp, x.visite ? dateCourte(x.visite) : '']);
+  const csv = '\ufeff' + [entete].concat(lignes).map((l) => l.map(cel).join(';')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = 'equipe-academie-' + new Date().toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(a); a.click(); a.remove();
 }
 
 async function exporterAttestations(bouton) {
@@ -942,13 +1022,13 @@ function rendreCharte() {
         ${etat.valide ? `<div class="verdict entre" style="background:${bonnes >= 2 ? 'var(--bon)' : 'var(--faux)'}">
             <div style="display:flex;flex-direction:column;gap:6px"><p class="titre" style="font-size:24px">${bonnes >= 2 ? 'Mission validée !' : 'Presque !'}</p>
             <p>${bonnes}/3 bonnes réponses${bonnes >= 2 ? ' · charte validée' : ' · relis la charte et réessaie'}.</p></div>
-            ${bonnes >= 2 ? '<button type="button" class="btn btn-citron" data-aller="progression">Voir ma progression</button>' : '<button type="button" class="btn btn-fort" id="reessayer">Refaire le quiz</button>'}</div>${bonnes >= 2 ? blocRetour('1.1') : ''}`
-          : `<div class="boutons"><button type="button" class="btn btn-citron" id="valider" ${pret && !etat.envoi ? '' : 'disabled'}>${etat.envoi ? 'Enregistrement…' : 'Valider ma mission'}</button>
-            <p class="doux" style="font-size:14px">${etat.lue ? (pret ? 'Tout est prêt.' : 'Réponds aux 3 questions.') : 'Coche d’abord la charte, juste au-dessus.'}</p></div>`}
+            ${bonnes >= 2 ? '<button type="button" class="btn btn-citron" data-aller="progression">Voir ma progression</button>' : '<button type="button" class="btn btn-fort" id="reessayer">Refaire le quiz</button>'}</div>`
+          : `${pret ? blocAvis('1.1') : ''}<div class="boutons"><button type="button" class="btn btn-citron" id="valider" ${pret && avisComplet('1.1') && !etat.envoi ? '' : 'disabled'}>${etat.envoi ? 'Enregistrement…' : 'Valider ma mission'}</button>
+            <p class="doux" style="font-size:14px">${etat.lue ? (pret ? (avisComplet('1.1') ? 'Tout est prêt.' : 'Réponds aux deux questions ci-dessus.') : 'Réponds aux 3 questions.') : 'Coche d’abord la charte, juste au-dessus.'}</p></div>`}
       </section></div>`;
     window.scrollTo(0, defilement);
     if (!etat.valide) SESSION && SESSION.sauver && SESSION.sauver();
-    brancherRetour('1.1');
+    brancherAvis('1.1', dessiner);
     brancherRecommencer('1.1', rendreCharte);
     const caseLue = document.getElementById('charte-lue');
     if (caseLue) caseLue.onchange = () => { etat.lue = caseLue.checked; dessiner(); };
@@ -957,6 +1037,7 @@ function rendreCharte() {
     if (v) v.onclick = async () => {
       etat.envoi = true; dessiner();
       try {
+        envoyerAvis('1.1');
         ETAT = await appel('terminerMission', '1.1', bonnes, 3, etat.lue);
         etat.valide = true; etat.envoi = false; effacerReprise('1.1'); SESSION = null; majEntete(); dessiner(); annoncerResultat(ETAT.resultat);
       } catch (e) { etat.envoi = false; dessiner(); toast('Enregistrement impossible', messageErreur(e)); }
@@ -1069,27 +1150,36 @@ function rendreJeu() {
   const dessinerFin = async () => {
     const etoiles = s.bonnes >= 5 ? 3 : (s.bonnes === 4 ? 2 : (s.bonnes === 3 ? 1 : 0));
     const gagne = s.bonnes >= 3;
+    const attendAvis = gagne && !s.enregistre && avisRequis('1.3');
     vue.innerHTML = `<div class="pile" style="max-width:980px;margin:0 auto">
       <section class="carte entre" style="position:relative;overflow:hidden;padding:56px;display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center">
         ${gagne ? COULEURS.map((c, i) => `<span class="confetti" style="left:${12 + i * 18}%;background:${c};animation-delay:${i * 0.12}s" aria-hidden="true"></span>`).join('') : ''}
         <div class="etoiles" aria-label="${etoiles} étoiles sur 3">${[0, 1, 2].map((k) => `<svg width="72" height="72" viewBox="0 0 24 24" style="animation-delay:${0.15 + k * 0.18}s" aria-hidden="true"><path d="M12 2l3 7 7 .6-5.4 4.6 1.7 7L12 17.4 5.7 21.2l1.7-7L2 9.6 9 9z" fill="${k < etoiles ? 'var(--soleil)' : 'var(--piste)'}"/></svg>`).join('')}</div>
         <h2 class="titre" style="font-size:48px">${gagne ? 'Mission validée !' : 'Presque !'}</h2>
         <p class="doux" style="font-size:18px">${s.bonnes}/5 hallucinations repérées · ${s.score} points</p>
-        <p id="fin-message" style="max-width:560px;line-height:1.6">${gagne ? 'Enregistrement de ta mission…' : 'Il faut repérer au moins 3 hallucinations pour valider la mission. Refais l’exercice : les pièges deviennent vite faciles à voir.'}</p>
-        <div class="boutons" style="justify-content:center"><button type="button" class="btn btn-contour" id="rejouer">Refaire l’exercice</button><button type="button" class="btn btn-citron" data-aller="progression">Voir ma progression</button></div>
-        <div id="zone-retour" style="width:100%;text-align:left"></div>
+        <p id="fin-message" style="max-width:560px;line-height:1.6">${attendAvis ? 'Encore une étape : réponds aux deux questions ci-dessous pour valider ta mission.' : (gagne ? 'Enregistrement de ta mission…' : 'Il faut repérer au moins 3 hallucinations pour valider la mission. Refais l’exercice : les pièges deviennent vite faciles à voir.')}</p>
+        ${attendAvis ? `<div style="width:100%;text-align:left">${blocAvis('1.3')}</div><button type="button" class="btn btn-citron" id="valider-jeu" ${avisComplet('1.3') ? '' : 'disabled'}>Valider ma mission</button>`
+          : `<div class="boutons" style="justify-content:center"><button type="button" class="btn btn-contour" id="rejouer">Refaire l’exercice</button><button type="button" class="btn btn-citron" data-aller="progression">Voir ma progression</button></div>`}
       </section></div>`;
+    if (attendAvis) {
+      brancherAvis('1.3', dessinerFin);
+      document.getElementById('valider-jeu').onclick = () => { s.avisFait = true; envoyerAvis('1.3'); enregistrer(); };
+      return;
+    }
     document.getElementById('rejouer').onclick = () => { s.ecran = 'intro'; dessiner(); };
+    enregistrer();
+  };
+  const enregistrer = async () => {
+    const gagne = s.bonnes >= 3;
     if (s.enregistre) return;
     s.enregistre = true;
+    if (s.avisFait) { s.avisFait = false; dessinerFin(); }
     try {
       ETAT = await appel('terminerMission', '1.3', s.bonnes, 5, false);
       majEntete();
       const msg = document.getElementById('fin-message');
       if (msg && gagne) msg.textContent = ETAT.resultat.test ? 'Mode test : résultat calculé, rien n’a été enregistré.' : (ETAT.resultat.premiereFois ? 'Mission enregistrée : +' + ETAT.resultat.xpGagne + ' XP pour toi et pour ton site.' : 'Mission enregistrée. Tu l’avais déjà validée : refais-la pour viser les 3 étoiles.');
       annoncerResultat(ETAT.resultat);
-      const zr = document.getElementById('zone-retour');
-      if (zr && gagne) { zr.innerHTML = blocRetour('1.3'); brancherRetour('1.3'); }
     } catch (e) { toast('Enregistrement impossible', messageErreur(e)); }
   };
   dessiner();
@@ -1170,6 +1260,29 @@ function blocRetour(id) {
     <button type="button" class="btn btn-contour" id="envoyer-retour" style="align-self:flex-start;min-height:44px" disabled>Envoyer</button></div>`;
 }
 
+/* Questions obligatoires (non notées) avant la première validation d'une mission */
+const AVIS = {};
+function avisRequis(id) { const m = toutesMissions().find((x) => x.id === id); return !!m && !m.reussie && missionOuverte(id); }
+function avisComplet(id) { return !avisRequis(id) || !!(AVIS[id] && AVIS[id].utile && AVIS[id].usage); }
+function blocAvis(id) {
+  if (!avisRequis(id)) return '';
+  const a = AVIS[id] || {};
+  const bouton = (q, v, t) => `<button type="button" data-avis="${q}" data-valeur="${v}" aria-pressed="${a[q] === v}">${t}</button>`;
+  return `<div class="retour-mission">
+    <p class="titre" style="font-size:18px">Deux questions pour valider (non notées)</p>
+    <div style="display:flex;flex-direction:column;gap:8px"><p style="font-weight:600">Cette mission t’a été utile ?</p>
+      <div class="choix-ligne">${bouton('utile', 'oui', 'Oui')}${bouton('utile', 'non', 'Pas vraiment')}</div></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><p style="font-weight:600">Cette semaine, as-tu utilisé une compétence Slackbot ?</p>
+      <div class="choix-ligne">${bouton('usage', 'souvent', 'Oui, plusieurs fois')}${bouton('usage', 'une fois', 'Oui, une fois')}${bouton('usage', 'pas encore', 'Pas encore')}</div></div></div>`;
+}
+function brancherAvis(id, redessiner) {
+  document.querySelectorAll('[data-avis]').forEach((b) => { b.onclick = () => { AVIS[id] = Object.assign({}, AVIS[id], { [b.dataset.avis]: b.dataset.valeur }); redessiner(); }; });
+}
+function envoyerAvis(id) {
+  if (!avisRequis(id) || !AVIS[id]) return;
+  appel('enregistrerRetour', { mission: id, utile: AVIS[id].utile, usage: AVIS[id].usage }).catch(() => {});
+}
+
 function brancherRetour(id) {
   const zone = document.getElementById('retour-mission');
   if (!zone) return;
@@ -1194,11 +1307,11 @@ function entreteMission(id, titre, chapo) {
 function verdictMission(reussie, ligne, id) {
   return `<div class="verdict entre" style="background:${reussie ? 'var(--bon)' : 'var(--faux)'}">
     <div style="display:flex;flex-direction:column;gap:6px"><p class="titre" style="font-size:24px">${reussie ? 'Mission validée !' : 'Presque !'}</p><p>${ligne}</p></div>
-    ${reussie ? '<button type="button" class="btn btn-citron" data-aller="progression">Voir ma progression</button>' : '<button type="button" class="btn btn-fort" id="reessayer">Refaire la mission</button>'}</div>
-    ${reussie ? blocRetour(id) : ''}`;
+    ${reussie ? '<button type="button" class="btn btn-citron" data-aller="progression">Voir ma progression</button>' : '<button type="button" class="btn btn-fort" id="reessayer">Refaire la mission</button>'}</div>`;
 }
 
 async function envoyerMission(id, bonnes, total) {
+  envoyerAvis(id);
   ETAT = await appel('terminerMission', id, bonnes, total, false);
   majEntete(); annoncerResultat(ETAT.resultat);
   return ETAT.resultat;
@@ -1261,10 +1374,11 @@ function rendreMissionAnonymiser() {
           return `<label class="choix ${cls}"><input type="radio" name="q${i}" value="${k}" ${etat.rep[i] === k ? 'checked' : ''} ${etat.valide !== null ? 'disabled' : ''}>${c}</label>`; }).join('')}
           ${etat.valide !== null ? `<p class="explication"><strong>${etat.rep[i] === q.bonne ? 'Bien vu !' : 'Pas tout à fait.'}</strong> ${q.explication}</p>` : ''}</fieldset>`).join('')}
         ${etat.valide !== null ? verdictMission(etat.valide, bonnes + '/3 bonnes réponses' + (etat.valide ? '.' : ' : il en faut 2. Relis les explications et refais la mission.'), id)
-          : `<div class="boutons"><button type="button" class="btn btn-citron" id="valider" ${pret && !etat.envoi ? '' : 'disabled'}>${etat.envoi ? 'Enregistrement…' : 'Valider ma mission'}</button></div>`}
+          : `${blocAvis(id)}<div class="boutons"><button type="button" class="btn btn-citron" id="valider" ${pret && avisComplet(id) && !etat.envoi ? '' : 'disabled'}>${etat.envoi ? 'Enregistrement…' : 'Valider ma mission'}</button></div>`}
       </section>` : ''}
     </div>`;
     window.scrollTo(0, defil);
+    brancherAvis(id, dessiner);
     if (SESSION && SESSION.sauver && etat.valide === null) SESSION.sauver();
     document.querySelectorAll('[data-jeton]').forEach((b) => { b.onclick = () => { const i = Number(b.dataset.jeton), k = etat.sel.indexOf(i); if (k === -1) etat.sel.push(i); else etat.sel.splice(k, 1); dessiner(); }; });
     const ver = document.getElementById('verifier');
@@ -1329,10 +1443,11 @@ function rendreMissionOutils() {
           return `<button type="button" data-situation="${i}" data-outil="${k}" aria-pressed="${etat.rep[i] === k}" ${etat.valide !== null ? 'disabled' : ''} style="${style}">${o}</button>`; }).join('')}</div>
           ${etat.valide !== null ? `<p class="explication"><strong>${etat.rep[i] === x.bonne ? 'Bien vu !' : 'Pas tout à fait.'}</strong> ${x.explication}</p>` : ''}</fieldset>`).join('')}
         ${etat.valide !== null ? verdictMission(etat.valide, bonnes + '/7 bonnes réponses' + (etat.valide ? '.' : ' : il en faut 5. Relis les explications et refais la mission.'), id)
-          : `<div class="boutons"><button type="button" class="btn btn-citron" id="valider" ${pret && !etat.envoi ? '' : 'disabled'}>${etat.envoi ? 'Enregistrement…' : 'Valider ma mission'}</button>
-            <p class="doux" style="font-size:14px">${pret ? 'Tout est prêt.' : 'Réponds aux 7 situations.'}</p></div>`}
+          : `${pret ? blocAvis(id) : ''}<div class="boutons"><button type="button" class="btn btn-citron" id="valider" ${pret && avisComplet(id) && !etat.envoi ? '' : 'disabled'}>${etat.envoi ? 'Enregistrement…' : 'Valider ma mission'}</button>
+            <p class="doux" style="font-size:14px">${pret ? (avisComplet(id) ? 'Tout est prêt.' : 'Réponds aux deux questions ci-dessus.') : 'Réponds aux 7 situations.'}</p></div>`}
       </section></div>`;
     window.scrollTo(0, defil);
+    brancherAvis(id, dessiner);
     SESSION && SESSION.sauver && etat.valide === null && SESSION.sauver();
     document.querySelectorAll('[data-situation]').forEach((b) => { b.onclick = () => { etat.rep[Number(b.dataset.situation)] = Number(b.dataset.outil); dessiner(); }; });
     const v = document.getElementById('valider');
@@ -1464,10 +1579,11 @@ function rendreMissionFiche(id) {
           return `<label class="choix ${cls}"><input type="radio" name="q${i}" value="${k}" ${etat.quiz[i] === k ? 'checked' : ''} ${etat.valide !== null ? 'disabled' : ''}>${c}</label>`; }).join('')}
           ${etat.valide !== null ? `<p class="explication"><strong>${etat.quiz[i] === q.bonne ? 'Bien vu !' : 'Pas tout à fait.'}</strong> ${q.explication}</p>` : ''}</fieldset>`).join('')}
         ${etat.valide !== null ? verdictMission(etat.valide, (bonsEx + bonsQuiz) + '/' + total + ' bonnes réponses' + (etat.valide ? '.' : ' : il en faut ' + d.seuil + '. Relis les explications et refais la mission.'), id)
-          : `<div class="boutons"><button type="button" class="btn btn-citron" id="valider" ${pret && !etat.envoi ? '' : 'disabled'}>${etat.envoi ? 'Enregistrement…' : 'Valider ma mission'}</button></div>`}
+          : `${blocAvis(id)}<div class="boutons"><button type="button" class="btn btn-citron" id="valider" ${pret && avisComplet(id) && !etat.envoi ? '' : 'disabled'}>${etat.envoi ? 'Enregistrement…' : 'Valider ma mission'}</button></div>`}
       </section>` : ''}
     </div>`;
     window.scrollTo(0, defil);
+    brancherAvis(id, dessiner);
     if (SESSION && SESSION.sauver && etat.valide === null) SESSION.sauver();
     document.querySelectorAll('[data-item]').forEach((b) => { b.onclick = () => { etat.rep[Number(b.dataset.item)] = Number(b.dataset.option); dessiner(); }; });
     const ver = document.getElementById('verifier');
@@ -1913,7 +2029,7 @@ function adminVue(A) {
     </div>
     <section class="carte" style="display:flex;flex-direction:column;gap:16px">
       <div style="display:flex;flex-direction:column;gap:6px"><h2 class="sous-titre-admin">Mesure d’impact</h2>
-        <p class="doux" style="font-size:14px;line-height:1.55">À la fin de chaque mission validée, deux questions facultatives : la mission était-elle utile, et le collaborateur a-t-il utilisé une compétence Slackbot dans la semaine ? Avec le taux de réussite du quiz, c’est le meilleur indicateur des réflexes qui s’installent. ${nbr(r.total)} ${accord(r.total, 'réponse', 'réponses')} pour l’instant.</p></div>
+        <p class="doux" style="font-size:14px;line-height:1.55">Avant de valider une mission pour la première fois, chaque collaborateur répond à deux questions non notées : la mission était-elle utile, et a-t-il utilisé une compétence Slackbot dans la semaine ? Avec le taux de réussite du quiz, c’est le meilleur indicateur des réflexes qui s’installent. ${nbr(r.total)} ${accord(r.total, 'réponse', 'réponses')} pour l’instant.</p></div>
       <div class="graphiques">
         <div class="graphique"><h3>« As-tu utilisé une compétence Slackbot cette semaine ? »</h3>${graphBarres([['Oui, plusieurs fois', 'souvent'], ['Oui, une fois', 'une fois'], ['Pas encore', 'pas encore']].map((x) => ({ label: x[0], valeur: usage[x[1]] || 0, max: totalUsage || 1, texte: pourcent(usage[x[1]] || 0, totalUsage) + ' %' })))}</div>
         <div class="graphique"><h3>Missions jugées utiles</h3>${graphBarres(jouables.map((m) => { const x = r.parMission[m.id] || { oui: 0, non: 0 }; return { label: m.id + ' · ' + m.titre, valeur: x.oui, max: (x.oui + x.non) || 1, texte: x.oui + x.non ? pourcent(x.oui, x.oui + x.non) + ' %' : '—' }; }))}</div>
@@ -1923,7 +2039,7 @@ function adminVue(A) {
     <section class="carte" style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
       <div style="flex:1 1 360px;display:flex;flex-direction:column;gap:6px"><h2 class="sous-titre-admin">Preuve de formation</h2>
         <p class="doux" style="font-size:14px;line-height:1.55">Crée ou met à jour l’onglet « Attestations » du tableur : qui a validé la charte et quand, missions validées, XP. Utile pour montrer la sensibilisation des équipes à l’IA (loi européenne sur l’IA, article 4).</p></div>
-      <button type="button" class="btn btn-citron" id="exporter-admin">Exporter les attestations</button>
+      <button type="button" class="btn btn-citron" id="exporter-admin">Exporter les attestations vers le tableur</button>
     </section>`;
 }
 
@@ -1938,10 +2054,10 @@ function adminPublications(A) {
   const quand = (x) => x.date ? new Date(x.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'long' }) + ' à ' + (x.heure || '09:00').replace(':', ' h ') : '';
   return `
     <section class="carte" style="display:flex;flex-direction:column;gap:8px">
-      <p class="doux" style="line-height:1.6">Deux façons de remplir le calendrier de #kerogo-tools : les <strong>brouillons rédigés par l’IA</strong> chaque mois, à relire et valider, ou une <strong>publication que tu écris toi-même</strong>. Tout part à la date et à l’heure prévues, à l’heure près.</p>
+      <p class="doux" style="line-height:1.6">Deux façons de remplir le calendrier de #kerogo-tools : les <strong>brouillons</strong> préparés automatiquement chaque mois, à relire et valider, ou une <strong>publication que tu écris toi-même</strong>. Tout part à la date et à l’heure prévues, à l’heure près.</p>
     </section>
     <section class="carte" style="display:flex;flex-direction:column;gap:16px">
-      <div class="carte-titre"><h2 class="sous-titre-admin">Brouillons rédigés par l’IA</h2><span class="niv" style="${A.ia.active ? '' : 'background:var(--piste);color:var(--texte)'}">${A.ia.active ? 'ACTIVÉE' : 'EN ATTENTE DE LA CLÉ'}</span></div>
+      <div class="carte-titre"><h2 class="sous-titre-admin">Brouillons</h2><span class="niv" style="${A.ia.active ? '' : 'background:var(--piste);color:var(--texte)'}">${A.ia.active ? 'ACTIVÉE' : 'EN ATTENTE DE LA CLÉ'}</span></div>
       <p class="doux" style="font-size:14px;line-height:1.55">Le ${A.ia.jour} de chaque mois, Claude prépare l’article, le focus compétence, le cas du mois et le quiz du mois suivant, à partir du Catalogue, de #kerogo-tools et des résultats de l’Académie. Une nouvelle rédaction remplace les brouillons non validés du mois.</p>
       <div class="boutons"><button type="button" class="btn btn-citron" id="generer" ${A.ia.active ? '' : 'disabled'}>Rédiger les brouillons de ${esc(A.ia.libelleSuivant)}</button>
         ${A.ia.derniere ? `<p class="doux" style="font-size:13px">Dernière rédaction : ${new Date(A.ia.derniere).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</p>` : ''}</div>
@@ -2044,7 +2160,7 @@ function adminAcces(A) {
     </section>
     <section class="carte" style="display:flex;flex-direction:column;gap:14px">
       <h2 class="sous-titre-admin">Managers</h2>
-      <p class="doux" style="font-size:14px">Ils voient la page « Mon équipe » : progression, validation de la charte et attestations des collaborateurs de leurs sites.</p>
+      <p class="doux" style="font-size:14px;line-height:1.55">Les managers de l’organigramme voient automatiquement toute leur équipe dans « Mon équipe » (${nbr((ac.organigramme || {}).managers || 0)} managers, ${nbr((ac.organigramme || {}).membres || 0)} personnes). Ajoute ici uniquement un accès par site, par exemple pour un directeur de site.</p>
       <div class="liste-admin">${Object.keys(ac.managers).length ? Object.keys(ac.managers).map((e) => `<div class="item-admin"><span style="flex:1 1 auto;min-width:0"><strong>${esc(e)}</strong><br><span class="doux" style="font-size:13px">${ac.managers[e].length ? esc(ac.managers[e].join(', ')) : 'Tous les sites'}</span></span>
         <button type="button" class="btn btn-contour" style="min-height:40px;padding:0 14px;font-size:14px" data-retirer-manager="${esc(e)}">Retirer</button></div>`).join('') : '<p class="vide">Aucun manager pour l’instant.</p>'}</div>
       <label class="champ">Adresse du manager<input type="email" id="nouveau-manager" placeholder="prenom.nom@keobiz.fr"></label>
@@ -2078,6 +2194,8 @@ function adminReglages(A) {
       <div style="display:flex;flex-direction:column;gap:4px;flex:1 1 420px"><p style="font-weight:800">${A.modeTest ? 'Mode test actif' : 'Envois ouverts à tout le monde'}</p>
         <p style="font-size:14px;line-height:1.5">${A.modeTest ? 'Relances, invitations, publications et annonces partent uniquement vers ' + esc(A.emailTest) + ', en message privé.' : 'Les relances partent aux collaborateurs et les publications dans #kerogo-tools.'}</p></div>
       <button type="button" class="btn ${A.modeTest ? 'btn-citron' : 'btn-contour'}" id="basculer-test">${A.modeTest ? 'Ouvrir les envois à tout le monde' : 'Repasser en mode test'}</button></div>
+    <div class="item-admin" style="flex-wrap:wrap"><span style="flex:1 1 320px;min-width:0"><strong>Organigramme</strong><br><span class="doux" style="font-size:13px">Noms, postes et managers, relus toutes les 6 heures : ${nbr(((A.acces || {}).organigramme || {}).membres || 0)} personnes.</span></span>
+      <button type="button" class="btn btn-contour" id="rafraichir-organigramme" style="min-height:40px;padding:0 14px;font-size:14px">Relire maintenant</button></div>
     <p class="doux" style="font-size:14px;line-height:1.55">Relances : charte non validée 4 jours ouvrés après l’inscription, puis une fois par semaine ; sans visite depuis 4 jours ouvrés, puis une fois par semaine. Les week-ends et jours fériés ne comptent pas.</p>
   </section>`;
 }
@@ -2144,6 +2262,7 @@ function brancherAdmin(A) {
   on('[data-renommer]', (b) => { const ancien = b.dataset.renommer, nouveau = prompt('Nouveau nom pour « ' + ancien + ' » :', ancien); if (nouveau && nouveau.trim() !== ancien) agirAdmin(b, 'renommerSite', [ancien, nouveau.trim()], ['Site renommé', '']); });
   on('[data-supprimer-site]', (b) => { if (confirm('Supprimer le site « ' + b.dataset.supprimerSite + ' » ?')) agirAdmin(b, 'supprimerSite', [b.dataset.supprimerSite], ['Site supprimé', '']); });
   // Réglages
+  const ro2 = $('rafraichir-organigramme'); if (ro2) ro2.onclick = (ev) => agirAdmin(ev.currentTarget, 'rafraichirOrganigramme', [], ['Organigramme relu', '']);
   const bt = $('basculer-test');
   if (bt) bt.onclick = (ev) => { const ouvrir = A.modeTest; if (ouvrir && !confirm('Les relances et invitations partiront à tous les collaborateurs, et les publications dans #kerogo-tools. Confirmer ?')) return; agirAdmin(ev.currentTarget, 'basculerModeTest', [!ouvrir], [ouvrir ? 'Envois ouverts' : 'Mode test réactivé', '']); };
 }
