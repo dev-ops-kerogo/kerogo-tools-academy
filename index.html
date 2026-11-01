@@ -14,7 +14,7 @@ var KTA_CONFIG = {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
-var KTA_VERSION = 'hébergée 01/11 · 8';
+var KTA_VERSION = 'hébergée 01/11 · 9';
 var KTA_ERREURS = [];
 window.addEventListener('error', function (e) {
   KTA_ERREURS.push((e && e.message ? e.message : 'Erreur inconnue') + (e && e.lineno ? ' (ligne ' + e.lineno + ')' : ''));
@@ -938,12 +938,12 @@ function dessinerEquipe() {
       <div class="tuiles">
         <p class="tuile"><strong>${nbr(inscrits.length)}${c.length !== inscrits.length ? ' / ' + nbr(c.length) : ''}</strong><span class="doux">${c.length !== inscrits.length ? 'inscrits dans l’Académie' : accord(c.length, 'collaborateur inscrit', 'collaborateurs inscrits')}</span></p>
         <p class="tuile"><strong>${pourcent(charte, c.length)} %</strong><span class="doux">ont validé la charte (${nbr(charte)} sur ${nbr(c.length)})</span></p>
-        <p class="tuile"><strong>${moy}</strong><span class="doux">missions validées en moyenne</span></p>
+        <p class="tuile"><strong>${moy}</strong><span class="doux">${Number(moy.replace(',', '.')) < 2 ? 'mission validée' : 'missions validées'} en moyenne</span></p>
         <p class="tuile"><strong>${nbr(actifs)}</strong><span class="doux">${accord(actifs, 'actif', 'actifs')} ces 7 derniers jours</span></p>
       </div>
     </section>
     <div class="graphiques">
-      <div class="graphique"><h3>Charte validée</h3>${graphAnneau(charte, c.length, nbr(charte) + ' sur ' + nbr(c.length) + ' personnes')}</div>
+      <div class="graphique"><h3>Charte validée</h3>${graphAnneau(charte, c.length, nbr(charte) + ' sur ' + nbr(c.length) + ' ' + accord(c.length, 'personne', 'personnes'))}</div>
       <div class="graphique"><h3>Avancement par mission</h3>${graphBarres(E.missions.map((m) => { const f = c.filter((x) => x.missions.indexOf(m.id) !== -1).length; return { label: m.id + ' · ' + m.titre, valeur: f, max: c.length || 1, texte: pourcent(f, c.length) + ' %' }; }))}</div>
     </div>
     <section class="carte" style="display:flex;flex-direction:column;gap:14px">
@@ -1113,7 +1113,7 @@ function rendreJeu() {
     vue.innerHTML = `<div class="pile" style="max-width:980px;margin:0 auto">
       <div class="hud">
         <button type="button" class="btn btn-contour" data-aller="accueil" style="min-height:40px;padding:0 14px;font-size:14px">✕ Quitter</button>
-        <div style="display:flex;gap:6px" aria-label="${s.vies} vies restantes">${[0, 1, 2].map((k) => `<svg width="28" height="26" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 21s-9-5.6-9-12A5 5 0 0 1 12 6a5 5 0 0 1 9 3c0 6.4-9 12-9 12z" fill="${k < s.vies ? 'var(--corail)' : 'var(--piste)'}"/></svg>`).join('')}</div>
+        <div style="display:flex;gap:6px" aria-label="${s.vies} ${accord(s.vies, 'vie restante', 'vies restantes')}">${[0, 1, 2].map((k) => `<svg width="28" height="26" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 21s-9-5.6-9-12A5 5 0 0 1 12 6a5 5 0 0 1 9 3c0 6.4-9 12-9 12z" fill="${k < s.vies ? 'var(--corail)' : 'var(--piste)'}"/></svg>`).join('')}</div>
         <div style="display:flex;align-items:center;gap:8px"><p style="font-weight:700;font-size:14px;margin-right:6px">Manche ${s.manche + 1}/5</p>
           ${MANCHES.map((_, k) => `<span style="width:12px;height:12px;border-radius:50%;background:${k < s.resultats.length ? (s.resultats[k] ? 'var(--citron)' : 'var(--corail)') : (k === s.manche ? 'var(--inverse)' : 'var(--piste)')}"></span>`).join('')}</div>
         <div style="display:flex;gap:8px;align-items:center">${s.combo >= 2 ? `<p style="padding:6px 10px;border-radius:10px;background:var(--corail);color:var(--encre);font-size:13px;font-weight:800">Combo ×${Math.min(3, s.combo)}</p>` : ''}
@@ -1155,9 +1155,9 @@ function rendreJeu() {
     vue.innerHTML = `<div class="pile" style="max-width:980px;margin:0 auto">
       <section class="carte entre" style="position:relative;overflow:hidden;padding:56px;display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center">
         ${gagne ? COULEURS.map((c, i) => `<span class="confetti" style="left:${12 + i * 18}%;background:${c};animation-delay:${i * 0.12}s" aria-hidden="true"></span>`).join('') : ''}
-        <div class="etoiles" aria-label="${etoiles} étoiles sur 3">${[0, 1, 2].map((k) => `<svg width="72" height="72" viewBox="0 0 24 24" style="animation-delay:${0.15 + k * 0.18}s" aria-hidden="true"><path d="M12 2l3 7 7 .6-5.4 4.6 1.7 7L12 17.4 5.7 21.2l1.7-7L2 9.6 9 9z" fill="${k < etoiles ? 'var(--soleil)' : 'var(--piste)'}"/></svg>`).join('')}</div>
+        <div class="etoiles" aria-label="${etoiles} ${accord(etoiles, 'étoile', 'étoiles')} sur 3">${[0, 1, 2].map((k) => `<svg width="72" height="72" viewBox="0 0 24 24" style="animation-delay:${0.15 + k * 0.18}s" aria-hidden="true"><path d="M12 2l3 7 7 .6-5.4 4.6 1.7 7L12 17.4 5.7 21.2l1.7-7L2 9.6 9 9z" fill="${k < etoiles ? 'var(--soleil)' : 'var(--piste)'}"/></svg>`).join('')}</div>
         <h2 class="titre" style="font-size:48px">${gagne ? 'Mission validée !' : 'Presque !'}</h2>
-        <p class="doux" style="font-size:18px">${s.bonnes}/5 hallucinations repérées · ${s.score} points</p>
+        <p class="doux" style="font-size:18px">${s.bonnes}/5 hallucinations repérées · ${s.score} ${accord(s.score, 'point', 'points')}</p>
         <p id="fin-message" style="max-width:560px;line-height:1.6">${attendAvis ? 'Encore une étape : réponds aux deux questions ci-dessous pour valider ta mission.' : (gagne ? 'Enregistrement de ta mission…' : 'Il faut repérer au moins 3 hallucinations pour valider la mission. Refais l’exercice : les pièges deviennent vite faciles à voir.')}</p>
         ${attendAvis ? `<div style="width:100%;text-align:left">${blocAvis('1.3')}</div><button type="button" class="btn btn-citron" id="valider-jeu" ${avisComplet('1.3') ? '' : 'disabled'}>Valider ma mission</button>`
           : `<div class="boutons" style="justify-content:center"><button type="button" class="btn btn-contour" id="rejouer">Refaire l’exercice</button><button type="button" class="btn btn-citron" data-aller="progression">Voir ma progression</button></div>`}
@@ -1638,7 +1638,7 @@ function rendreMissionFiche(id) {
           if (etat.verifie) style = k === x.bonne ? 'background:var(--bon);border-color:var(--citron)' : (etat.rep[i] === k ? 'background:var(--faux);border-color:var(--corail)' : '');
           return `<button type="button" data-item="${i}" data-option="${k}" aria-pressed="${etat.rep[i] === k}" ${etat.verifie ? 'disabled' : ''} style="${style};text-align:left">${o}</button>`; }).join('')}</div>
           ${etat.verifie ? `<p class="explication"><strong>${etat.rep[i] === x.bonne ? 'Bien vu !' : 'Pas tout à fait.'}</strong> ${x.explication}</p>` : ''}</fieldset>`).join('')}
-        ${etat.verifie ? `<p style="font-weight:700">${bonsEx}/${ex.items.length} bonnes réponses à l’exercice.</p>`
+        ${etat.verifie ? `<p style="font-weight:700">${bonsEx}/${ex.items.length} ${accord(ex.items.length, 'bonne réponse', 'bonnes réponses')} à l’exercice.</p>`
           : `<div class="boutons"><button type="button" class="btn btn-fort" id="verifier" ${pretEx ? '' : 'disabled'}>Vérifier mes réponses</button><p class="doux" style="font-size:14px">${pretEx ? 'Tout est prêt.' : 'Réponds à chaque ligne.'}</p></div>`}
       </section>
       ${etat.verifie ? `<section class="carte" style="display:flex;flex-direction:column;gap:22px">
@@ -1648,7 +1648,7 @@ function rendreMissionFiche(id) {
           if (etat.valide !== null) cls = k === q.bonne ? 'bonne' : (etat.quiz[i] === k ? 'mauvaise' : '');
           return `<label class="choix ${cls}"><input type="radio" name="q${i}" value="${k}" ${etat.quiz[i] === k ? 'checked' : ''} ${etat.valide !== null ? 'disabled' : ''}>${c}</label>`; }).join('')}
           ${etat.valide !== null ? `<p class="explication"><strong>${etat.quiz[i] === q.bonne ? 'Bien vu !' : 'Pas tout à fait.'}</strong> ${q.explication}</p>` : ''}</fieldset>`).join('')}
-        ${etat.valide !== null ? verdictMission(etat.valide, (bonsEx + bonsQuiz) + '/' + total + ' bonnes réponses' + (etat.valide ? '.' : ' : il en faut ' + d.seuil + '. Relis les explications et refais la mission.'), id)
+        ${etat.valide !== null ? verdictMission(etat.valide, (bonsEx + bonsQuiz) + '/' + total + ' ' + accord(total, 'bonne réponse', 'bonnes réponses') + (etat.valide ? '.' : ' : il en faut ' + d.seuil + '. Relis les explications et refais la mission.'), id)
           : `${blocAvis(id)}<div class="boutons"><button type="button" class="btn btn-citron" id="valider" ${pret && avisComplet(id) && !etat.envoi ? '' : 'disabled'}>${etat.envoi ? 'Enregistrement…' : 'Valider ma mission'}</button></div>`}
       </section>` : ''}
     </div>`;
@@ -1688,7 +1688,7 @@ function rendreQuizCarte() {
     <div class="quiz-icone" aria-hidden="true">?</div>
     <div style="flex:1 1 320px;display:flex;flex-direction:column;gap:6px">
       <p class="surtitre">Quiz du mois de ${esc(q.libelle)}</p>
-      <p class="titre" style="font-size:26px">${q.fait ? 'Ton score : ' + q.score + '/' + q.nb : q.nb + ' questions sur nos compétences'}</p>
+      <p class="titre" style="font-size:26px">${q.fait ? 'Ton score : ' + q.score + '/' + q.nb : q.nb + ' ' + accord(q.nb, 'question', 'questions') + ' sur nos compétences'}</p>
       <p class="doux" style="line-height:1.5">${q.fait ? 'Tu peux le refaire pour t’entraîner ; seule ta première tentative du mois compte pour les XP.' : 'Jusqu’à +' + q.xpMax + ' XP pour toi et pour ton site, à ta première tentative.'}</p>
     </div>
     <button type="button" class="btn ${q.fait ? 'btn-contour' : 'btn-citron'}" data-aller="quiz">${q.fait ? 'Refaire le quiz' : 'Faire le quiz'}</button>
@@ -1713,7 +1713,7 @@ async function rendreQuizMois(moisTest) {
       ${boutonQuitter}
       <section class="carte entre" style="display:flex;flex-direction:column;gap:14px">
         <p class="surtitre">Quiz du mois de ${esc(Q.libelle)}</p>
-        <h1 class="titre" style="font-size:52px;line-height:1">${Q.questions.length} questions sur nos compétences</h1>
+        <h1 class="titre" style="font-size:52px;line-height:1">${Q.questions.length} ${accord(Q.questions.length, 'question', 'questions')} sur nos compétences</h1>
         ${Q.test ? '<p class="mode-test">Test administrateur : brouillons inclus, rien n’est enregistré.</p>' : ''}
         <p class="doux" style="font-size:17px;line-height:1.6">${Q.deja && Q.deja.fait && !Q.test ? 'Tu as déjà fait le quiz ce mois-ci (' + Q.deja.score + '/' + Q.deja.nb + ') : cette tentative sert à t’entraîner.' : '+10 XP par bonne réponse, pour toi et pour ton site. Seule ta première tentative du mois compte.'}</p>
       </section>
@@ -1726,7 +1726,7 @@ async function rendreQuizMois(moisTest) {
           }).join('')}
           ${R ? verdict(R.corrections[i]) : ''}</fieldset>`).join('')}
         ${R ? `<div class="verdict entre" style="background:${R.score * 2 >= R.total ? 'var(--bon)' : 'var(--faux)'}">
-            <div style="display:flex;flex-direction:column;gap:6px"><p class="titre" style="font-size:24px">${R.score}/${R.total} bonnes réponses</p>
+            <div style="display:flex;flex-direction:column;gap:6px"><p class="titre" style="font-size:24px">${R.score}/${R.total} ${accord(R.total, 'bonne réponse', 'bonnes réponses')}</p>
             <p>${R.test ? 'Test administrateur : rien n’a été enregistré.' : (R.premiereFois ? (R.xpGagne ? '+' + R.xpGagne + ' XP pour toi et pour ton site.' : 'Pas d’XP cette fois, mais tu connais maintenant les bonnes réponses.') : 'Quiz d’entraînement : les XP ne comptent qu’à la première tentative du mois.')}</p></div>
             <button type="button" class="btn btn-citron" data-aller="accueil">Retour à l’accueil</button></div>`
           : `<div class="boutons"><button type="button" class="btn btn-citron" id="valider-quiz" ${pret && !etat.envoi ? '' : 'disabled'}>${etat.envoi ? 'Correction…' : 'Valider mes réponses'}</button>
@@ -2092,7 +2092,7 @@ function adminVue(A) {
       </div>
     </section>
     <div class="graphiques">
-      <div class="graphique"><h3>Charte validée</h3>${graphAnneau(c.charte, c.joueurs, nbr(c.charte) + ' sur ' + nbr(c.joueurs) + ' collaborateurs inscrits')}</div>
+      <div class="graphique"><h3>Charte validée</h3>${graphAnneau(c.charte, c.joueurs, nbr(c.charte) + ' sur ' + nbr(c.joueurs) + ' ' + accord(c.joueurs, 'collaborateur inscrit', 'collaborateurs inscrits'))}</div>
       <div class="graphique"><h3>Collaborateurs actifs par semaine</h3>${graphColonnes((A.activite || []).map((s) => ({ label: s.semaine, valeur: s.actifs })))}</div>
       <div class="graphique"><h3>Avancement par mission</h3>${graphBarres(jouables.map((m) => ({ label: m.id + ' · ' + m.titre, valeur: m.faites, max: c.joueurs || 1, texte: pourcent(m.faites, c.joueurs) + ' %' })))}</div>
       <div class="graphique"><h3>Charte validée par site</h3>${graphBarres((A.parSite || []).filter((p) => p.site !== 'Site non choisi').map((p) => ({ label: p.site, valeur: p.charte, max: p.joueurs || 1, texte: pourcent(p.charte, p.joueurs) + ' %' })))}</div>
@@ -2266,7 +2266,7 @@ function adminReglages(A) {
       <button type="button" class="btn ${A.modeTest ? 'btn-citron' : 'btn-contour'}" id="basculer-test">${A.modeTest ? 'Ouvrir les envois à tout le monde' : 'Repasser en mode test'}</button></div>
     ${(() => { const o = (A.acces || {}).organigramme || {}, m = o.methodes || {};
       return `<div class="item-admin" style="flex-wrap:wrap;align-items:flex-start"><span style="flex:1 1 320px;min-width:0;line-height:1.55"><strong>Organigramme</strong><br>
-        <span class="doux" style="font-size:13px">${nbr(o.membres || 0)} personnes, relues toutes les 6 heures. Collaborateurs de l’Académie reliés à leur fiche : ${nbr(m.email || 0)} par l’adresse, ${nbr(m.slack || 0)} par l’identifiant Slack, ${nbr(m.adresse || 0)} par un autre domaine, ${nbr(m.nom || 0)} par le nom. ${o.nbSans ? nbr(o.nbSans) + ' non ' + (o.nbSans > 1 ? 'reliés' : 'relié') + ' : ' + esc((o.sans || []).join(', ')) + (o.nbSans > (o.sans || []).length ? '…' : '') + '.' : 'Tout le monde est relié.'}</span></span>
+        <span class="doux" style="font-size:13px">${nbr(o.membres || 0)} ${accord(o.membres || 0, 'personne, relue', 'personnes, relues')} toutes les 6 heures. Collaborateurs de l’Académie reliés à leur fiche : ${nbr(m.email || 0)} par l’adresse, ${nbr(m.slack || 0)} par l’identifiant Slack, ${nbr(m.adresse || 0)} par un autre domaine, ${nbr(m.nom || 0)} par le nom. ${o.nbSans ? nbr(o.nbSans) + ' non ' + (o.nbSans > 1 ? 'reliés' : 'relié') + ' : ' + esc((o.sans || []).join(', ')) + (o.nbSans > (o.sans || []).length ? '…' : '') + '.' : 'Tout le monde est relié.'}</span></span>
         <button type="button" class="btn btn-contour" id="rafraichir-organigramme" style="min-height:40px;padding:0 14px;font-size:14px">Relire maintenant</button></div>`; })()}
     <p class="doux" style="font-size:14px;line-height:1.55">Relances : charte non validée 4 jours ouvrés après l’inscription, puis une fois par semaine ; sans visite depuis 4 jours ouvrés, puis une fois par semaine. Les week-ends et jours fériés ne comptent pas.</p>
   </section>`;
