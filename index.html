@@ -14,7 +14,7 @@ var KTA_CONFIG = {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
-var KTA_VERSION = 'hébergée 01/11 · 7';
+var KTA_VERSION = 'hébergée 01/11 · 8';
 var KTA_ERREURS = [];
 window.addEventListener('error', function (e) {
   KTA_ERREURS.push((e && e.message ? e.message : 'Erreur inconnue') + (e && e.lineno ? ' (ligne ' + e.lineno + ')' : ''));
@@ -661,6 +661,7 @@ function rendreAccueil(ancre) {
       <div style="display:flex;flex-wrap:wrap;gap:8px 24px">
         <button type="button" class="lien-discret" data-aller="charte" style="padding:12px 0">Charte d’usage de l’IA</button>
         <a href="${esc(ETAT.liens.catalogue)}" target="_blank" rel="noopener" style="padding:12px 0">Catalogue Kerogo Tools</a>
+        <span style="padding:12px 0;font-size:12px">Version ${esc(window.KTA_VERSION || '')}</span>
       </div>
     </footer>
   </div>`;
