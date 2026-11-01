@@ -14,7 +14,7 @@ var KTA_CONFIG = {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
-var KTA_VERSION = 'hébergée 01/11 · 6';
+var KTA_VERSION = 'hébergée 01/11 · 7';
 var KTA_ERREURS = [];
 window.addEventListener('error', function (e) {
   KTA_ERREURS.push((e && e.message ? e.message : 'Erreur inconnue') + (e && e.lineno ? ' (ligne ' + e.lineno + ')' : ''));
@@ -568,7 +568,7 @@ function missionOuverte(id) {
   return !!m && (m.reussie || (m.dispo && !missionBloquante(id)));
 }
 function missionAccessible(id) { return missionOuverte(id) || (ETAT.admin && MISSIONS_JOUABLES.indexOf(id) !== -1); }
-const MISSIONS_JOUABLES = ['1.1', '1.2', '1.3', '1.4', '2.1', '2.2', '2.3', '2.4'];
+const MISSIONS_JOUABLES = ['1.1', '1.2', '1.3', '1.4', '2.1', '2.2', '2.3', '2.4', '3.1', '3.2', '3.3', '3.4'];
 const dateCourte = (iso) => iso ? new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
 const dateOuverture = (jour) => new Date(jour + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }).replace(/^1 /, '1er ');
 const pourcent = (a, b) => (b ? Math.round(100 * a / b) : 0);
@@ -1535,6 +1535,75 @@ const MISSIONS_DEF = {
     quiz: [
       { q: 'Comment reformuler « Confirme que cette dépense est déductible » ?', bonne: 1, choix: ['« Confirme vite »', '« Dans quels cas cette dépense est-elle déductible, et avec quelles limites ? »', '« Réponds seulement oui ou non »'], explication: 'Une question ouverte laisse l’IA chercher la règle, au lieu de te donner raison.' },
       { q: 'Face à une demande trop chargée, tu…', bonne: 0, choix: ['La découpes en plusieurs demandes', 'L’envoies quand même', 'Ajoutes encore des questions'], explication: 'Une tâche par demande : chaque réponse est plus précise.' }]
+  },
+  '3.1': {
+    titre: 'Résumer et retrouver', seuil: 5,
+    chapo: 'Un canal chargé, un fil interminable, une information perdue : Slackbot résume et retrouve pour toi, à condition de bien lui demander. 5 minutes, +50 XP.',
+    lecons: [['Résumer un fil ou un canal', 'Demande les décisions, les actions et les questions en suspens, plutôt qu’un résumé général.'],
+      ['Retrouver une information', '« Où a-t-on parlé du planning des clôtures ? » Slackbot cherche dans les canaux et messages auxquels tu as accès.'],
+      ['Vérifier à la source', 'Avant d’agir, ouvre le message d’origine : un résumé peut oublier une nuance.']],
+    exemple: [['Demande vague', 'Résume.'], ['Demande utile', 'Résume ce fil en trois parties : décisions prises, actions avec leur responsable, questions en suspens.']],
+    exercice: { titre: 'Choisis la meilleure façon de faire', items: [
+      { s: 'Tu reviens de congés et le canal de ton équipe compte 200 nouveaux messages.', bonne: 1, options: ['« Résume. »', '« Résume les messages de ce canal depuis le 20 octobre : décisions, actions qui me concernent, questions en suspens. »', 'Tout lire sans aide'], explication: 'Une période et ce que tu veux en retirer : le résumé va droit à l’essentiel.' },
+      { s: 'Tu cherches le message où le planning des clôtures a été partagé.', bonne: 0, options: ['« Retrouve le message où le planning des clôtures a été partagé, et donne-moi le lien. »', '« Planning ? »', 'Écrire à toute l’équipe en message privé'], explication: 'Une demande précise, avec le lien vers le message : tu gagnes du temps et tu vérifies la source.' },
+      { s: 'Le résumé mentionne une décision importante pour ton dossier.', bonne: 1, options: ['Agir tout de suite', 'Ouvrir le message d’origine pour vérifier avant d’agir', 'Transférer le résumé au client'], explication: 'Un résumé est un point de départ : la source fait foi.' },
+      { s: 'Slackbot ne trouve pas une information que tu es sûr d’avoir vue.', bonne: 1, options: ['Elle n’existe sûrement pas', 'Elle est peut-être dans un canal auquel tu n’as pas accès : demande à un collègue', 'Reposer la même question dix fois'], explication: 'Slackbot ne voit que ce que tu peux voir toi-même : c’est ce qui protège les informations de chacun.' }] },
+    quiz: [
+      { q: 'Que demander dans un bon résumé de fil ?', bonne: 1, choix: ['Tout, mot pour mot', 'Les décisions, les actions et les questions en suspens', 'Seulement le premier message'], explication: 'Ce sont les trois choses dont tu as besoin pour agir.' },
+      { q: 'Slackbot cherche dans…', bonne: 1, choix: ['Tous les canaux du groupe, même ceux où tu n’es pas', 'Les canaux et messages auxquels tu as accès', 'Internet uniquement'], explication: 'Il respecte tes droits d’accès dans Slack.' },
+      { q: 'Avant d’agir sur un résumé important, tu…', bonne: 1, choix: ['Agis directement', 'Vérifies le message d’origine', 'Demandes un autre résumé'], explication: 'La source fait foi, pas le résumé.' }]
+  },
+  '3.2': {
+    titre: 'Rédiger avec Slackbot', seuil: 5,
+    chapo: 'Un message d’équipe, une réponse à un client, une relance : Slackbot propose un premier jet, tu le relis et tu l’envoies. 5 minutes, +50 XP.',
+    lecons: [['Rédiger', 'Donne le contexte, le destinataire et le ton : Slackbot propose un premier jet.'],
+      ['Reformuler', '« Plus court », « plus cordial », « sans jargon » : une phrase suffit pour ajuster.'],
+      ['Relire et envoyer', 'Vérifie les faits, les dates et les montants, puis envoie toi-même.']],
+    exemple: [['Sans contexte', 'Écris un message pour l’équipe.'], ['Avec contexte', 'Écris un message court pour prévenir l’équipe que la réunion de jeudi passe à 14 h, sur un ton cordial.']],
+    exercice: { titre: 'Choisis la meilleure façon de faire', items: [
+      { s: 'Tu dois annoncer un changement d’horaire de réunion à ton équipe.', bonne: 1, options: ['« Écris un message. »', '« Écris un message court pour annoncer que la réunion de jeudi passe à 14 h, ton cordial. »', 'Copier un ancien message sans le relire'], explication: 'Le sujet, l’information clé et le ton : le premier jet est presque prêt.' },
+      { s: 'Le message proposé est trop long pour Slack.', bonne: 0, options: ['« Raccourcis en trois lignes, en gardant l’heure et le lieu. »', 'Le laisser tel quel', '« Fais mieux. »'], explication: 'Tu dis la longueur voulue et ce qui doit rester.' },
+      { s: 'Tu réponds à un client mécontent.', bonne: 1, options: ['Envoyer la proposition sans la lire', 'Faire proposer un brouillon, puis le relire, vérifier les faits et l’adapter avant d’envoyer', 'Ne pas répondre'], explication: 'Rien ne part chez un client sans relecture : c’est une règle de la charte.' },
+      { s: 'Le brouillon contient une date que tu n’as jamais donnée.', bonne: 1, options: ['La garder', 'La vérifier ou la retirer : l’IA a pu l’inventer', 'La mettre en gras'], explication: 'Une information que tu n’as pas fournie est à vérifier : c’est peut-être une hallucination.' }] },
+    quiz: [
+      { q: 'Pour obtenir un bon brouillon, tu donnes…', bonne: 1, choix: ['Seulement le sujet', 'Le contexte, le destinataire et le ton', 'Le moins d’informations possible'], explication: 'Plus le contexte est clair, moins tu auras de corrections.' },
+      { q: 'Qui envoie le message final ?', bonne: 1, choix: ['Slackbot, automatiquement', 'Toi, après relecture', 'Ton manager'], explication: 'Tu restes responsable de ce que tu envoies.' },
+      { q: 'Tu prépares une réponse sur le dossier d’un client. Où travailles-tu ?', bonne: 1, choix: ['Dans un canal ouvert à tout le groupe', 'Dans Slackbot ou un canal réservé au dossier', 'Dans une IA gratuite'], explication: 'Les informations d’un client ne sont vues que par les personnes qui suivent ce client.' }]
+  },
+  '3.3': {
+    titre: 'Préparer une réunion', seuil: 5,
+    chapo: 'Avant, pendant, après : Slackbot t’aide à préparer l’ordre du jour et à rédiger un compte rendu utile. 5 minutes, +50 XP.',
+    lecons: [['Avant', 'Fais proposer un ordre du jour à partir des échanges du canal du projet : points à traiter et temps prévu.'],
+      ['Pendant', 'Note les décisions et les actions au fil de l’eau, avec un responsable pour chacune.'],
+      ['Après', 'Fais rédiger le compte rendu : décisions, actions avec responsable et échéance, points en attente. Pour un Meet avec un client, Ker’Meet le fait pour toi.']],
+    exemple: [['Demande vague', 'Prépare la réunion.'], ['Demande utile', 'À partir de ce canal, propose un ordre du jour de 30 minutes en 4 points, avec les questions encore en suspens.']],
+    exercice: { titre: 'Choisis la meilleure façon de faire', items: [
+      { s: 'Tu animes un point projet demain matin.', bonne: 1, options: ['« Prépare la réunion. »', '« À partir de ce canal, propose un ordre du jour de 30 minutes en 4 points. »', 'Improviser'], explication: 'La source, la durée et le nombre de points : l’ordre du jour est prêt en une minute.' },
+      { s: 'Ta réunion avec un client s’est tenue sur Google Meet.', bonne: 0, options: ['Ker’Meet, la compétence qui rédige le compte rendu et l’envoie dans Salesforce', 'Une IA gratuite trouvée sur internet', 'Ne rien noter'], explication: 'Ker’Meet est la compétence Kerogo Tools prévue pour ce cas.' },
+      { s: 'Le compte rendu doit être utile à toute l’équipe.', bonne: 1, options: ['« Résume. »', '« Rédige le compte rendu : décisions, actions avec responsable et échéance, points en attente. »', '« Fais long. »'], explication: 'Trois rubriques : chacun sait ce qui a été décidé et ce qu’il doit faire.' },
+      { s: 'Le compte rendu cite un montant qui n’a pas été dit en réunion.', bonne: 1, options: ['Le garder', 'Le corriger avant de partager', 'L’envoyer tel quel au client'], explication: 'Tu relis toujours avant de partager : l’IA a pu se tromper.' }] },
+    quiz: [
+      { q: 'Un bon ordre du jour précise…', bonne: 1, choix: ['Seulement l’heure', 'Les points à traiter et le temps prévu', 'La liste des absents'], explication: 'Les points et le temps : la réunion reste courte et utile.' },
+      { q: 'Pour le compte rendu d’un Meet avec un client, la compétence à utiliser est…', bonne: 1, choix: ['KeroBrief', 'Ker’Meet', 'GEC'], explication: 'Ker’Meet rédige le compte rendu et l’envoie dans Salesforce.' },
+      { q: 'Un compte rendu de réunion client se partage…', bonne: 0, choix: ['Avec les personnes qui suivent le dossier', 'Dans un canal ouvert à tous', 'Dans un outil externe'], explication: 'Les bonnes informations aux bonnes personnes, comme le dit la charte.' }]
+  },
+  '3.4': {
+    titre: 'Les tâches planifiées', seuil: 5,
+    chapo: 'Une demande que tu refais chaque semaine ? Programme-la une fois, et Slackbot te l’envoie au bon moment. 5 minutes, +50 XP.',
+    lecons: [['Repérer', 'Une demande qui revient : le résumé du lundi, le rappel des actions du vendredi, le point sur un canal.'],
+      ['Programmer', 'Écris la demande une fois, choisis le jour et l’heure : Slackbot te l’envoie automatiquement.'],
+      ['Faire le point', 'Chaque mois, garde les tâches utiles et supprime les autres.']],
+    exemple: [['Chaque lundi, à la main', 'Résume le canal de mon équipe.'], ['Une tâche planifiée', 'Chaque lundi à 9 h, résume les messages du canal de mon équipe de la semaine passée : décisions, actions, questions en suspens.']],
+    note: 'Les règles de la charte s’appliquent aussi aux tâches planifiées : pas de données sensibles dans un canal ouvert, et rien ne part chez un client sans relecture.',
+    exercice: { titre: 'Bonne idée de tâche planifiée, ou pas ?', options: ['Bonne idée', 'Pas adapté'], items: [
+      { s: 'Recevoir chaque lundi le résumé du canal de ton équipe.', bonne: 0, explication: 'Une demande qui revient chaque semaine : c’est exactement l’usage prévu.' },
+      { s: 'Recevoir chaque vendredi un rappel des actions décidées dans le canal du projet.', bonne: 0, explication: 'Un rappel régulier qui t’évite d’oublier une action.' },
+      { s: 'Envoyer automatiquement chaque semaine un mail à tes clients, sans relecture.', bonne: 1, explication: 'Rien ne part chez un client sans relecture.' },
+      { s: 'Programmer une demande que tu ne fais qu’une fois par an.', bonne: 1, explication: 'Pour une demande rare, une demande ponctuelle suffit.' },
+      { s: 'Publier chaque mois un résumé des salaires de l’équipe dans un canal ouvert.', bonne: 1, explication: 'Les salaires nominatifs ne s’affichent jamais dans un canal ouvert à tous.' }] },
+    quiz: [
+      { q: 'Une bonne tâche planifiée, c’est…', bonne: 0, choix: ['Une demande qui revient régulièrement', 'Une demande unique', 'Un message à un client sans relecture'], explication: 'La régularité, c’est ce qui rend la programmation utile.' },
+      { q: 'Que fais-tu des tâches planifiées qui ne servent plus ?', bonne: 1, choix: ['Je les garde', 'Je les supprime lors de mon point mensuel', 'J’en crée d’autres'], explication: 'Moins de messages inutiles, plus d’attention pour ceux qui comptent.' }]
   }
 };
 
@@ -2194,8 +2263,10 @@ function adminReglages(A) {
       <div style="display:flex;flex-direction:column;gap:4px;flex:1 1 420px"><p style="font-weight:800">${A.modeTest ? 'Mode test actif' : 'Envois ouverts à tout le monde'}</p>
         <p style="font-size:14px;line-height:1.5">${A.modeTest ? 'Relances, invitations, publications et annonces partent uniquement vers ' + esc(A.emailTest) + ', en message privé.' : 'Les relances partent aux collaborateurs et les publications dans #kerogo-tools.'}</p></div>
       <button type="button" class="btn ${A.modeTest ? 'btn-citron' : 'btn-contour'}" id="basculer-test">${A.modeTest ? 'Ouvrir les envois à tout le monde' : 'Repasser en mode test'}</button></div>
-    <div class="item-admin" style="flex-wrap:wrap"><span style="flex:1 1 320px;min-width:0"><strong>Organigramme</strong><br><span class="doux" style="font-size:13px">Noms, postes et managers, relus toutes les 6 heures : ${nbr(((A.acces || {}).organigramme || {}).membres || 0)} personnes.</span></span>
-      <button type="button" class="btn btn-contour" id="rafraichir-organigramme" style="min-height:40px;padding:0 14px;font-size:14px">Relire maintenant</button></div>
+    ${(() => { const o = (A.acces || {}).organigramme || {}, m = o.methodes || {};
+      return `<div class="item-admin" style="flex-wrap:wrap;align-items:flex-start"><span style="flex:1 1 320px;min-width:0;line-height:1.55"><strong>Organigramme</strong><br>
+        <span class="doux" style="font-size:13px">${nbr(o.membres || 0)} personnes, relues toutes les 6 heures. Collaborateurs de l’Académie reliés à leur fiche : ${nbr(m.email || 0)} par l’adresse, ${nbr(m.slack || 0)} par l’identifiant Slack, ${nbr(m.adresse || 0)} par un autre domaine, ${nbr(m.nom || 0)} par le nom. ${o.nbSans ? nbr(o.nbSans) + ' non ' + (o.nbSans > 1 ? 'reliés' : 'relié') + ' : ' + esc((o.sans || []).join(', ')) + (o.nbSans > (o.sans || []).length ? '…' : '') + '.' : 'Tout le monde est relié.'}</span></span>
+        <button type="button" class="btn btn-contour" id="rafraichir-organigramme" style="min-height:40px;padding:0 14px;font-size:14px">Relire maintenant</button></div>`; })()}
     <p class="doux" style="font-size:14px;line-height:1.55">Relances : charte non validée 4 jours ouvrés après l’inscription, puis une fois par semaine ; sans visite depuis 4 jours ouvrés, puis une fois par semaine. Les week-ends et jours fériés ne comptent pas.</p>
   </section>`;
 }

@@ -13,8 +13,8 @@ Projet porté par l'équipe Dev Ops du groupe Kerogo.
 | Niveau | Thème | Badge | État |
 |---|---|---|---|
 | 1 | Les bons réflexes | Découvreur | 4 missions et 4 capsules vidéo prêtes |
-| 2 | Bien demander | Utilisateur | 4 missions prêtes, capsules en préparation |
-| 3 | Slackbot au quotidien | Efficace | En préparation |
+| 2 | Bien demander | Utilisateur | 4 missions et 4 capsules vidéo prêtes |
+| 3 | Slackbot au quotidien | Efficace | 4 missions et 4 capsules vidéo prêtes |
 | 4 | Les compétences | Autonome | En préparation |
 | 5 | L'IA dans ton métier | Expert | En préparation |
 | 6 | Créateurs | Créateur | En préparation |
@@ -89,7 +89,7 @@ Si la page est publiée à une nouvelle adresse, l'ajouter dans Google Cloud : *
 
 - Charte non validée 4 jours ouvrés après l'inscription, puis une fois par semaine.
 - Aucune visite depuis 4 jours ouvrés, puis une fois par semaine.
-- Les week-ends et les jours fériés français ne comptent pas.
+- Les week-ends et les jours fériés ne comptent pas : ceux de France, de Tunisie, de Madagascar ou de l'Île Maurice selon le site du collaborateur.
 - En mode test (onglet **Réglages**), relances, invitations et publications partent uniquement vers l'adresse de test.
 
 ## Fichiers du dépôt
@@ -109,6 +109,7 @@ Si la page est publiée à une nouvelle adresse, l'ajouter dans Google Cloud : *
 | La page charge sans fin | Le déploiement « API version hébergée » n'est pas à jour ou n'est pas ouvert à « tout le monde » |
 | Les boutons Slack ouvrent l'ancienne adresse | Mettre à jour la propriété `URL_APP` |
 | Une mission reste « Verrouillée » | La mission précédente n'est pas validée, ou le niveau n'est pas encore ouvert (calendrier) |
-| Un manager ne voit pas « Mon équipe » | Son adresse n'est pas dans l'onglet **Accès**, ou il doit recharger la page |
+| Un manager ne voit pas « Mon équipe » | Il n'a personne sous sa responsabilité dans l'organigramme, ou il n'est pas encore relié à sa fiche (voir l'onglet **Réglages**) |
+| Un collaborateur n'apparaît pas dans l'équipe de son manager | Il n'est pas relié à sa fiche de l'organigramme : le bilan du rapprochement est dans l'onglet **Réglages** |
 
 Une question : #kerogo-tools.
