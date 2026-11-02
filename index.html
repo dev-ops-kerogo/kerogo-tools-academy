@@ -14,7 +14,7 @@ var KTA_CONFIG = {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
-var KTA_VERSION = 'hébergée 01/11 · 9';
+var KTA_VERSION = 'hébergée 01/11 · 10';
 var KTA_ERREURS = [];
 window.addEventListener('error', function (e) {
   KTA_ERREURS.push((e && e.message ? e.message : 'Erreur inconnue') + (e && e.lineno ? ' (ligne ' + e.lineno + ')' : ''));
@@ -1493,83 +1493,83 @@ const MISSIONS_DEF = {
     titre: 'Affiner en 3 étapes', seuil: 5,
     chapo: 'La première réponse est rarement la bonne. En trois étapes, tu la transformes en une réponse prête à l’emploi. 5 minutes, +50 XP.',
     lecons: [['1. Lire et repérer', 'Ce qui manque, ce qui est en trop, ce qui sonne faux.'], ['2. Préciser', 'Une demande courte et précise : « plus court », « pour un dirigeant », « en tableau ».'],
-      ['3. Faire vérifier', '« Signale ce dont tu n’es pas sûr », « indique tes sources » : puis tu relis toi-même.']],
+      ['3. Repartir de zéro si besoin', 'Après trois essais, la conversation s’enlise : ouvre-en une nouvelle avec une demande complète.']],
     note: 'Inutile de tout réécrire : dans la même conversation, l’IA tient compte de ta première demande.',
     exercice: { titre: 'Pour chaque situation, choisis la meilleure façon d’affiner', items: [
       { s: 'La réponse fait une page, il te faut 5 lignes pour un dirigeant.', bonne: 1, options: ['« Recommence. »', '« Résume en 5 lignes, pour un dirigeant sans connaissances comptables. »', '« C’est trop long. »'], explication: 'Une précision utile : la longueur et la cible.' },
       { s: 'Le ton est trop familier pour un client.', bonne: 0, options: ['« Reformule sur un ton professionnel et cordial, en vouvoyant le client. »', '« Change le ton. »', 'Tout corriger à la main sans le dire'], explication: 'Tu nommes le ton voulu : l’IA ajuste tout le texte.' },
-      { s: 'La réponse contient un taux que tu ne connais pas.', bonne: 1, options: ['Le recopier tel quel', '« Indique ta source pour ce taux, et signale si tu n’es pas sûr. », puis vérifier', '« Tu es sûr ? »'], explication: 'Tu demandes la source, puis tu vérifies toi-même : l’IA peut inventer un chiffre.' },
+      { s: 'Après quatre corrections, la réponse s’éloigne de plus en plus de ce que tu veux.', bonne: 1, options: ['Corriger encore une fois', 'Ouvrir une nouvelle conversation avec une demande complète, qui reprend ce que tu as appris', 'Abandonner'], explication: 'Une demande complète repart sur de bonnes bases : c’est souvent plus rapide que de corriger encore.' },
       { s: 'Il te faut la même information sous forme de tableau.', bonne: 0, options: ['« Présente la même réponse dans un tableau : tâche, échéance, responsable. »', 'Reposer toute la question depuis le début', '« Fais un tableau. »'], explication: 'Tu décris les colonnes voulues : inutile de tout reprendre.' }] },
     quiz: [
-      { q: 'Que fais-tu après une première réponse ?', bonne: 1, choix: ['Je l’envoie tout de suite', 'Je la lis, je précise ce qui manque, puis je la fais vérifier', 'J’ouvre une autre IA'], explication: 'Lire, préciser, faire vérifier : trois étapes courtes, et la réponse devient utilisable.' },
+      { q: 'Que fais-tu après une première réponse ?', bonne: 1, choix: ['Je l’envoie tout de suite', 'Je la lis, puis je précise ce qui manque', 'J’ouvre une autre IA'], explication: 'Lire, puis préciser : une phrase suffit souvent pour corriger le tir.' },
       { q: 'Pourquoi affiner dans la même conversation ?', bonne: 0, choix: ['Parce que l’IA tient compte de ta première demande', 'Parce que c’est obligatoire', 'Pour obtenir une réponse plus longue'], explication: 'Le contexte est déjà là : une phrase suffit pour corriger le tir.' },
-      { q: 'Qui est responsable de la réponse finale ?', bonne: 1, choix: ['L’IA', 'Moi : je la relis avant de l’utiliser', 'Personne'], explication: 'C’est la règle de la charte : tu restes responsable de ce que tu envoies.' }]
+      { q: 'Quand vaut-il mieux repartir de zéro ?', bonne: 1, choix: ['À la première réponse imparfaite', 'Quand plusieurs corrections ne suffisent plus', 'Jamais'], explication: 'Tant qu’une phrase suffit, on affine. Quand ça s’enlise, une nouvelle demande complète fait gagner du temps.' }]
   },
   '2.3': {
     titre: 'Montrer l’exemple', seuil: 5,
     chapo: 'Un exemple vaut mieux qu’une longue explication. Montre à l’IA ce que tu attends, et décris la forme de la réponse. 5 minutes, +50 XP.',
     lecons: [['Donner un exemple', 'Colle un exemple de ce que tu veux obtenir : un mail réussi, une ligne de tableau, un intitulé.'], ['Décrire le format', 'Liste, tableau, nombre de lignes, ordre des éléments : sois précis.'],
-      ['Anonymiser l’exemple', 'Un exemple tiré d’un vrai dossier ? Retire les noms et les numéros avant de le coller.']],
+      ['Varier les exemples', 'Avec un seul exemple, l’IA le recopie de près. Avec deux ou trois exemples différents, elle comprend le style et l’adapte.']],
     exemple: [['Sans exemple', 'Écris des intitulés courts pour nos tâches.'], ['Avec un exemple', 'Écris des intitulés courts pour nos tâches, sur ce modèle : « Relancer le client – relevés de mars ». Un verbe à l’infinitif, un tiret, puis l’objet. 8 mots maximum.']],
     exercice: { titre: 'Choisis la demande qui donnera le résultat attendu', items: [
       { s: 'Tu veux un tableau des échéances fiscales du trimestre.', bonne: 1, options: ['« Parle-moi des échéances. »', '« Donne les échéances fiscales du trimestre dans un tableau : date, impôt, action à mener. »', '« Fais un tableau. »'], explication: 'Le sujet, la période et les colonnes : l’IA sait exactement quoi produire.' },
       { s: 'Tu veux des réponses aux clients dans le style de tes mails habituels.', bonne: 1, options: ['« Écris comme moi. »', '« Voici un de mes mails, anonymisé : […]. Rédige la réponse dans le même style. »', '« Sois naturel. »'], explication: 'Un exemple anonymisé montre ton style mieux qu’une description.' },
       { s: 'Tu veux un compte rendu de réunion en trois parties.', bonne: 0, options: ['« Fais le compte rendu en trois parties : décisions, actions avec responsable, points en attente. »', '« Résume la réunion. »', '« Fais court. »'], explication: 'Les trois parties sont nommées : le compte rendu suit ta structure.' },
-      { s: 'Tu veux coller un vrai mail client comme exemple.', bonne: 1, options: ['Le coller tel quel', 'Retirer d’abord les noms, les numéros et les montants', 'Demander à l’IA de l’anonymiser une fois collé'], explication: 'On anonymise avant de coller : une fois le message envoyé, c’est trop tard.' }] },
+      { s: 'Tu veux des intitulés de tâches variés, pas des copies de ton modèle.', bonne: 1, options: ['Donner un seul exemple', 'Donner deux ou trois exemples différents, sur le même modèle', 'Ne donner aucun exemple'], explication: 'Plusieurs exemples variés montrent ce qui doit rester identique et ce qui peut changer.' }] },
     quiz: [
       { q: 'Pourquoi donner un exemple à l’IA ?', bonne: 1, choix: ['Pour qu’elle le recopie mot pour mot', 'Pour lui montrer le résultat attendu : style, longueur, forme', 'Cela ne sert à rien'], explication: 'L’exemple sert de modèle : l’IA en reprend le style et la forme, pas les mots.' },
       { q: 'Quelle précision de format est la plus utile ?', bonne: 1, choix: ['« Fais bien »', '« Un tableau à trois colonnes : date, montant, statut »', '« Fais joli »'], explication: 'Une forme décrite précisément donne une réponse prête à l’emploi.' },
-      { q: 'Avant de coller un exemple tiré d’un dossier, tu…', bonne: 1, choix: ['Le colles tel quel', 'Retires ce qui permet de reconnaître quelqu’un', 'Ajoutes le nom du client pour être clair'], explication: 'C’est le réflexe de la mission 1.2 : anonymiser avant de demander.' }]
+      { q: 'L’IA recopie presque mot pour mot ton exemple. Que fais-tu ?', bonne: 1, choix: ['Je retire l’exemple', 'J’ajoute un ou deux exemples différents', 'Je répète la même demande'], explication: 'Des exemples variés lui montrent le style à suivre, pas les mots à recopier.' }]
   },
   '2.4': {
     titre: 'Les demandes à éviter', seuil: 6,
-    chapo: 'Certaines demandes donnent presque toujours une mauvaise réponse. Apprends à les repérer et à les reformuler. 5 minutes, +50 XP.',
-    lecons: [['Floue', '« Aide-moi sur ce dossier » : l’IA ne sait pas ce que tu attends.'], ['Orientée', '« Confirme que c’est déductible » : l’IA risque de te donner raison au lieu de vérifier.'],
-      ['Trop chargée', 'Cinq tâches dans un seul message : les réponses deviennent superficielles. Une tâche à la fois.'], ['Avec des données sensibles', 'Un nom, un salaire ou un IBAN dans une question générale : à retirer avant d’envoyer.']],
-    exercice: { titre: 'Quel est le problème de chaque demande ?', options: ['Floue', 'Orientée', 'Trop chargée', 'Données sensibles', 'Bonne demande'], items: [
-      { s: '« Aide-moi pour la paie. »', bonne: 0, explication: 'On ne connaît ni la tâche, ni le résultat attendu.' },
-      { s: '« Confirme-moi que ce repas d’affaires est déductible à 100 %. »', bonne: 1, explication: 'La question pousse vers un oui. Demande plutôt : « Dans quelles conditions un repas d’affaires est-il déductible ? »' },
-      { s: '« Résume ce contrat, liste les risques, rédige un mail au client, prépare un tableau des échéances et propose un planning. »', bonne: 2, explication: 'Cinq tâches d’un coup : fais-les une par une.' },
-      { s: '« Rédige une relance pour Mme Martin, son IBAN est FR76 1234… »', bonne: 3, explication: 'Un nom et un IBAN n’ont rien à faire dans cette demande : retire-les.' },
-      { s: '« Rédige un mail de relance pour un client qui n’a pas envoyé ses relevés de mars. Ton cordial, 100 mots maximum. »', bonne: 4, explication: 'Une consigne claire, une contrainte de ton et de longueur, aucune donnée personnelle.' },
-      { s: '« Fais quelque chose avec ce fichier. »', bonne: 0, explication: 'L’IA ne sait pas quoi faire : résumer, vérifier, mettre en forme ?' }] },
+    chapo: 'Certaines demandes donnent presque toujours une réponse décevante. Apprends à les repérer et à les reformuler. 5 minutes, +50 XP.',
+    lecons: [['Trop chargée', 'Cinq tâches dans un seul message : les réponses deviennent superficielles. Une tâche à la fois.'], ['Sans contexte', '« Écris la réponse. » Laquelle, à qui, pourquoi ? L’IA devine, et se trompe.'],
+      ['Sans résultat attendu', '« Regarde ce fichier » : résumer, vérifier, mettre en forme ? Dis ce que tu attends.'], ['Consignes contradictoires', '« Court, mais très détaillé » : l’IA ne peut pas faire les deux. Choisis.']],
+    exercice: { titre: 'Quel est le problème de chaque demande ?', options: ['Trop chargée', 'Sans contexte', 'Sans résultat attendu', 'Consignes contradictoires', 'Bonne demande'], items: [
+      { s: '« Résume ce contrat, liste les risques, rédige un mail au client, prépare un tableau des échéances et propose un planning. »', bonne: 0, explication: 'Cinq tâches d’un coup : fais-les une par une.' },
+      { s: '« Écris la réponse. »', bonne: 1, explication: 'On ne sait ni à qui répondre, ni sur quoi : donne la situation en une phrase.' },
+      { s: '« Regarde ce fichier. »', bonne: 2, explication: 'L’IA ne sait pas quoi faire : résumer, vérifier, mettre en forme ?' },
+      { s: '« Fais un résumé très court, avec tous les détails. »', bonne: 3, explication: 'Court ou détaillé : il faut choisir, ou dire quels détails comptent.' },
+      { s: '« Rédige un mail de relance pour un client qui n’a pas envoyé ses relevés de mars. Ton cordial, 100 mots maximum. »', bonne: 4, explication: 'Une consigne claire, avec le contexte, le ton et la longueur.' },
+      { s: '« Corrige ce texte. », sans dire s’il s’agit de l’orthographe, du ton ou de la longueur', bonne: 2, explication: 'Corriger quoi ? Dis ce que tu attends : orthographe, ton ou longueur.' }] },
     quiz: [
-      { q: 'Comment reformuler « Confirme que cette dépense est déductible » ?', bonne: 1, choix: ['« Confirme vite »', '« Dans quels cas cette dépense est-elle déductible, et avec quelles limites ? »', '« Réponds seulement oui ou non »'], explication: 'Une question ouverte laisse l’IA chercher la règle, au lieu de te donner raison.' },
+      { q: 'Comment reformuler « Fais un résumé très court, avec tous les détails » ?', bonne: 1, choix: ['« Fais au mieux »', '« Résume en cinq points, une phrase chacun, en gardant les dates et les montants »', '« Encore plus court »'], explication: 'Tu choisis la longueur et tu dis quels détails comptent : la consigne n’est plus contradictoire.' },
       { q: 'Face à une demande trop chargée, tu…', bonne: 0, choix: ['La découpes en plusieurs demandes', 'L’envoies quand même', 'Ajoutes encore des questions'], explication: 'Une tâche par demande : chaque réponse est plus précise.' }]
   },
   '3.1': {
     titre: 'Résumer et retrouver', seuil: 5,
     chapo: 'Un canal chargé, un fil interminable, une information perdue : Slackbot résume et retrouve pour toi, à condition de bien lui demander. 5 minutes, +50 XP.',
-    lecons: [['Résumer un fil ou un canal', 'Demande les décisions, les actions et les questions en suspens, plutôt qu’un résumé général.'],
-      ['Retrouver une information', '« Où a-t-on parlé du planning des clôtures ? » Slackbot cherche dans les canaux et messages auxquels tu as accès.'],
-      ['Vérifier à la source', 'Avant d’agir, ouvre le message d’origine : un résumé peut oublier une nuance.']],
-    exemple: [['Demande vague', 'Résume.'], ['Demande utile', 'Résume ce fil en trois parties : décisions prises, actions avec leur responsable, questions en suspens.']],
+    lecons: [['Choisir le périmètre', 'Une période, un sujet, ce qui te concerne : « depuis le 20 octobre, sur le devis, les actions qui me sont confiées ».'],
+      ['Chercher avec des mots précis', 'Un nom de dossier, une date ou un mot exact trouvent mieux qu’une phrase vague.'],
+      ['Ce que Slackbot voit', 'Il cherche seulement dans les canaux et messages auxquels tu as accès.']],
+    exemple: [['Demande vague', 'Résume.'], ['Demande utile', 'Résume les messages de ce canal depuis le 20 octobre sur le devis, et liste les actions qui me sont confiées.']],
     exercice: { titre: 'Choisis la meilleure façon de faire', items: [
       { s: 'Tu reviens de congés et le canal de ton équipe compte 200 nouveaux messages.', bonne: 1, options: ['« Résume. »', '« Résume les messages de ce canal depuis le 20 octobre : décisions, actions qui me concernent, questions en suspens. »', 'Tout lire sans aide'], explication: 'Une période et ce que tu veux en retirer : le résumé va droit à l’essentiel.' },
-      { s: 'Tu cherches le message où le planning des clôtures a été partagé.', bonne: 0, options: ['« Retrouve le message où le planning des clôtures a été partagé, et donne-moi le lien. »', '« Planning ? »', 'Écrire à toute l’équipe en message privé'], explication: 'Une demande précise, avec le lien vers le message : tu gagnes du temps et tu vérifies la source.' },
-      { s: 'Le résumé mentionne une décision importante pour ton dossier.', bonne: 1, options: ['Agir tout de suite', 'Ouvrir le message d’origine pour vérifier avant d’agir', 'Transférer le résumé au client'], explication: 'Un résumé est un point de départ : la source fait foi.' },
+      { s: 'Tu cherches le message où le planning des clôtures a été partagé.', bonne: 0, options: ['« Retrouve le message où le planning des clôtures a été partagé, et donne-moi le lien. »', '« Planning ? »', 'Écrire à toute l’équipe en message privé'], explication: 'Une demande précise, avec le lien vers le message : tu gagnes du temps.' },
+      { s: 'Tu cherches « le document de l’autre jour » et Slackbot ne trouve rien.', bonne: 1, options: ['Reposer la même question', 'Chercher avec des mots précis : le nom du dossier, le titre du document, une date', 'Abandonner'], explication: 'Un nom, une date, un mot exact : c’est ce qui permet de retrouver le bon message.' },
       { s: 'Slackbot ne trouve pas une information que tu es sûr d’avoir vue.', bonne: 1, options: ['Elle n’existe sûrement pas', 'Elle est peut-être dans un canal auquel tu n’as pas accès : demande à un collègue', 'Reposer la même question dix fois'], explication: 'Slackbot ne voit que ce que tu peux voir toi-même : c’est ce qui protège les informations de chacun.' }] },
     quiz: [
-      { q: 'Que demander dans un bon résumé de fil ?', bonne: 1, choix: ['Tout, mot pour mot', 'Les décisions, les actions et les questions en suspens', 'Seulement le premier message'], explication: 'Ce sont les trois choses dont tu as besoin pour agir.' },
+      { q: 'Pour obtenir un résumé utile, tu précises…', bonne: 1, choix: ['Rien : Slackbot devine', 'La période, le sujet et ce qui te concerne', 'Seulement le nom du canal'], explication: 'Un périmètre clair donne un résumé court et utile.' },
       { q: 'Slackbot cherche dans…', bonne: 1, choix: ['Tous les canaux du groupe, même ceux où tu n’es pas', 'Les canaux et messages auxquels tu as accès', 'Internet uniquement'], explication: 'Il respecte tes droits d’accès dans Slack.' },
-      { q: 'Avant d’agir sur un résumé important, tu…', bonne: 1, choix: ['Agis directement', 'Vérifies le message d’origine', 'Demandes un autre résumé'], explication: 'La source fait foi, pas le résumé.' }]
+      { q: 'Quelle recherche a le plus de chances d’aboutir ?', bonne: 2, choix: ['« Le truc de la semaine dernière »', '« Document »', '« Planning des clôtures, partagé en octobre »'], explication: 'Un titre et une date : Slackbot sait exactement quoi chercher.' }]
   },
   '3.2': {
     titre: 'Rédiger avec Slackbot', seuil: 5,
-    chapo: 'Un message d’équipe, une réponse à un client, une relance : Slackbot propose un premier jet, tu le relis et tu l’envoies. 5 minutes, +50 XP.',
-    lecons: [['Rédiger', 'Donne le contexte, le destinataire et le ton : Slackbot propose un premier jet.'],
-      ['Reformuler', '« Plus court », « plus cordial », « sans jargon » : une phrase suffit pour ajuster.'],
-      ['Relire et envoyer', 'Vérifie les faits, les dates et les montants, puis envoie toi-même.']],
-    exemple: [['Sans contexte', 'Écris un message pour l’équipe.'], ['Avec contexte', 'Écris un message court pour prévenir l’équipe que la réunion de jeudi passe à 14 h, sur un ton cordial.']],
+    chapo: 'Répondre à un fil, écrire au bon ton, traduire un message : Slackbot propose un premier jet, tu l’ajustes et tu l’envoies. 5 minutes, +50 XP.',
+    lecons: [['Partir du fil', '« Propose une réponse à ce fil » : Slackbot reprend la discussion, inutile de tout réexpliquer.'],
+      ['Adapter au destinataire', 'L’équipe : court et direct. Un client : formel, avec vouvoiement. Un manager : une synthèse en trois points.'],
+      ['Traduire', 'Un message en anglais à comprendre ou à envoyer : Slackbot traduit et adapte le ton. Relis les termes métier.']],
+    exemple: [['Sans le fil', 'Écris une réponse pour dire que c’est d’accord pour la réunion de jeudi, mais qu’il faut la décaler à 14 h.'], ['À partir du fil', 'Propose une réponse à ce fil : d’accord pour jeudi, mais à 14 h.']],
     exercice: { titre: 'Choisis la meilleure façon de faire', items: [
-      { s: 'Tu dois annoncer un changement d’horaire de réunion à ton équipe.', bonne: 1, options: ['« Écris un message. »', '« Écris un message court pour annoncer que la réunion de jeudi passe à 14 h, ton cordial. »', 'Copier un ancien message sans le relire'], explication: 'Le sujet, l’information clé et le ton : le premier jet est presque prêt.' },
-      { s: 'Le message proposé est trop long pour Slack.', bonne: 0, options: ['« Raccourcis en trois lignes, en gardant l’heure et le lieu. »', 'Le laisser tel quel', '« Fais mieux. »'], explication: 'Tu dis la longueur voulue et ce qui doit rester.' },
-      { s: 'Tu réponds à un client mécontent.', bonne: 1, options: ['Envoyer la proposition sans la lire', 'Faire proposer un brouillon, puis le relire, vérifier les faits et l’adapter avant d’envoyer', 'Ne pas répondre'], explication: 'Rien ne part chez un client sans relecture : c’est une règle de la charte.' },
-      { s: 'Le brouillon contient une date que tu n’as jamais donnée.', bonne: 1, options: ['La garder', 'La vérifier ou la retirer : l’IA a pu l’inventer', 'La mettre en gras'], explication: 'Une information que tu n’as pas fournie est à vérifier : c’est peut-être une hallucination.' }] },
+      { s: 'Un fil de 30 messages attend ta réponse sur l’organisation d’une réunion.', bonne: 1, options: ['Recopier tout le fil dans ta demande', '« Propose une réponse à ce fil : d’accord pour jeudi, mais à 14 h. »', 'Ne pas répondre'], explication: 'Slackbot lit le fil : tu n’as qu’à donner ta décision.' },
+      { s: 'Tu écris à un client pour annoncer un retard sur son dossier.', bonne: 0, options: ['« Rédige un mail au client : ton formel, vouvoiement, une excuse et une nouvelle date. »', '« Écris un message sympa. »', '« Fais court. »'], explication: 'Le destinataire et le ton sont dits : le premier jet est presque prêt.' },
+      { s: 'Ton manager te demande où en est un dossier.', bonne: 1, options: ['Lui transférer tous les messages', '« Fais une synthèse en trois points pour mon manager : avancement, blocages, prochaine étape. »', '« Résume. »'], explication: 'Un manager veut l’essentiel : trois points suffisent.' },
+      { s: 'Un client t’écrit en anglais.', bonne: 1, options: ['Répondre sans être sûr d’avoir compris', '« Traduis ce message, puis propose une réponse en anglais, ton cordial. »', 'Ignorer le message'], explication: 'Slackbot traduit et rédige : tu relis les termes métier avant d’envoyer.' }] },
     quiz: [
-      { q: 'Pour obtenir un bon brouillon, tu donnes…', bonne: 1, choix: ['Seulement le sujet', 'Le contexte, le destinataire et le ton', 'Le moins d’informations possible'], explication: 'Plus le contexte est clair, moins tu auras de corrections.' },
-      { q: 'Qui envoie le message final ?', bonne: 1, choix: ['Slackbot, automatiquement', 'Toi, après relecture', 'Ton manager'], explication: 'Tu restes responsable de ce que tu envoies.' },
-      { q: 'Tu prépares une réponse sur le dossier d’un client. Où travailles-tu ?', bonne: 1, choix: ['Dans un canal ouvert à tout le groupe', 'Dans Slackbot ou un canal réservé au dossier', 'Dans une IA gratuite'], explication: 'Les informations d’un client ne sont vues que par les personnes qui suivent ce client.' }]
+      { q: 'Pour répondre à un long fil, tu…', bonne: 1, choix: ['Recopies tout le fil dans ta demande', 'Demandes à Slackbot de proposer une réponse à partir du fil', 'Attends que quelqu’un d’autre réponde'], explication: 'Slackbot reprend la discussion : tu gagnes du temps.' },
+      { q: 'Un message pour ton équipe doit être…', bonne: 0, choix: ['Court, direct, avec l’action attendue', 'Formel et long', 'Sans objet précis'], explication: 'Dans Slack, l’équipe lit vite : une action claire, en quelques lignes.' },
+      { q: 'Après une traduction par Slackbot, tu…', bonne: 1, choix: ['L’envoies sans la lire', 'Relis les termes métier avant d’envoyer', 'La fais retraduire par une autre IA'], explication: 'Les termes comptables ou juridiques se traduisent mal : un coup d’œil suffit à les vérifier.' }]
   },
   '3.3': {
     titre: 'Préparer une réunion', seuil: 5,
@@ -1595,13 +1595,13 @@ const MISSIONS_DEF = {
       ['Programmer', 'Écris la demande une fois, choisis le jour et l’heure : Slackbot te l’envoie automatiquement.'],
       ['Faire le point', 'Chaque mois, garde les tâches utiles et supprime les autres.']],
     exemple: [['Chaque lundi, à la main', 'Résume le canal de mon équipe.'], ['Une tâche planifiée', 'Chaque lundi à 9 h, résume les messages du canal de mon équipe de la semaine passée : décisions, actions, questions en suspens.']],
-    note: 'Les règles de la charte s’appliquent aussi aux tâches planifiées : pas de données sensibles dans un canal ouvert, et rien ne part chez un client sans relecture.',
+    note: 'Une bonne tâche planifiée dit quand, sur quelle période et sous quelle forme.',
     exercice: { titre: 'Bonne idée de tâche planifiée, ou pas ?', options: ['Bonne idée', 'Pas adapté'], items: [
       { s: 'Recevoir chaque lundi le résumé du canal de ton équipe.', bonne: 0, explication: 'Une demande qui revient chaque semaine : c’est exactement l’usage prévu.' },
       { s: 'Recevoir chaque vendredi un rappel des actions décidées dans le canal du projet.', bonne: 0, explication: 'Un rappel régulier qui t’évite d’oublier une action.' },
-      { s: 'Envoyer automatiquement chaque semaine un mail à tes clients, sans relecture.', bonne: 1, explication: 'Rien ne part chez un client sans relecture.' },
+      { s: 'Programmer chaque lundi « Résume. », sans période ni forme.', bonne: 1, explication: 'À préciser d’abord : quelle période, quel canal, sous quelle forme ? Sinon le résumé ne servira pas.' },
       { s: 'Programmer une demande que tu ne fais qu’une fois par an.', bonne: 1, explication: 'Pour une demande rare, une demande ponctuelle suffit.' },
-      { s: 'Publier chaque mois un résumé des salaires de l’équipe dans un canal ouvert.', bonne: 1, explication: 'Les salaires nominatifs ne s’affichent jamais dans un canal ouvert à tous.' }] },
+      { s: 'Programmer un résumé quotidien d’un canal où il ne se passe presque rien.', bonne: 1, explication: 'Un message quotidien presque vide finit par être ignoré : une fois par semaine suffit.' }] },
     quiz: [
       { q: 'Une bonne tâche planifiée, c’est…', bonne: 0, choix: ['Une demande qui revient régulièrement', 'Une demande unique', 'Un message à un client sans relecture'], explication: 'La régularité, c’est ce qui rend la programmation utile.' },
       { q: 'Que fais-tu des tâches planifiées qui ne servent plus ?', bonne: 1, choix: ['Je les garde', 'Je les supprime lors de mon point mensuel', 'J’en crée d’autres'], explication: 'Moins de messages inutiles, plus d’attention pour ceux qui comptent.' }]
