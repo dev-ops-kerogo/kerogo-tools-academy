@@ -14,7 +14,7 @@ var KTA_CONFIG = {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
-var KTA_VERSION = 'hébergée 02/11 · 1';
+var KTA_VERSION = 'hébergée 02/11 · 2';
 var KTA_ERREURS = [];
 window.addEventListener('error', function (e) {
   KTA_ERREURS.push((e && e.message ? e.message : 'Erreur inconnue') + (e && e.lineno ? ' (ligne ' + e.lineno + ')' : ''));
@@ -568,7 +568,7 @@ function missionOuverte(id) {
   return !!m && (m.reussie || (m.dispo && !missionBloquante(id)));
 }
 function missionAccessible(id) { return missionOuverte(id) || (ETAT.admin && MISSIONS_JOUABLES.indexOf(id) !== -1); }
-const MISSIONS_JOUABLES = ['1.1', '1.2', '1.3', '1.4', '2.1', '2.2', '2.3', '2.4', '3.1', '3.2', '3.3', '3.4'];
+const MISSIONS_JOUABLES = ['1.1', '1.2', '1.3', '1.4', '2.1', '2.2', '2.3', '2.4', '3.1', '3.2', '3.3', '3.4', '4.1', '4.2', '4.3', '4.4', '5.1', '5.2', '5.3', '5.4', '6.1', '6.2', '6.3', '6.4'];
 const dateCourte = (iso) => iso ? new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
 const dateOuverture = (jour) => new Date(jour + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }).replace(/^1 /, '1er ');
 const pourcent = (a, b) => (b ? Math.round(100 * a / b) : 0);
@@ -721,7 +721,7 @@ function rendreProgression() {
     <section class="carte entre ch-entete" style="gap:14px">
       <p class="surtitre">Ton parcours</p>
       <h1 class="grand" style="font-size:56px">Ma progression</h1>
-      <p class="chapo" style="max-width:760px">6 niveaux, un par mois : 24 missions courtes, environ une par semaine. Les missions se font dans l’ordre : chacune s’ouvre quand la précédente est validée et que son niveau a ouvert. Chaque niveau terminé te donne un badge et +100 XP.</p>
+      <p class="chapo" style="max-width:760px">6 niveaux, 24 missions courtes, à suivre à ton rythme. Les missions se font dans l’ordre : chacune s’ouvre quand la précédente est validée et que son niveau a ouvert. Chaque niveau terminé te donne un badge et +100 XP.</p>
       <div class="progression-ligne" style="max-width:520px"><strong>${faites}/${toutes.length}</strong><span>missions validées</span>
         <span class="barre" aria-hidden="true"><i style="width:${pourcent(faites, toutes.length)}%"></i></span><strong>${nbr(ETAT.joueur.xp)} XP</strong></div>
     </section>
@@ -1473,10 +1473,10 @@ function rendreMissionOutils() {
 const MISSIONS_DEF = {
   '2.1': {
     titre: 'La méthode des 5 C', seuil: 6,
-    chapo: 'Une demande précise donne une réponse utile du premier coup. Cinq éléments suffisent : contexte, consigne, cible, contraintes et canevas. 5 minutes, +50 XP.',
+    chapo: 'Une demande précise donne une réponse utile du premier coup. Cinq éléments suffisent : contexte, consigne, cible, contraintes et canevas. Et pour le canevas, rien ne vaut un exemple. 5 minutes, +50 XP.',
     lecons: [['Contexte', 'La situation : qui tu es, sur quel dossier, ce qui s’est passé.'], ['Consigne', 'Ce que tu attends, avec un verbe clair : rédige, résume, compare, liste.'],
       ['Cible', 'Pour qui est la réponse : un dirigeant, un collègue, un client sans connaissances comptables.'], ['Contraintes', 'Longueur, ton, ce qu’il faut éviter : « 120 mots maximum », « sans jargon ».'],
-      ['Canevas', 'La forme de la réponse : un mail avec objet, une liste, un tableau.']],
+      ['Canevas', 'La forme de la réponse : un mail avec objet, une liste, un tableau. Le plus simple : montrer un exemple.']],
     exemple: [['Demande floue', 'Fais-moi un mail pour un client.'], ['Avec les 5 C', 'Je suis chargé de mission dans un cabinet comptable. Rédige un mail pour relancer un client qui n’a pas envoyé ses relevés bancaires. Il dirige une TPE et n’a pas de connaissances comptables. Ton cordial, 120 mots maximum. Donne un objet, puis le mail en trois paragraphes.']],
     exercice: { titre: 'Chaque phrase de cette demande correspond à un des 5 C : lequel ?', options: ['Contexte', 'Consigne', 'Cible', 'Contraintes', 'Canevas'], items: [
       { s: '« Je prépare le bilan d’une boulangerie qui a ouvert un deuxième magasin cette année. »', bonne: 0, explication: 'La situation du dossier : c’est le contexte.' },
@@ -1486,58 +1486,28 @@ const MISSIONS_DEF = {
       { s: '« Présente-les dans un tableau à deux colonnes : point à vérifier, pièce justificative. »', bonne: 4, explication: 'La forme de la réponse : c’est le canevas.' }] },
     quiz: [
       { q: 'Que manque-t-il à la demande « Résume ce document » ?', bonne: 1, choix: ['Rien, elle est claire', 'La cible et le canevas : pour qui, et sous quelle forme', 'Une formule de politesse'], explication: 'Sans cible ni forme, l’IA choisit à ta place : le résumé risque d’être trop long ou mal adapté.' },
-      { q: 'Le canevas, c’est…', bonne: 1, choix: ['Le ton de la réponse', 'La forme attendue : mail, liste, tableau', 'Le contexte du dossier'], explication: 'Le canevas décrit la forme de la réponse. Le ton fait partie des contraintes.' },
+      { q: 'Le moyen le plus simple de montrer la forme attendue ?', bonne: 1, choix: ['La décrire en détail', 'Donner un exemple, ou deux ou trois exemples variés si tu veux un style', 'Ne rien préciser'], explication: 'Un exemple montre la forme et le style mieux qu’une longue explication. Plusieurs exemples variés évitent qu’il soit recopié mot pour mot.' },
       { q: 'Faut-il toujours écrire les 5 C ?', bonne: 1, choix: ['Oui, sinon l’IA ne répond pas', 'Non : deux ou trois suffisent pour une demande simple, les cinq aident pour une tâche importante', 'Non, un mot suffit toujours'], explication: 'Les 5 C sont une aide, pas une obligation. Plus la tâche compte, plus ils sont utiles.' }]
   },
+
   '2.2': {
-    titre: 'Affiner en 3 étapes', seuil: 5,
-    chapo: 'La première réponse est rarement la bonne. En trois étapes, tu la transformes en une réponse prête à l’emploi. 5 minutes, +50 XP.',
-    lecons: [['1. Lire et repérer', 'Ce qui manque, ce qui est en trop, ce qui sonne faux.'], ['2. Préciser', 'Une demande courte et précise : « plus court », « pour un dirigeant », « en tableau ».'],
-      ['3. Repartir de zéro si besoin', 'Après trois essais, la conversation s’enlise : ouvre-en une nouvelle avec une demande complète.']],
-    note: 'Inutile de tout réécrire : dans la même conversation, l’IA tient compte de ta première demande.',
-    exercice: { titre: 'Pour chaque situation, choisis la meilleure façon d’affiner', items: [
+    titre: 'Affiner et éviter les pièges', seuil: 5,
+    chapo: 'La première réponse est rarement la bonne, et certaines demandes partent mal dès le départ. Apprends à corriger le tir en une phrase. 5 minutes, +50 XP.',
+    lecons: [['Lire et repérer', 'Ce qui manque, ce qui est en trop, ce qui sonne faux.'], ['Préciser en une phrase', '« Plus court », « pour un dirigeant », « en tableau » : inutile de tout réécrire, l’IA tient compte de ta première demande.'],
+      ['Repartir de zéro si besoin', 'Après trois essais, la conversation s’enlise : ouvre-en une nouvelle avec une demande complète.'],
+      ['Éviter les pièges', 'Une demande trop chargée, sans contexte, sans résultat attendu ou aux consignes contradictoires donne une réponse décevante.']],
+    exercice: { titre: 'Pour chaque situation, choisis la meilleure façon de faire', items: [
       { s: 'La réponse fait une page, il te faut 5 lignes pour un dirigeant.', bonne: 1, options: ['« Recommence. »', '« Résume en 5 lignes, pour un dirigeant sans connaissances comptables. »', '« C’est trop long. »'], explication: 'Une précision utile : la longueur et la cible.' },
-      { s: 'Le ton est trop familier pour un client.', bonne: 0, options: ['« Reformule sur un ton professionnel et cordial, en vouvoyant le client. »', '« Change le ton. »', 'Tout corriger à la main sans le dire'], explication: 'Tu nommes le ton voulu : l’IA ajuste tout le texte.' },
       { s: 'Après quatre corrections, la réponse s’éloigne de plus en plus de ce que tu veux.', bonne: 1, options: ['Corriger encore une fois', 'Ouvrir une nouvelle conversation avec une demande complète, qui reprend ce que tu as appris', 'Abandonner'], explication: 'Une demande complète repart sur de bonnes bases : c’est souvent plus rapide que de corriger encore.' },
-      { s: 'Il te faut la même information sous forme de tableau.', bonne: 0, options: ['« Présente la même réponse dans un tableau : tâche, échéance, responsable. »', 'Reposer toute la question depuis le début', '« Fais un tableau. »'], explication: 'Tu décris les colonnes voulues : inutile de tout reprendre.' }] },
+      { s: '« Résume ce contrat, liste les risques, rédige un mail au client, prépare un tableau des échéances et propose un planning. »', bonne: 1, options: ['L’envoyer tel quel', 'La découper : une demande par tâche', 'Ajouter encore une question'], explication: 'Cinq tâches d’un coup donnent cinq réponses superficielles : fais-les une par une.' },
+      { s: '« Fais un résumé très court, avec tous les détails. »', bonne: 1, options: ['L’envoyer tel quel', 'Choisir : « Cinq points, une phrase chacun, en gardant les dates et les montants »', '« Encore plus court »'], explication: 'Court ou détaillé : il faut choisir, ou dire quels détails comptent.' }] },
     quiz: [
       { q: 'Que fais-tu après une première réponse ?', bonne: 1, choix: ['Je l’envoie tout de suite', 'Je la lis, puis je précise ce qui manque', 'J’ouvre une autre IA'], explication: 'Lire, puis préciser : une phrase suffit souvent pour corriger le tir.' },
-      { q: 'Pourquoi affiner dans la même conversation ?', bonne: 0, choix: ['Parce que l’IA tient compte de ta première demande', 'Parce que c’est obligatoire', 'Pour obtenir une réponse plus longue'], explication: 'Le contexte est déjà là : une phrase suffit pour corriger le tir.' },
-      { q: 'Quand vaut-il mieux repartir de zéro ?', bonne: 1, choix: ['À la première réponse imparfaite', 'Quand plusieurs corrections ne suffisent plus', 'Jamais'], explication: 'Tant qu’une phrase suffit, on affine. Quand ça s’enlise, une nouvelle demande complète fait gagner du temps.' }]
+      { q: 'Quand vaut-il mieux repartir de zéro ?', bonne: 1, choix: ['À la première réponse imparfaite', 'Quand plusieurs corrections ne suffisent plus', 'Jamais'], explication: 'Tant qu’une phrase suffit, on affine. Quand ça s’enlise, une nouvelle demande complète fait gagner du temps.' },
+      { q: '« Regarde ce fichier. » Quel est le problème de cette demande ?', bonne: 1, choix: ['Elle est trop chargée', 'Elle ne dit pas le résultat attendu', 'Ses consignes se contredisent'], explication: 'Résumer, vérifier, mettre en forme ? Dis ce que tu attends.' }]
   },
+
   '2.3': {
-    titre: 'Montrer l’exemple', seuil: 5,
-    chapo: 'Un exemple vaut mieux qu’une longue explication. Montre à l’IA ce que tu attends, et décris la forme de la réponse. 5 minutes, +50 XP.',
-    lecons: [['Donner un exemple', 'Colle un exemple de ce que tu veux obtenir : un mail réussi, une ligne de tableau, un intitulé.'], ['Décrire le format', 'Liste, tableau, nombre de lignes, ordre des éléments : sois précis.'],
-      ['Varier les exemples', 'Avec un seul exemple, l’IA le recopie de près. Avec deux ou trois exemples différents, elle comprend le style et l’adapte.']],
-    exemple: [['Sans exemple', 'Écris des intitulés courts pour nos tâches.'], ['Avec un exemple', 'Écris des intitulés courts pour nos tâches, sur ce modèle : « Relancer le client – relevés de mars ». Un verbe à l’infinitif, un tiret, puis l’objet. 8 mots maximum.']],
-    exercice: { titre: 'Choisis la demande qui donnera le résultat attendu', items: [
-      { s: 'Tu veux un tableau des échéances fiscales du trimestre.', bonne: 1, options: ['« Parle-moi des échéances. »', '« Donne les échéances fiscales du trimestre dans un tableau : date, impôt, action à mener. »', '« Fais un tableau. »'], explication: 'Le sujet, la période et les colonnes : l’IA sait exactement quoi produire.' },
-      { s: 'Tu veux des réponses aux clients dans le style de tes mails habituels.', bonne: 1, options: ['« Écris comme moi. »', '« Voici un de mes mails, anonymisé : […]. Rédige la réponse dans le même style. »', '« Sois naturel. »'], explication: 'Un exemple anonymisé montre ton style mieux qu’une description.' },
-      { s: 'Tu veux un compte rendu de réunion en trois parties.', bonne: 0, options: ['« Fais le compte rendu en trois parties : décisions, actions avec responsable, points en attente. »', '« Résume la réunion. »', '« Fais court. »'], explication: 'Les trois parties sont nommées : le compte rendu suit ta structure.' },
-      { s: 'Tu veux des intitulés de tâches variés, pas des copies de ton modèle.', bonne: 1, options: ['Donner un seul exemple', 'Donner deux ou trois exemples différents, sur le même modèle', 'Ne donner aucun exemple'], explication: 'Plusieurs exemples variés montrent ce qui doit rester identique et ce qui peut changer.' }] },
-    quiz: [
-      { q: 'Pourquoi donner un exemple à l’IA ?', bonne: 1, choix: ['Pour qu’elle le recopie mot pour mot', 'Pour lui montrer le résultat attendu : style, longueur, forme', 'Cela ne sert à rien'], explication: 'L’exemple sert de modèle : l’IA en reprend le style et la forme, pas les mots.' },
-      { q: 'Quelle précision de format est la plus utile ?', bonne: 1, choix: ['« Fais bien »', '« Un tableau à trois colonnes : date, montant, statut »', '« Fais joli »'], explication: 'Une forme décrite précisément donne une réponse prête à l’emploi.' },
-      { q: 'L’IA recopie presque mot pour mot ton exemple. Que fais-tu ?', bonne: 1, choix: ['Je retire l’exemple', 'J’ajoute un ou deux exemples différents', 'Je répète la même demande'], explication: 'Des exemples variés lui montrent le style à suivre, pas les mots à recopier.' }]
-  },
-  '2.4': {
-    titre: 'Les demandes à éviter', seuil: 6,
-    chapo: 'Certaines demandes donnent presque toujours une réponse décevante. Apprends à les repérer et à les reformuler. 5 minutes, +50 XP.',
-    lecons: [['Trop chargée', 'Cinq tâches dans un seul message : les réponses deviennent superficielles. Une tâche à la fois.'], ['Sans contexte', '« Écris la réponse. » Laquelle, à qui, pourquoi ? L’IA devine, et se trompe.'],
-      ['Sans résultat attendu', '« Regarde ce fichier » : résumer, vérifier, mettre en forme ? Dis ce que tu attends.'], ['Consignes contradictoires', '« Court, mais très détaillé » : l’IA ne peut pas faire les deux. Choisis.']],
-    exercice: { titre: 'Quel est le problème de chaque demande ?', options: ['Trop chargée', 'Sans contexte', 'Sans résultat attendu', 'Consignes contradictoires', 'Bonne demande'], items: [
-      { s: '« Résume ce contrat, liste les risques, rédige un mail au client, prépare un tableau des échéances et propose un planning. »', bonne: 0, explication: 'Cinq tâches d’un coup : fais-les une par une.' },
-      { s: '« Écris la réponse. »', bonne: 1, explication: 'On ne sait ni à qui répondre, ni sur quoi : donne la situation en une phrase.' },
-      { s: '« Regarde ce fichier. »', bonne: 2, explication: 'L’IA ne sait pas quoi faire : résumer, vérifier, mettre en forme ?' },
-      { s: '« Fais un résumé très court, avec tous les détails. »', bonne: 3, explication: 'Court ou détaillé : il faut choisir, ou dire quels détails comptent.' },
-      { s: '« Rédige un mail de relance pour un client qui n’a pas envoyé ses relevés de mars. Ton cordial, 100 mots maximum. »', bonne: 4, explication: 'Une consigne claire, avec le contexte, le ton et la longueur.' },
-      { s: '« Corrige ce texte. », sans dire s’il s’agit de l’orthographe, du ton ou de la longueur', bonne: 2, explication: 'Corriger quoi ? Dis ce que tu attends : orthographe, ton ou longueur.' }] },
-    quiz: [
-      { q: 'Comment reformuler « Fais un résumé très court, avec tous les détails » ?', bonne: 1, choix: ['« Fais au mieux »', '« Résume en cinq points, une phrase chacun, en gardant les dates et les montants »', '« Encore plus court »'], explication: 'Tu choisis la longueur et tu dis quels détails comptent : la consigne n’est plus contradictoire.' },
-      { q: 'Face à une demande trop chargée, tu…', bonne: 0, choix: ['La découpes en plusieurs demandes', 'L’envoies quand même', 'Ajoutes encore des questions'], explication: 'Une tâche par demande : chaque réponse est plus précise.' }]
-  },
-  '3.1': {
     titre: 'Résumer et retrouver', seuil: 5,
     chapo: 'Un canal chargé, un fil interminable, une information perdue : Slackbot résume et retrouve pour toi, à condition de bien lui demander. 5 minutes, +50 XP.',
     lecons: [['Choisir le périmètre', 'Une période, un sujet, ce qui te concerne : « depuis le 20 octobre, sur le devis, les actions qui me sont confiées ».'],
@@ -1554,48 +1524,111 @@ const MISSIONS_DEF = {
       { q: 'Slackbot cherche dans…', bonne: 1, choix: ['Tous les canaux du groupe, même ceux où tu n’es pas', 'Les canaux et messages auxquels tu as accès', 'Internet uniquement'], explication: 'Il respecte tes droits d’accès dans Slack.' },
       { q: 'Quelle recherche a le plus de chances d’aboutir ?', bonne: 2, choix: ['« Le truc de la semaine dernière »', '« Document »', '« Planning des clôtures, partagé en octobre »'], explication: 'Un titre et une date : Slackbot sait exactement quoi chercher.' }]
   },
+
+  '2.4': {
+    titre: 'Analyser un document', seuil: 5,
+    chapo: 'Un PDF de 80 pages, un export de 3 000 lignes, une capture d’écran : Slackbot les lit pour toi et en sort l’essentiel en quelques secondes. 5 minutes, +50 XP.',
+    lecons: [['Ce qu’il sait lire', 'PDF jusqu’à 100 pages (4,5 Mo), tableaux CSV et fichiers texte (1 Mo), images et captures d’écran, canevas et listes Slack.'],
+      ['Poser une question précise', '« Liste les échéances et les montants de ce contrat » plutôt que « résume ce document ».'],
+      ['Partir d’une capture', 'Un message d’erreur, un tableau à l’écran : fais une capture, Slackbot la lit et t’explique.'],
+      ['En faire un canevas', '« Fais un canevas récapitulatif pour l’équipe » : Slackbot te demande de cliquer sur Confirmer avant d’écrire dans un canevas partagé.']],
+    exemple: [['Demande vague', 'Résume ce document.'], ['Demande utile', 'Dans ce bail de 40 pages, liste la date de fin, le loyer, l’indexation et les conditions de résiliation, avec la page de chaque information.']],
+    exercice: { titre: 'Choisis la meilleure façon de faire', items: [
+      { s: 'Tu reçois un contrat de 60 pages et tu cherches les dates clés.', bonne: 1, options: ['Le lire en entier', '« Liste les dates clés de ce contrat (début, fin, préavis), avec la page de chacune. »', '« Résume. »'], explication: 'Une question précise, et la page de chaque date pour la retrouver en un clic.' },
+      { s: 'Un export CSV de 3 000 lignes : tu veux les factures impayées depuis plus de 60 jours.', bonne: 0, options: ['« Dans ce fichier, liste les factures impayées depuis plus de 60 jours, triées par montant. »', 'Les chercher à la main', '« Analyse ce fichier. »'], explication: 'Le critère et le tri sont donnés : Slackbot fait le filtre pour toi.' },
+      { s: 'Un logiciel affiche un message d’erreur que tu ne comprends pas.', bonne: 1, options: ['Recopier le message à la main', 'Faire une capture d’écran et demander : « Que veut dire ce message, et que dois-je faire ? »', 'Fermer le logiciel'], explication: 'Slackbot lit les images : une capture suffit.' },
+      { s: 'Ton PDF fait 250 pages.', bonne: 1, options: ['L’envoyer tel quel', 'N’envoyer que les parties utiles : Slackbot lit jusqu’à 100 pages', 'Abandonner'], explication: 'Au-delà de 100 pages ou 4,5 Mo, Slackbot ne lit pas tout : envoie les parties utiles.' }] },
+    quiz: [
+      { q: 'Quels fichiers Slackbot sait-il lire ?', bonne: 1, choix: ['Seulement les messages', 'Les PDF, les tableaux CSV, les images, les canevas et les listes', 'Uniquement les fichiers Word'], explication: 'PDF jusqu’à 100 pages, CSV et TXT jusqu’à 1 Mo, images, canevas et listes.' },
+      { q: 'Slackbot veut ajouter du contenu à un canevas partagé. Que se passe-t-il ?', bonne: 1, choix: ['Il l’écrit sans prévenir', 'Il te demande de cliquer sur Confirmer', 'Il remplace l’ancien contenu'], explication: 'Rien n’est ajouté à un canevas partagé sans ta confirmation.' },
+      { q: 'Quelle demande donne le résultat le plus utile ?', bonne: 2, choix: ['« Lis ce document. »', '« Qu’en penses-tu ? »', '« Liste les montants et les échéances de ce document, dans un tableau. »'], explication: 'Une question précise et une forme : la réponse est prête à l’emploi.' }]
+  },
+
+  '3.1': {
+    titre: 'Trouver la bonne compétence', seuil: 5,
+    chapo: 'Une compétence, c’est une tâche que Slackbot sait faire étape par étape, toujours de la même façon. Encore faut-il savoir où les trouver. 5 minutes, +50 XP.',
+    lecons: [['Une compétence, c’est quoi ?', 'Des instructions pas à pas pour une tâche précise : Slackbot fait le travail de la même façon à chaque fois.'],
+      ['L’onglet Compétences', 'Dans Slackbot, l’onglet Compétences liste celles qui sont disponibles : ouvre une compétence pour la découvrir, puis active-la pour l’ajouter.'],
+      ['Le catalogue Kerogo Tools', 'Il présente les compétences du groupe, avec leur guide et leur démo, et dit à qui chacune s’adresse.'],
+      ['Le label Kerogo Tools', 'Une compétence labellisée a été vérifiée (sécurité, fiabilité, capacité à servir tout le groupe) avant d’être déployée. Sans label, elle ne se partage pas.']],
+    exemple: [['Sans compétence', 'Réexpliquer à Slackbot, à chaque fois, comment préparer le brief de tes rendez-vous client.'], ['Avec une compétence', 'Utilise KeroBrief pour préparer tes rendez-vous de demain : il connaît déjà les étapes.']],
+    exercice: { titre: 'Choisis la meilleure façon de faire', items: [
+      { s: 'Tu refais chaque semaine la même tâche, avec les mêmes étapes.', bonne: 1, options: ['Tout réexpliquer à Slackbot à chaque fois', 'Chercher si une compétence existe déjà dans l’onglet Compétences', 'Continuer à la main'], explication: 'Une tâche qui revient avec les mêmes étapes : c’est exactement ce que fait une compétence.' },
+      { s: 'Tu veux savoir quelles compétences le groupe propose, et comment elles marchent.', bonne: 0, options: ['Consulter le catalogue Kerogo Tools, avec les guides et les démos', 'Demander à une IA gratuite', 'Attendre qu’on t’en parle'], explication: 'Le catalogue présente chaque compétence labellisée, avec son guide.' },
+      { s: 'Tu as trouvé une compétence utile dans l’onglet Compétences.', bonne: 1, options: ['Rien à faire, elle marche déjà pour tout le monde', 'L’activer pour l’ajouter à ton Slackbot', 'La recopier dans un document'], explication: 'Pour que Slackbot l’utilise, il faut d’abord l’ajouter.' },
+      { s: 'Deux compétences semblent faire la même chose.', bonne: 1, options: ['Prendre la première venue', 'Choisir celle qui porte le label Kerogo Tools', 'N’en utiliser aucune'], explication: 'Le label garantit qu’elle a été vérifiée avant d’être déployée.' }] },
+    quiz: [
+      { q: 'Une compétence Slackbot, c’est…', bonne: 1, choix: ['Un nouvel outil d’IA à installer', 'Des instructions pas à pas pour une tâche précise', 'Un canal Slack'], explication: 'Slackbot suit les mêmes étapes à chaque fois : le résultat est fiable et rapide.' },
+      { q: 'Où trouves-tu les compétences disponibles dans Slack ?', bonne: 0, choix: ['Dans l’onglet Compétences de Slackbot', 'Dans les paramètres de ton profil', 'Dans tes messages directs'], explication: 'Ouvre Slackbot, puis l’onglet Compétences.' },
+      { q: 'Que garantit le label Kerogo Tools ?', bonne: 1, choix: ['Que la compétence est gratuite', 'Qu’elle a été vérifiée avant d’être déployée à tout le groupe', 'Qu’elle fait ton travail à ta place'], explication: 'Sécurité, fiabilité, capacité à servir tout le groupe : une compétence labellisée s’utilise en confiance.' }]
+  },
+
   '3.2': {
-    titre: 'Rédiger avec Slackbot', seuil: 5,
-    chapo: 'Répondre à un fil, écrire au bon ton, traduire un message : Slackbot propose un premier jet, tu l’ajustes et tu l’envoies. 5 minutes, +50 XP.',
-    lecons: [['Partir du fil', '« Propose une réponse à ce fil » : Slackbot reprend la discussion, inutile de tout réexpliquer.'],
-      ['Adapter au destinataire', 'L’équipe : court et direct. Un client : formel, avec vouvoiement. Un manager : une synthèse en trois points.'],
-      ['Traduire', 'Un message en anglais à comprendre ou à envoyer : Slackbot traduit et adapte le ton. Relis les termes métier.']],
-    exemple: [['Sans le fil', 'Écris une réponse pour dire que c’est d’accord pour la réunion de jeudi, mais qu’il faut la décaler à 14 h.'], ['À partir du fil', 'Propose une réponse à ce fil : d’accord pour jeudi, mais à 14 h.']],
-    exercice: { titre: 'Choisis la meilleure façon de faire', items: [
-      { s: 'Un fil de 30 messages attend ta réponse sur l’organisation d’une réunion.', bonne: 1, options: ['Recopier tout le fil dans ta demande', '« Propose une réponse à ce fil : d’accord pour jeudi, mais à 14 h. »', 'Ne pas répondre'], explication: 'Slackbot lit le fil : tu n’as qu’à donner ta décision.' },
-      { s: 'Tu écris à un client pour annoncer un retard sur son dossier.', bonne: 0, options: ['« Rédige un mail au client : ton formel, vouvoiement, une excuse et une nouvelle date. »', '« Écris un message sympa. »', '« Fais court. »'], explication: 'Le destinataire et le ton sont dits : le premier jet est presque prêt.' },
-      { s: 'Ton manager te demande où en est un dossier.', bonne: 1, options: ['Lui transférer tous les messages', '« Fais une synthèse en trois points pour mon manager : avancement, blocages, prochaine étape. »', '« Résume. »'], explication: 'Un manager veut l’essentiel : trois points suffisent.' },
-      { s: 'Un client t’écrit en anglais.', bonne: 1, options: ['Répondre sans être sûr d’avoir compris', '« Traduis ce message, puis propose une réponse en anglais, ton cordial. »', 'Ignorer le message'], explication: 'Slackbot traduit et rédige : tu relis les termes métier avant d’envoyer.' }] },
+    titre: 'Les outils de ton quotidien', seuil: 5,
+    chapo: 'Compétences, commandes, applications, automatismes : les outils Kerogo Tools se lancent de quatre façons. Les reconnaître, c’est gagner du temps chaque jour. 5 minutes, +50 XP.',
+    lecons: [['Une compétence Slackbot', 'Tu la lances en écrivant à Slackbot. Exemple : KeroBrief prépare tes rendez-vous client.'],
+      ['Une commande', 'Tu la tapes dans Slack. Exemples : /case envoie une demande à l’équipe d’un dossier, /ticket ouvre une demande au support interne.'],
+      ['Une application', 'Tu l’ouvres avec /kerogo : par exemple pour générer une attestation d’expert-comptable ou suivre les réclamations.'],
+      ['Un automatisme', 'Il tourne tout seul et t’envoie le résultat. Exemple : chaque lundi, le Churn radar signale les clients qui s’éloignent de notre client modèle.']],
+    note: 'Chaque outil s’adresse à certains cabinets : la colonne « Pour qui » du catalogue Kerogo Tools le précise.',
+    exercice: { titre: 'Quel outil, et comment le lancer ?', items: [
+      { s: 'Tu dois demander une mise à jour de la comptabilité à l’équipe d’un dossier.', bonne: 1, options: ['Un mail à toute l’équipe', 'La commande /case, depuis le canal du client', 'Un message dans un canal général'], explication: '/case envoie ta demande à la bonne personne, avec un suivi et des rappels automatiques.' },
+      { s: 'Salesforce affiche une anomalie qui te bloque.', bonne: 0, options: ['La commande /ticket', 'Attendre que ça passe', 'Une IA gratuite'], explication: '/ticket ouvre une demande au support interne, suivie jusqu’à sa résolution.' },
+      { s: 'Un client te demande une attestation de chiffre d’affaires.', bonne: 1, options: ['La rédiger à la main dans Word', 'L’application Kerogo tools (/kerogo) : l’attestation est générée, validée, puis envoyée', 'La demander à Slackbot sans modèle'], explication: 'L’attestation est générée depuis Salesforce, validée par le manager et l’expert-comptable, puis envoyée au client.' },
+      { s: 'Lundi matin, tu reçois la liste de tes clients qui s’éloignent.', bonne: 2, options: ['Tu l’as lancée par erreur', 'C’est une compétence à relancer', 'C’est le Churn radar, un automatisme : à toi d’appeler ces clients'], explication: 'Le Churn radar tourne tout seul chaque lundi : le but est d’appeler ces clients avant qu’ils ne partent.' }] },
     quiz: [
-      { q: 'Pour répondre à un long fil, tu…', bonne: 1, choix: ['Recopies tout le fil dans ta demande', 'Demandes à Slackbot de proposer une réponse à partir du fil', 'Attends que quelqu’un d’autre réponde'], explication: 'Slackbot reprend la discussion : tu gagnes du temps.' },
-      { q: 'Un message pour ton équipe doit être…', bonne: 0, choix: ['Court, direct, avec l’action attendue', 'Formel et long', 'Sans objet précis'], explication: 'Dans Slack, l’équipe lit vite : une action claire, en quelques lignes.' },
-      { q: 'Après une traduction par Slackbot, tu…', bonne: 1, choix: ['L’envoies sans la lire', 'Relis les termes métier avant d’envoyer', 'La fais retraduire par une autre IA'], explication: 'Les termes comptables ou juridiques se traduisent mal : un coup d’œil suffit à les vérifier.' }]
+      { q: 'De combien de façons se lance un outil Kerogo Tools ?', bonne: 2, choix: ['Une seule', 'Deux', 'Quatre : compétence, commande, application, automatisme'], explication: 'La fiche de chaque outil, dans le catalogue, dit comment le lancer.' },
+      { q: 'Où vois-tu si un outil est disponible pour ton cabinet ?', bonne: 1, choix: ['Nulle part', 'Dans la colonne « Pour qui » du catalogue Kerogo Tools', 'Dans tes paramètres Slack'], explication: 'Certains outils sont réservés à un cabinet ou à un service.' },
+      { q: 'Un automatisme, c’est…', bonne: 0, choix: ['Un outil qui tourne tout seul et t’envoie le résultat', 'Une commande à taper', 'Une compétence à activer'], explication: 'Tu n’as rien à lancer : le résultat arrive au bon moment.' }]
   },
+
   '3.3': {
-    titre: 'Préparer une réunion', seuil: 5,
-    chapo: 'Avant, pendant, après : Slackbot t’aide à préparer l’ordre du jour et à rédiger un compte rendu utile. 5 minutes, +50 XP.',
-    lecons: [['Avant', 'Fais proposer un ordre du jour à partir des échanges du canal du projet : points à traiter et temps prévu.'],
-      ['Pendant', 'Note les décisions et les actions au fil de l’eau, avec un responsable pour chacune.'],
-      ['Après', 'Fais rédiger le compte rendu : décisions, actions avec responsable et échéance, points en attente. Pour un Meet avec un client, Ker’Meet le fait pour toi.']],
-    exemple: [['Demande vague', 'Prépare la réunion.'], ['Demande utile', 'À partir de ce canal, propose un ordre du jour de 30 minutes en 4 points, avec les questions encore en suspens.']],
+    titre: 'Bien utiliser une compétence', seuil: 5,
+    chapo: 'Laisser Slackbot choisir la bonne compétence, ou la choisir toi-même, lui donner ce qu’elle attend, et faire remonter tes idées. 5 minutes, +50 XP.',
+    lecons: [['Laisser Slackbot choisir', 'Décris ton besoin : Slackbot trouve tout seul la compétence adaptée parmi celles que tu as ajoutées.'],
+      ['Ou la choisir toi-même', 'Clique sur « Compétences » au-dessus de la zone de message pour joindre une compétence précise à ta demande, comme un fichier.'],
+      ['Donner ce qu’elle attend', 'Le client, la période, le document : la compétence va droit au résultat quand tu lui fournis ce dont elle a besoin.'],
+      ['Proposer une amélioration', 'Un résultat à améliorer, une idée de compétence ? Le formulaire « Proposer une automatisation ou amélioration » de #kerogo-tools est fait pour ça.']],
+    exemple: [['Demande incomplète', 'Lance la compétence.'], ['Avec ce qu’elle attend', 'Utilise KeroBrief pour tes rendez-vous de demain matin avec la société Alpha et la société Beta.']],
     exercice: { titre: 'Choisis la meilleure façon de faire', items: [
-      { s: 'Tu animes un point projet demain matin.', bonne: 1, options: ['« Prépare la réunion. »', '« À partir de ce canal, propose un ordre du jour de 30 minutes en 4 points. »', 'Improviser'], explication: 'La source, la durée et le nombre de points : l’ordre du jour est prêt en une minute.' },
-      { s: 'Ta réunion avec un client s’est tenue sur Google Meet.', bonne: 0, options: ['Ker’Meet, la compétence qui rédige le compte rendu et l’envoie dans Salesforce', 'Une IA gratuite trouvée sur internet', 'Ne rien noter'], explication: 'Ker’Meet est la compétence Kerogo Tools prévue pour ce cas.' },
-      { s: 'Le compte rendu doit être utile à toute l’équipe.', bonne: 1, options: ['« Résume. »', '« Rédige le compte rendu : décisions, actions avec responsable et échéance, points en attente. »', '« Fais long. »'], explication: 'Trois rubriques : chacun sait ce qui a été décidé et ce qu’il doit faire.' },
-      { s: 'Le compte rendu cite un montant qui n’a pas été dit en réunion.', bonne: 1, options: ['Le garder', 'Le corriger avant de partager', 'L’envoyer tel quel au client'], explication: 'Tu relis toujours avant de partager : l’IA a pu se tromper.' }] },
+      { s: 'Tu ne te souviens plus du nom de la compétence qui prépare les rendez-vous.', bonne: 1, options: ['Abandonner', 'Décrire ton besoin à Slackbot : il trouve la compétence adaptée parmi celles que tu as ajoutées', 'Chercher dans tes mails'], explication: 'Slackbot choisit tout seul la compétence qui correspond à ta demande.' },
+      { s: 'Tu veux être sûr que Slackbot utilise une compétence précise.', bonne: 0, options: ['Cliquer sur « Compétences » au-dessus de la zone de message et la choisir', 'Écrire ta demande en majuscules', 'Ouvrir une IA gratuite'], explication: 'Comme un fichier ou un canal, tu peux joindre la compétence à ta demande.' },
+      { s: 'La compétence te redemande sans cesse des informations.', bonne: 1, options: ['Recommencer sans rien changer', 'Lui donner dès le départ ce qu’elle attend : le client, la période, le document', 'L’abandonner'], explication: 'Avec les bonnes informations dès le départ, elle va droit au résultat.' },
+      { s: 'Une compétence donne un résultat qui pourrait être meilleur.', bonne: 1, options: ['Ne rien dire', 'Le signaler avec le formulaire « Proposer une automatisation ou amélioration » de #kerogo-tools', 'La modifier toi-même pour tout le monde'], explication: 'L’équipe Dev Ops améliore les compétences grâce à vos retours.' }] },
     quiz: [
-      { q: 'Un bon ordre du jour précise…', bonne: 1, choix: ['Seulement l’heure', 'Les points à traiter et le temps prévu', 'La liste des absents'], explication: 'Les points et le temps : la réunion reste courte et utile.' },
-      { q: 'Pour le compte rendu d’un Meet avec un client, la compétence à utiliser est…', bonne: 1, choix: ['KeroBrief', 'Ker’Meet', 'GEC'], explication: 'Ker’Meet rédige le compte rendu et l’envoie dans Salesforce.' },
-      { q: 'Un compte rendu de réunion client se partage…', bonne: 0, choix: ['Avec les personnes qui suivent le dossier', 'Dans un canal ouvert à tous', 'Dans un outil externe'], explication: 'Les bonnes informations aux bonnes personnes, comme le dit la charte.' }]
+      { q: 'Ta demande correspond à une compétence que tu as ajoutée. Que fait Slackbot ?', bonne: 0, choix: ['Il l’utilise automatiquement', 'Il te demande d’écrire du code', 'Il l’ignore'], explication: 'Il repère tout seul la compétence adaptée à ta demande.' },
+      { q: 'Où se trouve le bouton pour joindre une compétence précise à ta demande ?', bonne: 1, choix: ['Dans tes paramètres', 'Au-dessus de la zone de message : « Compétences »', 'Dans le menu Aide'], explication: 'Comme pour un fichier ou un canal.' },
+      { q: 'Tu as une idée de compétence pour ton équipe.', bonne: 1, choix: ['Tu la gardes pour toi', 'Tu la proposes avec le formulaire de #kerogo-tools', 'Tu attends le dernier niveau'], explication: 'Les meilleures idées viennent du terrain : propose-la.' }]
   },
+
   '3.4': {
+    titre: 'Les astuces d’expert', seuil: 5,
+    chapo: 'Dicter au lieu de taper, retrouver une ancienne conversation, partager ta meilleure demande, lancer une recherche approfondie : les fonctions qui font gagner du temps. 5 minutes, +50 XP.',
+    lecons: [['Ta journée en une question', '« Quels messages directs ou mentions dois-je suivre ce matin ? » : Slackbot fait le tri pour toi.'],
+      ['Dicter', 'L’icône de micro te permet de dicter ta demande, sur ordinateur comme sur téléphone.'],
+      ['Historique et Stop', 'Retrouve tes anciennes conversations dans l’onglet Historique. Si Slackbot part dans la mauvaise direction, clique sur Stop.'],
+      ['Partager une demande qui marche', 'Transfère-la à tes collègues en cochant la case « Transférer en tant qu’invite » : ils n’ont plus qu’à cliquer sur « Envoyer vers Slackbot » pour la relancer.'],
+      ['La recherche approfondie', 'Bouton Plus › Recherche approfondie : un rapport complet sur un sujet complexe, en dix minutes au plus.']],
+    exemple: [['Au lieu de', 'À quoi dois-je faire attention ?'], ['Essaie', 'Quels messages directs ou mentions dois-je suivre ce matin ?']],
+    exercice: { titre: 'Choisis la meilleure façon de faire', items: [
+      { s: 'Lundi matin : 40 messages non lus et des mentions partout.', bonne: 1, options: ['Tout lire dans l’ordre', '« Quels messages directs ou mentions dois-je suivre ce matin ? »', 'Tout marquer comme lu'], explication: 'Slackbot trie pour toi ce qui attend une réponse de ta part.' },
+      { s: 'Tu es en déplacement, avec ton téléphone.', bonne: 0, options: ['Toucher l’icône de micro et dicter ta demande', 'Attendre d’être au bureau', 'Taper un long message'], explication: 'La dictée marche sur téléphone comme sur ordinateur.' },
+      { s: 'Ta demande pour préparer les relances clients marche très bien.', bonne: 1, options: ['La garder pour toi', 'La partager avec ton équipe, qui la relance d’un clic', 'La réécrire à chaque fois'], explication: 'Transférée avec la case « Transférer en tant qu’invite », ta demande se relance d’un clic sur « Envoyer vers Slackbot ».' },
+      { s: 'Tu veux retrouver la réponse que Slackbot t’a donnée la semaine dernière.', bonne: 1, options: ['Reposer la question', 'Ouvrir l’onglet Historique de Slackbot', 'Chercher dans tes mails'], explication: 'Toutes tes conversations avec Slackbot sont dans l’Historique, et tu peux les renommer.' }] },
+    quiz: [
+      { q: 'Pendant qu’il travaille, Slackbot part dans la mauvaise direction. Tu…', bonne: 1, choix: ['Attends la fin', 'Cliques sur Stop et reformules', 'Fermes Slack'], explication: 'Le bouton Stop arrête la réponse en cours : tu gagnes du temps.' },
+      { q: 'Pour un rapport complet sur un sujet complexe, tu utilises…', bonne: 2, choix: ['Une question rapide', 'Une tâche planifiée', 'La recherche approfondie'], explication: 'Bouton Plus › Recherche approfondie : Slackbot croise canaux, fichiers et web, en dix minutes au plus.' },
+      { q: 'La dictée vocale de Slackbot…', bonne: 1, choix: ['Enregistre ta voix', 'Transcrit ta demande sans conserver l’audio', 'Ne fonctionne qu’en anglais'], explication: 'Le message dicté est transcrit et l’audio n’est pas conservé. Elle fonctionne aussi en français.' }]
+  },
+
+  '4.1': {
     titre: 'Les tâches planifiées', seuil: 5,
     chapo: 'Une demande que tu refais chaque semaine ? Programme-la une fois, et Slackbot te l’envoie au bon moment. 5 minutes, +50 XP.',
     lecons: [['Repérer', 'Une demande qui revient : le résumé du lundi, le rappel des actions du vendredi, le point sur un canal.'],
-      ['Programmer', 'Écris la demande une fois, choisis le jour et l’heure : Slackbot te l’envoie automatiquement.'],
-      ['Faire le point', 'Chaque mois, garde les tâches utiles et supprime les autres.']],
+      ['Programmer', 'Onglet Tâches de Slackbot › Ajouter une tâche › Créer avec Slackbot : décris quand, à quelle fréquence et jusqu’à quand.'],
+      ['Faire le point', 'Mets une tâche en pause pendant tes congés. Chaque mois, supprime celles qui ne servent plus.']],
     exemple: [['Chaque lundi, à la main', 'Résume le canal de mon équipe.'], ['Une tâche planifiée', 'Chaque lundi à 9 h, résume les messages du canal de mon équipe de la semaine passée : décisions, actions, questions en suspens.']],
-    note: 'Une bonne tâche planifiée dit quand, sur quelle période et sous quelle forme.',
+    note: 'Une bonne tâche dit quand, sur quelle période et sous quelle forme. Chacun dispose de 10 tâches planifiées au total, compétences comprises : garde-les pour ce qui compte.',
     exercice: { titre: 'Bonne idée de tâche planifiée, ou pas ?', options: ['Bonne idée', 'Pas adapté'], items: [
       { s: 'Recevoir chaque lundi le résumé du canal de ton équipe.', bonne: 0, explication: 'Une demande qui revient chaque semaine : c’est exactement l’usage prévu.' },
       { s: 'Recevoir chaque vendredi un rappel des actions décidées dans le canal du projet.', bonne: 0, explication: 'Un rappel régulier qui t’évite d’oublier une action.' },
@@ -1605,6 +1638,205 @@ const MISSIONS_DEF = {
     quiz: [
       { q: 'Une bonne tâche planifiée, c’est…', bonne: 0, choix: ['Une demande qui revient régulièrement', 'Une demande unique', 'Un message à un client sans relecture'], explication: 'La régularité, c’est ce qui rend la programmation utile.' },
       { q: 'Que fais-tu des tâches planifiées qui ne servent plus ?', bonne: 1, choix: ['Je les garde', 'Je les supprime lors de mon point mensuel', 'J’en crée d’autres'], explication: 'Moins de messages inutiles, plus d’attention pour ceux qui comptent.' }]
+  },
+
+  '4.2': {
+    titre: 'Les tâches déclenchées', seuil: 5,
+    chapo: 'Une tâche peut démarrer à heure fixe, mais aussi au moment où quelque chose se passe : un message, une réaction, une liste mise à jour. 5 minutes, +50 XP.',
+    lecons: [['Quatre déclencheurs', 'Un message publié, une réaction ajoutée, un élément de liste modifié, un canal créé.'],
+      ['Une action à décrire', 'Tu dis à Slackbot quoi faire quand l’événement se produit : résumer, ajouter à une liste, préparer une réponse.'],
+      ['Avec ou sans ton accord', 'Tu choisis : Slackbot te demande d’abord, ou agit seul. Pour ce qui part chez un client, il te demande d’abord.'],
+      ['En une phrase', 'Tu peux aussi décrire l’événement et l’action en langage courant : Slackbot paramètre la tâche.']],
+    exemple: [['Chaque soir, à la main', 'Relire le canal du client pour repérer ce qui demande une action.'], ['Une tâche déclenchée', 'Quand j’ajoute une réaction à un message de ce canal, ajoute-le à ma liste d’actions avec la prochaine étape.']],
+    exercice: { titre: 'Choisis la meilleure façon de faire', items: [
+      { s: 'Dans le canal d’un client, tu veux garder une trace de ce qui demande une action.', bonne: 1, options: ['Tout recopier dans un tableur', 'Une tâche déclenchée par une réaction : tu réagis au message, Slackbot l’ajoute à ta liste d’actions', 'Relire le canal chaque soir'], explication: 'Un geste suffit : Slackbot fait le reste au moment où tu réagis.' },
+      { s: 'Une tâche déclenchée prépare une réponse à un client.', bonne: 0, options: ['Choisir qu’elle te demande ton accord avant d’agir', 'La laisser envoyer seule', 'Ne jamais la relire'], explication: 'Pour tout ce qui part chez un client, tu gardes la main.' },
+      { s: 'Tu veux qu’une tâche démarre quand un canal de dossier est créé.', bonne: 2, options: ['Impossible', 'Il faut une tâche à heure fixe', 'C’est l’un des quatre déclencheurs : la création d’un canal'], explication: 'Message, réaction, élément de liste, nouveau canal : ce sont les déclencheurs disponibles.' },
+      { s: 'Tu ne sais pas comment paramétrer la tâche.', bonne: 1, options: ['Abandonner', 'La décrire en une phrase à Slackbot, qui la paramètre', 'Demander à une IA gratuite'], explication: 'Slackbot comprend l’événement et l’action décrits en langage courant.' }] },
+    quiz: [
+      { q: 'Quelle différence avec une tâche planifiée ?', bonne: 1, choix: ['Aucune', 'Elle démarre quand un événement se produit, pas à une heure fixe', 'Elle ne fonctionne que le lundi'], explication: 'Planifiée : à heure fixe. Déclenchée : au moment où quelque chose se passe.' },
+      { q: 'Peux-tu exiger que Slackbot te demande avant d’agir ?', bonne: 0, choix: ['Oui, c’est un choix au moment de créer la tâche', 'Non, il agit toujours seul', 'Seulement si tu es administrateur'], explication: 'Tu choisis entre une validation préalable et une action automatique.' },
+      { q: 'Un bon usage d’une tâche déclenchée ?', bonne: 1, choix: ['Envoyer des mails aux clients sans relecture', 'Ajouter à ta liste d’actions les messages que tu marques d’une réaction', 'Supprimer des messages'], explication: 'Un petit geste, une action utile, et tu gardes la main.' }]
+  },
+
+  '4.3': {
+    titre: 'Slackbot passe à l’action', seuil: 5,
+    chapo: 'Créer un canal, inviter l’équipe, ranger tes brouillons, répondre à tes invitations : Slackbot ne fait plus que répondre, il agit, avec ton accord. 5 minutes, +50 XP.',
+    lecons: [['Agir dans Slack', 'Créer un canal, inviter des collègues, envoyer un message, lancer un flux de travail : décris ce qu’il faut faire.'],
+      ['Tes brouillons', '« Montre-moi mes brouillons non envoyés de la semaine » : Slackbot les retrouve, les programme ou les supprime, en te demandant avant.'],
+      ['Ton agenda', 'Il passe en revue tes invitations et accepte ou décline jusqu’à 20 réponses à la fois. Tu valides chaque réponse.'],
+      ['Un canevas supprimé', 'Supprimé par erreur il y a moins de 24 heures ? Slackbot le restaure, après vérification des droits et ton accord.']],
+    exercice: { titre: 'Choisis la meilleure façon de faire', items: [
+      { s: 'Un nouveau dossier démarre : il faut un canal et y inviter l’équipe.', bonne: 1, options: ['Tout faire à la main', '« Crée le canal du dossier et invites-y l’équipe » : Slackbot s’en charge', 'Attendre que quelqu’un le fasse'], explication: 'Slackbot agit dans Slack en ton nom.' },
+      { s: 'Tu as laissé plusieurs messages en brouillon cette semaine.', bonne: 0, options: ['« Montre-moi mes brouillons non envoyés de la semaine. »', 'Les chercher un par un', 'Tout supprimer sans regarder'], explication: 'Slackbot les retrouve, et demande avant d’en supprimer un ou de changer une heure d’envoi.' },
+      { s: 'Quinze invitations attendent ta réponse pour la semaine prochaine.', bonne: 1, options: ['Les ignorer', 'Demander à Slackbot de les passer en revue : tu valides chaque réponse', 'Tout accepter'], explication: 'Jusqu’à 20 invitations à la fois, toujours avec ton accord.' },
+      { s: 'Tu as supprimé par erreur un canevas ce matin.', bonne: 1, options: ['Il est perdu', '« Restaure le canevas que j’ai supprimé ce matin. »', 'Le refaire de mémoire'], explication: 'Dans les 24 heures, Slackbot le restaure après vérification et ton accord.' }] },
+    quiz: [
+      { q: 'Avant de supprimer un de tes brouillons, Slackbot…', bonne: 1, choix: ['Le supprime directement', 'Te demande ton accord', 'L’envoie'], explication: 'Il ne touche qu’à tes brouillons, et demande avant d’en supprimer un.' },
+      { q: 'Combien d’invitations peut-il traiter d’un coup ?', bonne: 2, choix: ['Une seule', 'Cinq', 'Jusqu’à 20'], explication: 'Tu valides chaque réponse.' },
+      { q: 'Jusqu’à quand peut-on restaurer un canevas supprimé ?', bonne: 1, choix: ['Une heure après', '24 heures après', 'Un an après'], explication: 'Slackbot restaure les canevas supprimés dans les dernières 24 heures.' }]
+  },
+
+  '4.4': {
+    titre: 'Proposer une automatisation', seuil: 5,
+    chapo: 'Une tâche te prend du temps chaque semaine ? Décris-la bien, et l’équipe Dev Ops pourra l’automatiser pour tout le monde. 5 minutes, +50 XP.',
+    lecons: [['Repérer le bon candidat', 'Une tâche répétitive, régulière, qui prend du temps : c’est elle qu’il faut proposer.'],
+      ['La décrire', 'Avec le formulaire « Proposer une automatisation ou amélioration » de #kerogo-tools : le problème, le temps passé, la fréquence, les outils actuels et les logiciels à connecter.'],
+      ['Le suivi', 'Tu es prévenu automatiquement : ta demande passe à l’étude, puis elle est planifiée dans un sprint de l’équipe Dev Ops.'],
+      ['Un parrain métier', 'Un référent de ton métier peut porter la demande avec toi, pour qu’elle colle au terrain.']],
+    exercice: { titre: 'Choisis la meilleure façon de faire', items: [
+      { s: 'Tu passes 30 minutes chaque semaine à recopier les mêmes informations d’un outil à l’autre.', bonne: 1, options: ['C’est le métier', 'Le proposer avec le formulaire de #kerogo-tools', 'Attendre que quelqu’un s’en rende compte'], explication: 'Répétitif, régulier, mesurable : c’est un très bon candidat.' },
+      { s: 'Tu décris ton problème dans le formulaire.', bonne: 1, options: ['« Ça prend du temps, faites quelque chose »', '« 30 minutes par semaine, entre Salesforce et Pennylane, à chaque clôture »', '« Urgent ! »'], explication: 'Le temps passé, la fréquence et les outils : ta demande peut être évaluée.' },
+      { s: 'Ta demande est « à l’étude ».', bonne: 0, options: ['Elle va être examinée, puis planifiée dans un sprint de l’équipe Dev Ops', 'Elle est refusée', 'Elle est terminée'], explication: 'Tu es prévenu automatiquement à chaque étape.' },
+      { s: 'Ta demande concerne un outil propre à ton métier.', bonne: 1, options: ['La garder pour toi', 'Indiquer un parrain métier qui la portera avec toi', 'La déposer sans détail'], explication: 'Un parrain du métier aide à préciser le besoin.' }] },
+    quiz: [
+      { q: 'Qu’est-ce qu’un bon candidat à l’automatisation ?', bonne: 1, choix: ['Une tâche rare et toujours différente', 'Une tâche répétitive, régulière et longue', 'Un problème personnel'], explication: 'Plus elle revient, plus l’automatiser fait gagner de temps.' },
+      { q: 'Quelles informations aident le plus à traiter ta demande ?', bonne: 1, choix: ['Seulement un titre', 'Le problème, le temps passé, la fréquence et les outils actuels', 'Le nom du logiciel que tu préfères'], explication: 'Chiffrer le besoin permet de prioriser.' },
+      { q: 'Que se passe-t-il après l’envoi du formulaire ?', bonne: 1, choix: ['Rien', 'Tu es prévenu quand ta demande passe à l’étude, puis quand elle est planifiée', 'Elle est publiée dans un canal ouvert'], explication: 'Le suivi est automatique.' }]
+  },
+
+  '5.1': {
+    titre: 'Comptabilité et Pennylane', seuil: 5,
+    chapo: 'Saisie automatique, contrôle qualité chaque matin, télédéclaration de la TVA, exports archivés : ce qui tourne déjà pour la comptabilité, et ce qui reste entre tes mains. 5 minutes, +50 XP.',
+    lecons: [['Autopilot Pennylane', 'Les factures et transactions complètes sont traitées automatiquement. Les éléments incomplets restent à contrôler : c’est là que tu interviens.'],
+      ['Le contrôle qualité de Luca', 'Chaque matin, un agent IA relit les grands livres et poste ses anomalies dans le canal du dossier. Tu les traites par une réaction.'],
+      ['La TVA', 'Le client approuve sa TVA, puis la télédéclaration se fait automatiquement.'],
+      ['Les exports archivés', 'L’export « Données comptables » envoyé par Pennylane est archivé sur Google Drive, et le lien est posté dans le canal du client.']],
+    exercice: { titre: 'Choisis la meilleure réaction', items: [
+      { s: 'Une transaction n’a pas été traitée par Autopilot.', bonne: 1, options: ['C’est une panne, on attend', 'Elle est incomplète : c’est à toi de la contrôler et de la compléter', 'On la supprime'], explication: 'Autopilot ne traite que ce qui est complet ; le reste demande ton œil de comptable.' },
+      { s: 'Luca a posté une anomalie dans le canal d’un de tes dossiers.', bonne: 0, options: ['La vérifier, la corriger, puis réagir au message', 'L’ignorer', 'La transférer au client'], explication: 'Les anomalies se traitent par réaction : l’équipe voit ce qui est fait.' },
+      { s: 'Tu cherches l’export comptable d’un client envoyé par Pennylane.', bonne: 1, options: ['Le redemander à Pennylane', 'Ouvrir le lien posté dans le canal du client : l’export est archivé sur Google Drive', 'Fouiller ta boîte mail'], explication: 'L’archive arrive automatiquement, et le lien est dans le canal du client.' },
+      { s: 'Le client a approuvé sa TVA.', bonne: 2, options: ['Tu la télédéclares à la main', 'Tu attends le mois suivant', 'La télédéclaration se fait automatiquement'], explication: 'Une fois approuvée par le client, la TVA est télédéclarée sans intervention.' }] },
+    quiz: [
+      { q: 'Que fait Autopilot Pennylane des éléments incomplets ?', bonne: 1, choix: ['Il les complète au hasard', 'Il les laisse à contrôler', 'Il les supprime'], explication: 'Seuls les éléments complets sont traités automatiquement.' },
+      { q: 'Quand Luca relit-il les grands livres ?', bonne: 0, choix: ['Chaque matin', 'Une fois par an', 'Seulement quand on le lui demande'], explication: 'Chaque matin à 7 h, avec un suivi à 23 h.' },
+      { q: 'Où Luca signale-t-il une anomalie ?', bonne: 1, choix: ['Par mail au client', 'Dans le canal du dossier', 'Dans un canal général'], explication: 'L’anomalie arrive là où l’équipe du dossier travaille.' }]
+  },
+
+  '5.2': {
+    titre: 'Social et paie', seuil: 5,
+    chapo: 'Écritures de paie importées chaque mois, récapitulatifs TESE passés en comptabilité, alerte à l’arrivée d’un client social : la paie a aussi ses automatismes. 5 minutes, +50 XP.',
+    lecons: [['L’import mensuel', 'Les écritures de paie Silae du mois précédent arrivent automatiquement dans Pennylane, dossier par dossier, avec un récapitulatif des erreurs.'],
+      ['/od-paie pour les cas particuliers', 'Pour pousser à la main les écritures d’une entreprise, sur une période donnée, dans le journal de paie Pennylane.'],
+      ['Les récapitulatifs TESE et URSSAF', 'Déposés dans le dossier Drive, ils sont passés en écritures dans Pennylane ; chaque fichier est renommé OK_ ou ERREUR_.'],
+      ['L’alerte paie', 'Quand un client avec un pack social passe en « Mission validée », son gestionnaire de paie est prévenu en message privé.']],
+    exercice: { titre: 'Choisis la meilleure réaction', items: [
+      { s: 'Le 16 du mois, les écritures de paie d’un dossier n’apparaissent pas dans Pennylane.', bonne: 1, options: ['Tout ressaisir à la main', 'Regarder le récapitulatif des erreurs de l’import, puis utiliser /od-paie si besoin', 'Attendre le mois suivant'], explication: 'L’import signale ses erreurs, et /od-paie pousse les écritures d’un dossier à la main.' },
+      { s: 'Un fichier TESE a été renommé ERREUR_ dans le dossier Drive.', bonne: 0, options: ['Le vérifier : il n’a pas pu être passé en écritures', 'Le supprimer', 'Rien, c’est normal'], explication: 'OK_ : passé en comptabilité. ERREUR_ : à vérifier.' },
+      { s: 'Tu reçois en message privé une alerte « Mission validée » pour un client.', bonne: 1, options: ['Une publicité', 'Un nouveau client avec un pack social : la tâche est aussi dans la liste « Alertes paie »', 'Une erreur de Salesforce'], explication: 'L’alerte te permet de démarrer la paie du nouveau client sans attendre.' },
+      { s: 'Tu dois pousser les écritures de paie d’une seule entreprise pour mars.', bonne: 2, options: ['Attendre l’import du 16', 'Une IA gratuite', 'La commande /od-paie'], explication: '/od-paie pousse les écritures d’une entreprise, pour la période choisie.' }] },
+    quiz: [
+      { q: 'Quand les écritures de paie Silae arrivent-elles dans Pennylane ?', bonne: 1, choix: ['Chaque jour', 'Le 16 de chaque mois, pour le mois précédent', 'Jamais automatiquement'], explication: 'Le 15 pour ECLA · EXA.' },
+      { q: 'Que signifie un fichier TESE renommé OK_ ?', bonne: 0, choix: ['Il a été passé en écritures dans Pennylane', 'Il doit être supprimé', 'Il attend ta signature'], explication: 'ERREUR_ signale un fichier à vérifier.' },
+      { q: 'Qui reçoit l’alerte quand un client avec un pack social passe en « Mission validée » ?', bonne: 1, choix: ['Le client', 'Son gestionnaire de paie', 'Tout le cabinet'], explication: 'En message privé, avec la tâche dans la liste « Alertes paie ».' }]
+  },
+
+  '5.3': {
+    titre: 'Juridique et fiscal', seuil: 5,
+    chapo: 'Documents INPI, actes des bénéficiaires effectifs, rémunération du dirigeant, déclaration de revenus des TNS : des outils prêts à l’emploi pour le juridique et le fiscal. 5 minutes, +50 XP.',
+    lecons: [['/inpi ou /documents', 'Statuts, immatriculation, actes, bilans, suivi des formalités du Guichet unique, et un assistant juridique.'],
+      ['/rbe', 'À partir d’un SIREN, les actes du registre des bénéficiaires effectifs sont récupérés auprès de l’INPI et compilés en PDF.'],
+      ['La rémunération du dirigeant', 'À partir des données Pennylane, cinq scénarios sont comparés et l’optimum est présenté dans une étude PDF prête à partager.'],
+      ['La déclaration de revenus TNS', 'À partir du FEC Pennylane, les montants à reporter sont calculés et le récapitulatif est envoyé au client par mail.']],
+    exercice: { titre: 'Quel outil pour quelle demande ?', items: [
+      { s: 'Tu as besoin des statuts à jour d’une société cliente.', bonne: 0, options: ['La commande /inpi', 'Les demander au client par mail', 'Une recherche sur internet'], explication: '/inpi récupère les documents officiels de la société.' },
+      { s: 'Une banque demande les actes du registre des bénéficiaires effectifs.', bonne: 1, options: ['/case', '/rbe, avec le SIREN', '/ticket'], explication: 'Les actes RBE sont récupérés et compilés en un PDF.' },
+      { s: 'Un dirigeant te demande comment se rémunérer au mieux.', bonne: 1, options: ['Un calcul à la main dans un tableur', 'L’app Rémunération dirigeant : cinq scénarios comparés, une étude PDF prête à partager', 'Une IA gratuite'], explication: 'L’étude part des données Pennylane du client.' },
+      { s: 'Un client TNS attend son récapitulatif pour sa déclaration de revenus.', bonne: 2, options: ['/rbe', 'Le reconstituer à la main', 'L’app IRPP, à partir de son FEC Pennylane'], explication: 'Les montants sont calculés et le récapitulatif lui est envoyé par mail.' }] },
+    quiz: [
+      { q: 'Que te faut-il pour lancer /rbe ?', bonne: 1, choix: ['Le nom du dirigeant', 'Le SIREN de la société', 'Son adresse'], explication: 'Le SIREN suffit.' },
+      { q: 'Combien de scénarios compare l’app Rémunération dirigeant ?', bonne: 2, choix: ['Un', 'Trois', 'Cinq'], explication: 'L’optimum est présenté dans une étude PDF.' },
+      { q: 'Pour suivre une formalité du Guichet unique, tu utilises…', bonne: 0, choix: ['/inpi ou /documents', '/od-paie', '/case'], explication: 'L’app Juridique suit aussi les formalités.' }]
+  },
+
+  '5.4': {
+    titre: 'La relation client', seuil: 5,
+    chapo: 'Compte rendu de Meet, synthèse d’un compte, courriers prêts à signer, mails transformés en cases : ce qui fait gagner du temps dans la relation client. 5 minutes, +50 XP.',
+    lecons: [['Ker’Meet', 'Après un Meet client, le résumé est publié dans le canal du client et un brouillon de mail t’attend en message privé. Il tourne grâce à des tâches planifiées que tu paramètres une fois.'],
+      ['La synthèse IA du compte', 'Dans Salesforce, Agentforce résume un compte client avant que tu l’appelles.'],
+      ['Les courriers avec /ma', 'Mission annulée, reprise de dossier par un confrère : le courrier est généré, puis signé par le manager ou envoyé directement au confrère.'],
+      ['Ce qui tourne seul', 'Les mails entrants deviennent des cases Salesforce et les appels Aircall sont analysés par l’IA. Pour le pôle réclamation de Keobiz, Qualif’MA propose les motifs des missions annulées.']],
+    exercice: { titre: 'Quel outil pour quelle situation ?', items: [
+      { s: 'Tu sors d’un Meet client et tu veux le compte rendu.', bonne: 0, options: ['Ker’Meet', 'KeroBrief', '/ticket'], explication: 'Ker’Meet publie le résumé dans le canal du client et te prépare un brouillon de mail.' },
+      { s: 'Un client quitte le cabinet : il faut lui envoyer le courrier de mission annulée.', bonne: 1, options: ['Le rédiger dans Word', 'La commande /ma : le courrier est généré, puis signé par le manager', 'Un message Slack au client'], explication: 'Le courrier part au manager pour signature avant d’être transmis au client.' },
+      { s: 'Avant d’appeler un client, tu veux un résumé de son compte.', bonne: 1, options: ['Relire tout l’historique', 'La synthèse IA du compte dans Salesforce (Agentforce)', 'Un mail au commercial'], explication: 'Agentforce résume le compte directement dans Salesforce.' },
+      { s: 'Ker’Meet a préparé un brouillon de mail pour ton client.', bonne: 1, options: ['Il part tout seul', 'Il t’attend en message privé : tu le relis et tu l’envoies toi-même', 'Il est publié dans un canal ouvert'], explication: 'C’est toi qui décides de l’envoyer.' }] },
+    quiz: [
+      { q: 'Que devient le mail d’un client qui arrive dans la boîte du cabinet ?', bonne: 1, choix: ['Rien', 'Une case Salesforce, créée automatiquement par l’IA', 'Un message dans un canal général'], explication: 'C’est l’automatisme « E-mail to case ».' },
+      { q: 'Qui signe le courrier de mission annulée ?', bonne: 0, choix: ['Le manager', 'Le client', 'Personne'], explication: 'Il est généré, puis envoyé au manager pour signature.' },
+      { q: 'Pour qui est Qualif’MA ?', bonne: 1, choix: ['Tous les cabinets', 'Le pôle réclamation de Keobiz', 'Les clients'], explication: 'Elle propose les motifs des missions annulées dans Salesforce.' }]
+  },
+
+  '6.1': {
+    titre: 'Créer ta compétence', seuil: 5,
+    chapo: 'Une tâche que tu fais souvent, toujours de la même façon ? Transforme-la en compétence Slackbot. 5 minutes, +50 XP.',
+    lecons: [['Le bon candidat', 'Une tâche régulière, qui suit toujours les mêmes étapes : préparer un rapport, analyser des données de plusieurs sources.'],
+      ['Avec l’aide de Slackbot', 'Dans l’onglet Compétences, choisis d’ajouter une compétence puis de la créer : décris ce qu’elle doit faire, Slackbot la rédige.'],
+      ['Ou à partir de zéro', 'Une description (Slackbot s’en sert pour savoir quand l’utiliser), les étapes à suivre, et le format du résultat : un canevas, un message…'],
+      ['Tester et ajuster', 'Lance-la sur un vrai cas, puis corrige-la toi-même ou demande à Slackbot de le faire. Tu peux aussi importer un canevas qui décrit déjà les étapes.']],
+    note: 'Pour partager ta compétence, passe par le label Kerogo Tools : c’est la mission suivante.',
+    exercice: { titre: 'Bon candidat pour une compétence, ou pas ?', options: ['Bon candidat', 'Pas adapté'], items: [
+      { s: 'Préparer chaque mois le même tableau de suivi pour ton équipe, à partir des mêmes sources.', bonne: 0, explication: 'Régulier, avec des étapes stables : c’est exactement ce que fait une compétence.' },
+      { s: 'Une question ponctuelle que tu ne poseras qu’une fois.', bonne: 1, explication: 'Une simple demande à Slackbot suffit.' },
+      { s: 'Rédiger le récapitulatif de fin de mission, toujours sur le même plan.', bonne: 0, explication: 'Le même plan à chaque fois : Slackbot peut le reproduire.' },
+      { s: 'Une tâche sans étapes fixes, qui dépend entièrement du cas.', bonne: 1, explication: 'Une compétence a besoin d’un processus stable.' }] },
+    quiz: [
+      { q: 'Une bonne compétence, c’est…', bonne: 1, choix: ['Une question unique', 'Une tâche régulière qui suit un processus stable', 'Un document à archiver'], explication: 'La régularité et des étapes stables : c’est ce que Slackbot peut reproduire.' },
+      { q: 'À quoi sert la description d’une compétence ?', bonne: 0, choix: ['À aider Slackbot à décider quand l’utiliser', 'À rien', 'À choisir sa couleur'], explication: 'Slackbot s’en sert pour savoir quand la compétence répond à une demande.' },
+      { q: 'Tu veux tester ta compétence. Que fais-tu ?', bonne: 1, choix: ['Tu la partages directement', 'Tu la lances sur un vrai cas, puis tu l’ajustes', 'Tu attends qu’un collègue la teste'], explication: 'Un vrai cas révèle vite ce qu’il faut préciser.' }]
+  },
+
+  '6.2': {
+    titre: 'Obtenir le label Kerogo Tools', seuil: 5,
+    chapo: 'Ta compétence marche bien ? Pour qu’elle serve à tout le groupe, elle passe une revue en trois axes. 5 minutes, +50 XP.',
+    lecons: [['Demander la revue', 'Dépose ta compétence dans le catalogue Kerogo Tools, en demande de validation. La revue est rendue en général sous 48 heures.'],
+      ['Trois axes, neuf critères', 'Sécurité, fiabilité, capacité à servir tout le groupe : trois critères par axe.'],
+      ['Trois décisions possibles', 'Labellisé, labellisé sous réserve (avec des points à corriger et une date limite), ou refusé.'],
+      ['Après le label', 'L’équipe Dev Ops rédige le guide et la démo, puis déploie la compétence. Elle perd son label si elle devient obsolète ou n’est plus utilisée.']],
+    exercice: { titre: 'Choisis la meilleure façon de faire', items: [
+      { s: 'Ta compétence est prête et tes collègues la réclament.', bonne: 1, options: ['La partager sans attendre', 'La déposer dans le catalogue, en demande de validation Kerogo Tools', 'L’envoyer par mail à tout le site'], explication: 'La revue vérifie sécurité, fiabilité et capacité à servir tout le groupe.' },
+      { s: 'Ta compétence lit les données de tous les clients alors qu’elle n’en a besoin que d’un.', bonne: 1, options: ['Ce n’est pas grave', 'À corriger avant la revue : c’est un point de sécurité', 'Personne ne le verra'], explication: 'La sécurité est l’un des trois axes de la revue.' },
+      { s: 'Ta compétence donne un résultat différent à chaque essai sur le même cas.', bonne: 0, options: ['La rendre plus précise avant la revue : la fiabilité sera vérifiée', 'La déposer quand même', 'Changer son nom'], explication: 'Un même cas doit donner le même résultat : c’est l’axe fiabilité.' },
+      { s: 'Ta compétence est « labellisée sous réserve ».', bonne: 1, options: ['Elle est refusée', 'Elle est acceptée, avec des points à corriger avant une date limite', 'Elle est déjà déployée partout'], explication: 'Tu corriges les points indiqués, puis vient la revue suivante.' }] },
+    quiz: [
+      { q: 'Quels sont les trois axes de la revue ?', bonne: 1, choix: ['Prix, délai, design', 'Sécurité, fiabilité, capacité à servir tout le groupe', 'Vitesse, couleur, nom'], explication: 'Trois critères par axe, neuf au total.' },
+      { q: 'En combien de temps la revue est-elle rendue, en général ?', bonne: 0, choix: ['Sous 48 heures', 'Sous un mois', 'Sous un an'], explication: 'Une revue rapide, pour ne pas freiner les bonnes idées.' },
+      { q: 'Qui rédige le guide et la démo d’une compétence labellisée ?', bonne: 1, choix: ['Le client', 'L’équipe Dev Ops', 'Personne'], explication: 'Elle les prépare au moment du déploiement.' }]
+  },
+
+  '6.3': {
+    titre: 'Devenir ambassadeur IA', seuil: 5,
+    chapo: 'Tes collègues te demandent comment faire ? L’ambassadeur IA partage les bons tips, rappelle les bons réflexes et oriente vers la bonne documentation. 5 minutes, +50 XP.',
+    lecons: [['Partager les tips', 'Une demande qui marche, une astuce Slackbot, un outil qui fait gagner du temps : tu les partages avec ton équipe.'],
+      ['Rappeler les bons réflexes', 'Les règles de la charte et les réflexes de l’Académie : tu les rappelles avec bienveillance, au bon moment, en proposant une solution.'],
+      ['Orienter vers la bonne documentation', 'Le guide d’un outil dans sa fiche du catalogue Kerogo Tools, la charte d’usage de l’IA, une mission de l’Académie : tu sais où envoyer chacun. Et quand tu ne sais pas, #kerogo-tools.']],
+    exercice: { titre: 'Choisis la meilleure façon de faire', items: [
+      { s: 'Tu as trouvé une demande à Slackbot qui fait gagner beaucoup de temps.', bonne: 1, options: ['La garder pour toi', 'La partager à ton équipe, avec un exemple', 'Attendre qu’on te la demande'], explication: 'Un tip partagé profite à toute l’équipe. Transféré en tant qu’invite, il se relance d’un clic.' },
+      { s: 'Un collègue colle des données clients dans une IA gratuite.', bonne: 1, options: ['Ne rien dire', 'Lui rappeler la charte avec bienveillance et lui montrer l’outil autorisé', 'Le signaler à tout le site'], explication: 'Un rappel bienveillant, avec une solution : c’est le rôle de l’ambassadeur.' },
+      { s: 'Un collègue te demande comment fonctionne Ker’Meet.', bonne: 1, options: ['Lui expliquer de mémoire, à peu près', 'L’orienter vers le guide de Ker’Meet, dans sa fiche du catalogue Kerogo Tools', 'Lui dire de chercher sur internet'], explication: 'Chaque outil a son guide dans le catalogue : c’est la source la plus à jour.' },
+      { s: 'Un nouveau collègue arrive et découvre l’IA au travail.', bonne: 1, options: ['Lui envoyer toute la documentation d’un coup', 'L’orienter vers la charte et le niveau 1 de l’Académie', 'Le laisser se débrouiller'], explication: 'La charte et les bons réflexes d’abord : le reste viendra à son rythme.' }] },
+    quiz: [
+      { q: 'Le rôle de l’ambassadeur IA, c’est…', bonne: 1, choix: ['Faire le travail des autres', 'Partager les tips, rappeler les bons réflexes et orienter vers la bonne documentation', 'Contrôler ses collègues'], explication: 'Un relais de proximité pour son site.' },
+      { q: 'Où trouver le guide d’un outil Kerogo Tools ?', bonne: 0, choix: ['Dans sa fiche du catalogue Kerogo Tools', 'Dans tes favoris de navigateur', 'Nulle part'], explication: 'Le guide est rattaché à la fiche de l’outil, dans le catalogue.' },
+      { q: 'Une question te dépasse. Tu…', bonne: 1, choix: ['Inventes une réponse', 'Orientes vers #kerogo-tools', 'Ignores la question'], explication: 'Orienter, c’est aussi savoir où poser la question.' }]
+  },
+
+  '6.4': {
+    titre: 'Animer un atelier IA', seuil: 5,
+    chapo: 'Une heure, quelques collègues, de vrais irritants : un atelier IA peut faire naître la prochaine compétence du groupe. 5 minutes, +50 XP.',
+    lecons: [['Partir des vrais irritants', 'Recueille avant l’atelier les tâches qui font perdre du temps à ton équipe.'],
+      ['Une heure en trois temps', 'Dix minutes de démo sur un cas réel, quarante minutes en petits groupes (un irritant chacun), dix minutes pour partager ce qui a marché.'],
+      ['Faire essayer', 'Chacun teste avec Slackbot et les outils Kerogo Tools : on apprend en faisant, pas en écoutant.'],
+      ['Donner une suite', 'Les idées retenues partent dans le catalogue. KeroBrief et Ker’Meet sont nés d’un hackathon IA.']],
+    exercice: { titre: 'Choisis la meilleure façon de faire', items: [
+      { s: 'Tu prépares un atelier IA pour ton site.', bonne: 1, options: ['Présenter toutes les fonctions de Slackbot pendant deux heures', 'Partir des tâches qui font perdre du temps à ton équipe', 'Improviser le jour même'], explication: 'Un vrai irritant motive bien plus qu’une démonstration générale.' },
+      { s: 'Combien de temps prévoir ?', bonne: 0, options: ['Une heure, en petits groupes', 'Une journée entière', 'Dix minutes en réunion plénière'], explication: 'Assez pour essayer, assez court pour que tout le monde vienne.' },
+      { s: 'Après la démo, que font les participants ?', bonne: 1, options: ['Ils regardent une deuxième démo', 'Ils essaient eux-mêmes, en petits groupes, sur un irritant réel', 'Ils remplissent un questionnaire'], explication: 'On apprend en faisant.' },
+      { s: 'L’atelier est terminé.', bonne: 1, options: ['On passe à autre chose', 'On partage ce qui a été retenu et la suite prévue', 'On attend le prochain atelier'], explication: 'Une suite visible donne envie de recommencer.' }] },
+    quiz: [
+      { q: 'Par quoi commencer un atelier IA ?', bonne: 1, choix: ['Une longue présentation', 'Les tâches qui font perdre du temps à l’équipe', 'Un quiz'], explication: 'Partir du terrain, c’est la clé.' },
+      { q: 'D’où viennent KeroBrief et Ker’Meet ?', bonne: 0, choix: ['D’un hackathon IA', 'D’un éditeur externe', 'D’un achat de logiciel'], explication: 'Les bonnes idées viennent du terrain.' },
+      { q: 'Combien de temps consacrer à la démo, sur une heure ?', bonne: 0, choix: ['Une dizaine de minutes', 'Toute l’heure', 'Aucune'], explication: 'Le reste du temps, les participants pratiquent.' }]
   }
 };
 
@@ -1844,7 +2076,7 @@ function rendreGuide() {
         <p class="surtitre">Le principe</p><h2 class="titre ch-h2">Des missions, des niveaux, des badges</h2>
         <div class="ch-trio">
           <div class="ch-carte"><span class="ch-marque" style="background:var(--citron)">1</span><p class="titre" style="font-size:20px">Des missions courtes</p><p class="doux" style="line-height:1.55">On lit, on s’entraîne, on valide : chaque mission prend environ 5 minutes et se termine par un exercice ou un quiz.</p></div>
-          <div class="ch-carte"><span class="ch-marque" style="background:var(--soleil)">2</span><p class="titre" style="font-size:20px">6 niveaux, 24 missions</p><p class="doux" style="line-height:1.55">Un niveau s’ouvre chaque mois : Les bons réflexes, Bien demander, Slackbot au quotidien, Les compétences, L’IA dans ton métier, puis Créateurs. Les missions se font dans l’ordre, et chaque niveau terminé te donne un badge.</p></div>
+          <div class="ch-carte"><span class="ch-marque" style="background:var(--soleil)">2</span><p class="titre" style="font-size:20px">6 niveaux, 24 missions</p><p class="doux" style="line-height:1.55">Tu avances à ton rythme : Les bons réflexes, Bien utiliser Slackbot, Les compétences Kerogo Tools, Automatiser, L’IA dans ton métier, puis Créateurs. Les missions se font dans l’ordre, et chaque niveau terminé te donne un badge.</p></div>
           <div class="ch-carte"><span class="ch-marque" style="background:var(--ciel)">3</span><p class="titre" style="font-size:20px">Tout s’enregistre seul</p><p class="doux" style="line-height:1.55">Pas d’inscription : l’Académie te reconnaît avec ton compte Google et garde ta progression.</p></div>
         </div>
       </div>

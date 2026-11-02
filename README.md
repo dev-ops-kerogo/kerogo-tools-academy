@@ -2,7 +2,7 @@
 
 L'académie IA du groupe Kerogo : les bons réflexes IA, 5 minutes par jour.
 
-Les collaborateurs suivent un parcours de 6 mois : 6 niveaux, un par mois, de 4 missions courtes chacun (24 missions). Ils font aussi le quiz du mois, gagnent des XP pour leur site et téléchargent leur attestation de formation depuis leur profil. L'équipe Dev Ops pilote le tout depuis l'espace admin, et les managers suivent leurs équipes.
+Les collaborateurs suivent un parcours de 6 niveaux de 4 missions courtes chacun (24 missions), à suivre à leur rythme. Ils font aussi le quiz du mois, gagnent des XP pour leur site et téléchargent leur attestation de formation depuis leur profil. L'équipe Dev Ops pilote le tout depuis l'espace admin, et les managers suivent leurs équipes.
 
 **Adresse :** https://dev-ops-kerogo.github.io/kerogo-tools-academy/
 
@@ -13,11 +13,11 @@ Projet porté par l'équipe Dev Ops du groupe Kerogo.
 | Niveau | Thème | Badge | État |
 |---|---|---|---|
 | 1 | Les bons réflexes | Découvreur | 4 missions et 4 capsules vidéo prêtes |
-| 2 | Bien demander | Utilisateur | 4 missions et 4 capsules vidéo prêtes |
-| 3 | Slackbot au quotidien | Efficace | 4 missions et 4 capsules vidéo prêtes |
-| 4 | Les compétences | Autonome | En préparation |
-| 5 | L'IA dans ton métier | Expert | En préparation |
-| 6 | Créateurs | Créateur | En préparation |
+| 2 | Bien utiliser Slackbot | Utilisateur | 4 missions et 4 capsules vidéo prêtes |
+| 3 | Les compétences Kerogo Tools | Efficace | 4 missions et 4 capsules vidéo prêtes |
+| 4 | Automatiser | Autonome | 4 missions et 4 capsules vidéo prêtes |
+| 5 | L'IA dans ton métier | Expert | 4 missions et 4 capsules vidéo prêtes |
+| 6 | Créateurs | Créateur | 4 missions et 4 capsules vidéo prêtes |
 
 - Les missions se font dans l'ordre : chacune s'ouvre quand la précédente est validée.
 - Chaque niveau s'ouvre à la date réglée dans l'admin (onglet **Missions** > « Calendrier des niveaux »). Avant cette date, il reste visible avec « Ouvre le … ». Sans date, il s'ouvre dès que ses missions sont prêtes.
