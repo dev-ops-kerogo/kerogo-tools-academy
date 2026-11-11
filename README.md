@@ -25,6 +25,8 @@ Projet porté par l'équipe Dev Ops du groupe Kerogo.
 - **Étape 0 · La charte** : la charte officielle (Google Doc) se lit dans l'Académie, en plusieurs fois si besoin. Chaque section compte quand elle a été lue le temps nécessaire, puis la personne signe. Elle ne bloque pas les missions, mais elle est nécessaire pour le badge Découvreur et la certification du niveau 1. Une nouvelle version de la charte demande une nouvelle signature.
 - **Documents** : l'accusé de réception de la charte (un par version signée) et la certification du niveau 1 sont produits une seule fois, archivés dans le Drive partagé « Automatisations », et téléchargeables depuis **Mon profil**. L'admin (onglet **Attestations**) les liste pour un audit. La liste de l'équipe se télécharge en PDF depuis **Mon équipe**.
 - **Catalogue** et **Webinaires** : le catalogue Kerogo Tools (liste Slack) et le programme des webinaires (agenda), avec l'inscription en un clic.
+- **Structure et site** : à la première visite, chacun indique sa structure (Kerogo ou un cabinet) et son site. Ce choix ne se change plus ensuite : en cas d'erreur ou de changement de poste, le manager le corrige depuis **Mon équipe**, l'admin depuis l'onglet **Accès**. Chaque correction est notée dans l'onglet « Journal des corrections » du tableur.
+- **Lexique** : celui de la charte (annexe du Google Doc), relu comme la charte.
 
 ## Comment ça fonctionne
 

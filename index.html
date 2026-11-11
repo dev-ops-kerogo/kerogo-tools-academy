@@ -19,7 +19,7 @@ var KTA_CONFIG = {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
-var KTA_VERSION = 'hébergée 09/11 · 4';
+var KTA_VERSION = 'hébergée 11/11 · 6';
 var KTA_ERREURS = [];
 window.addEventListener('error', function (e) {
   KTA_ERREURS.push((e && e.message ? e.message : 'Erreur inconnue') + (e && e.lineno ? ' (ligne ' + e.lineno + ')' : ''));
@@ -165,6 +165,13 @@ p{margin:0}
 .detail{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;padding:22px 24px;border-radius:22px;background:var(--surface)}
 .site-ligne{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:18px;border:1.5px solid var(--ligne)}
 .site-ligne.moi{border-color:var(--citron);background:var(--surface)}
+.modale .btn[hidden]{display:none}
+.btn-mini{margin-top:6px;min-height:30px;padding:0 12px;border-radius:999px;border:1.5px solid var(--ligne);background:transparent;color:inherit;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.btn-mini:hover,.btn-mini:focus-visible{border-color:var(--violet)}
+.site-intro p{margin:0}.site-intro ul{margin:6px 0 8px;padding-left:22px;display:flex;flex-direction:column;gap:4px}
+.structure{color:var(--violet);font-weight:800}[data-theme="sombre"] .structure{color:var(--lilas)}
+.etape-site{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--doux);margin-top:4px}
+#liste-structures button[disabled]{opacity:1;cursor:default}
 .rang{width:34px;height:34px;flex:0 0 34px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:var(--titre);font-weight:800;background:var(--piste)}
 .barre{flex:1 1 80px;min-width:60px;height:10px;border-radius:5px;background:var(--piste);overflow:hidden}
 .barre i{display:block;height:10px;border-radius:5px;transform-origin:left;animation:remplit .15s ease-out both}
@@ -211,7 +218,7 @@ legend{font-size:18px;font-weight:700;margin-bottom:12px}
 .modale .carte{max-width:620px;width:100%;display:flex;flex-direction:column;gap:20px}
 .sites{display:flex;flex-wrap:wrap;gap:10px}
 .sites button{padding:12px 16px;border-radius:14px;border:1.5px solid var(--ligne-forte);background:transparent;font-weight:700;font-size:15px}
-.sites button[aria-pressed="true"]{border-color:var(--violet);background:var(--violet);color:#fff}
+.sites button[aria-pressed="true"]{border-color:var(--violet);background:var(--violet);color:#fff}.sites button[aria-pressed="true"] .structure{color:#fff}
 .toast{position:fixed;right:24px;bottom:24px;z-index:30;max-width:380px;display:flex;gap:14px;align-items:center;padding:18px;border-radius:22px;background:var(--inverse);color:var(--inverse-texte);box-shadow:0 24px 60px -24px rgba(0,0,0,.5);animation:toast .5s cubic-bezier(.2,.7,.2,1) both}
 .toast[hidden]{display:none}
 .vide{padding:18px;border-radius:16px;background:var(--surface);color:var(--doux);font-size:14px;line-height:1.5}
@@ -260,6 +267,16 @@ legend{font-size:18px;font-weight:700;margin-bottom:12px}
 .ch-pastilles span{padding:9px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--ligne-forte);font-weight:600;font-size:14px}
 .ch-points{display:flex;flex-direction:column;gap:10px}
 .ch-point{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:16px;background:var(--surface)}
+.lex-groupe{display:flex;flex-direction:column;gap:12px;scroll-margin-top:90px}
+.lex-groupe[hidden],.lex-liste [hidden],.lex-lettres button[hidden]{display:none}
+.lex-lettre{font-size:30px;color:var(--violet)}[data-theme="sombre"] .lex-lettre{color:var(--lilas)}
+.lex-liste{margin:0;display:flex;flex-direction:column;gap:10px}
+.lex-liste .carte{padding:22px 24px}
+.lex-liste dt{font-size:19px;margin-bottom:6px}
+.lex-liste dd{margin:0}
+.lex-liste dd .ch-texte{margin:0 0 6px;line-height:1.6}
+.lex-lettres button{min-width:44px;justify-content:center}
+.lex-pied .ch-texte{margin:0 0 4px;color:var(--doux);font-size:14px}
 .ch-lexique{margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
 .ch-lexique div{padding:16px 18px;border-radius:16px;background:var(--surface)}
 .ch-lexique dt{font-weight:800;margin-bottom:4px}
@@ -411,13 +428,13 @@ legend{font-size:18px;font-weight:700;margin-bottom:12px}
     <p class="volet-titre">Kerogo Tools Academy</p>
     <button type="button" data-aller="accueil" aria-current="page">Accueil</button>
     <button type="button" data-aller="progression">Ma progression</button>
-    <button type="button" data-aller="catalogue">Catalogue</button>
+    <button type="button" data-aller="catalogue">Catalogue Kerogo Tools</button>
     <button type="button" data-aller="webinaires">Webinaires</button>
     <button type="button" data-aller="classement">Classement</button>
-    <button type="button" data-aller="lexique">Lexique</button>
     <button type="button" data-aller="charte">Charte</button>
     <button type="button" data-aller="equipe" id="nav-equipe" hidden>Mon équipe</button>
     <button type="button" data-aller="admin" id="nav-admin" hidden>Admin</button>
+    <button type="button" data-aller="lexique">Lexique</button>
   </nav>
   <main id="vue"><div class="pile" aria-busy="true" aria-label="Chargement">
     <div class="heros"><div class="heros-texte"><span class="os" style="width:220px;height:34px;border-radius:999px"></span><span class="os" style="width:min(520px,90%);height:150px"></span><span class="os" style="width:min(420px,80%);height:20px"></span><span class="os" style="width:260px;height:56px;border-radius:18px"></span></div>
@@ -428,12 +445,19 @@ legend{font-size:18px;font-weight:700;margin-bottom:12px}
 
 <div class="modale" id="modale-site" hidden>
   <div class="carte entre" role="dialog" aria-modal="true" aria-labelledby="titre-site">
-    <p class="surtitre">Bienvenue</p>
-    <h2 class="titre" id="titre-site" style="font-size:34px">Ton cabinet</h2>
-    <p class="doux" style="line-height:1.55">Choisis ton cabinet et sa ville. Il sert à te montrer d’abord ses outils dans le catalogue, et tes points comptent pour lui dans la ligue de la semaine. Tu pourras changer plus tard dans Mon profil.</p>
-    <p class="doux" id="site-a-preciser" style="line-height:1.55;font-weight:700" hidden>Le site Tunisie est maintenant séparé en trois : Kerogo Tunis, Kerogo Nabeul et Kerogo Bizerte. Choisis le tien.</p>
-    <div class="sites" id="liste-cabinets"></div>
+    <p class="surtitre" id="surtitre-site">Bienvenue</p>
+    <h2 class="titre" id="titre-site" style="font-size:34px">Où travailles-tu ?</h2>
+    <div class="doux site-intro" id="site-intro" style="line-height:1.55"><p>Indique ta structure et ton site. Cela te permet :</p>
+      <ul><li>de voir en premier, dans le catalogue, les outils disponibles pour ta structure ;</li><li>de faire gagner des points à ton site dans le classement de la semaine.</li></ul>
+      <p>En cas d’erreur ou de changement de poste, ton manager ou l’équipe Dev Ops pourra le modifier.</p></div>
+    <p class="doux" id="site-a-preciser" style="line-height:1.55;font-weight:700" hidden>Le site Tunisie est maintenant séparé en trois : Tunis, Nabeul et Bizerte. Choisis le tien.</p>
+    <p class="etape-site" id="etape-structure">1. Ta structure</p>
+    <div class="sites" id="liste-structures"></div>
+    <p class="etape-site" id="etape-site" hidden>2. Ton site</p>
+    <div class="sites" id="liste-cabinets" hidden></div>
+    <p class="doux" id="site-verrou" style="font-size:14px;line-height:1.5"></p>
     <button type="button" class="btn btn-citron" id="valider-site" disabled>Valider</button>
+    <button type="button" class="btn btn-contour" id="annuler-site" hidden>Annuler</button>
   </div>
 </div>
 
@@ -468,7 +492,7 @@ legend{font-size:18px;font-weight:700;margin-bottom:12px}
 window.KTA_PRET = true;
 const QUIZ_CHARTE = [
   { q: 'Quel outil d’IA utiliser en priorité chez Kerogo ?', bonne: 1, choix: ['La version gratuite de ChatGPT', 'Slackbot', 'Celui que je préfère'],
-    explication: 'Slackbot est l’outil prioritaire du groupe. Les versions grand public des autres IA sont interdites, sauf licence professionnelle fournie par le groupe ou ton cabinet.' },
+    explication: 'Slackbot est l’outil prioritaire du groupe. Les versions grand public des autres IA sont interdites, sauf licence professionnelle fournie par le groupe (nombre limité).' },
   { q: 'Peux-tu partager avec ton équipe une compétence que tu as créée ?', bonne: 1, choix: ['Oui, dès qu’elle fonctionne', 'Oui, après le label Kerogo Tools', 'Non, jamais'],
     explication: 'Pour toi, c’est libre. Pour la partager, elle doit d’abord recevoir le label Kerogo Tools.' },
   { q: 'L’IA propose de refuser un client. Qui décide ?', bonne: 1, choix: ['L’IA', 'Un collaborateur'],
@@ -741,8 +765,19 @@ const KTA_FS = (() => {
     const P = PUB.parcours.d;
     if (P.sites.indexOf(site) === -1) throw new Error('Site inconnu.');
     if (cabinet && P.cabinets.indexOf(cabinet) === -1) throw new Error('Cabinet inconnu.');
-    const maj = { site: site, maj: TS() };
-    if (cabinet) maj.cabinet = cabinet;
+    /* Structure et site verrouillés après le premier choix (11 novembre 2026, même règle que firestore.rules et choisirSite du serveur) :
+       le collaborateur ne choisit que si l'un des deux manque, ou si son site n'existe plus (« Tunisie ») ; les corrections passent par
+       son manager ou un administrateur (corrigerSite, Apps Script) */
+    const contact = 'contacte ton manager ou l’équipe Dev Ops.';
+    const dejaSite = P.sites.indexOf(siteActuel(FICHE.site)) !== -1 ? siteActuel(FICHE.site) : '';
+    if (FICHE.cabinet && dejaSite) {
+      if (site === dejaSite && (!cabinet || cabinet === FICHE.cabinet)) return etat();
+      throw new Error('Ta structure et ton site sont déjà enregistrés. Pour les changer, ' + contact);
+    }
+    if (FICHE.cabinet && cabinet && cabinet !== FICHE.cabinet) throw new Error('Ta structure est déjà enregistrée. Pour la changer, ' + contact);
+    const maj = { maj: TS() };
+    if (site !== FICHE.site) maj.site = site;
+    if (cabinet && cabinet !== FICHE.cabinet) maj.cabinet = cabinet;
     await ecrire(() => ref().update(maj));
     FICHE.site = site;
     if (cabinet) FICHE.cabinet = cabinet;
@@ -918,7 +953,8 @@ function chargerDonnees(nom, fn) {
 const donneesVieilles = (nom) => { const c = lireDonnees(nom); return !c || Date.now() - c.t >= FRAICHEUR; };
 const pageAffichee = (nom) => !!document.querySelector('.nav [data-aller="' + nom + '"][aria-current="page"]');
 /* Affiche tout de suite ce qui est connu ; rafraîchit en silence si les données ont plus de 5 minutes */
-async function pageAvecCache(nom, fn, dessiner, valide) {
+async function pageAvecCache(nom, fn, dessiner, valide, page) {
+  const ici = page || nom;
   let connu = lireDonnees(nom);
   if (connu && valide && !valide(connu.d)) connu = null;
   if (connu) { try { dessiner(connu.d); } catch (e) { connu = null; oublierDonnees(nom); } }
@@ -926,8 +962,8 @@ async function pageAvecCache(nom, fn, dessiner, valide) {
   if (connu && Date.now() - connu.t < FRAICHEUR) return;
   try {
     const d = await chargerDonnees(nom, fn);
-    if (pageAffichee(nom) && (!connu || hacher(JSON.stringify(d)) !== hacher(JSON.stringify(connu.d)))) dessiner(d);
-  } catch (e) { if (!connu && pageAffichee(nom)) vue.innerHTML = `<section class="carte panne"><p>${esc(messageErreur(e))}</p></section>`; }
+    if (pageAffichee(ici) && (!connu || hacher(JSON.stringify(d)) !== hacher(JSON.stringify(connu.d)))) dessiner(d);
+  } catch (e) { if (!connu && pageAffichee(ici)) vue.innerHTML = `<section class="carte panne"><p>${esc(messageErreur(e))}</p></section>`; }
 }
 /* Écritures envoyées au serveur : gardées dans le navigateur jusqu'à sa confirmation, envoyées une à une
    (dans l'ordre), avec de nouvelles tentatives espacées en cas de serveur saturé. Rien ne bloque l'affichage. */
@@ -987,6 +1023,7 @@ function precharger() {
   const lancer = () => {
     if (!ETAT) return;
     if (ETAT.manager && donneesVieilles('equipe')) chargerDonnees('equipe', 'getEquipe').catch(() => {});
+    if (ETAT.manager && !statsEquipeConnues()) chargerStatsEquipe();
     if (ETAT.admin && donneesVieilles('admin')) chargerDonnees('admin', 'getAdmin').catch(() => {});
     if (ETAT.admin && !statsConnues()) chargerStats();
     if (ETAT.quiz && donneesVieilles('quiz')) chargerDonnees('quiz', 'getQuizMois').catch(() => {});
@@ -1042,9 +1079,19 @@ const dateCourte = (iso) => iso ? new Date(iso).toLocaleDateString('fr-FR', { da
 const dateOuverture = (jour) => new Date(jour + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }).replace(/^1 /, '1er ');
 const pourcent = (a, b) => (b ? Math.round(100 * a / b) : 0);
 const nomComplet = (p) => ((p.prenom || '') + ' ' + (p.nom || '')).trim();
-/* Site affiché et classé : « Paris · Keobiz » pour un site français, le site seul pour un site offshore (même règle que siteCabinet_ du serveur) */
-const SITES_OFFSHORE = ['Kerogo Tunis', 'Kerogo Nabeul', 'Kerogo Bizerte', 'Keorise', 'Kerogo Madagascar', 'Tunisie', 'Madagascar', 'Île Maurice'];
-const siteCab = (site, cabinet) => (!site ? '' : (SITES_OFFSHORE.indexOf(site) !== -1 || !cabinet ? site : site + ' · ' + cabinet));
+/* « Structure · Site » partout (décision de Katia du 11 novembre 2026) : la structure est Kerogo (le groupe) ou un cabinet.
+   Mêmes noms que CONFIG.NOMS_STRUCTURES et CONFIG.NOMS_SITES du serveur (siteCabinet_) ; les valeurs enregistrées ne changent pas. */
+const SITES_OFFSHORE = ['Kerogo Tunis', 'Kerogo Nabeul', 'Kerogo Bizerte', 'Keorise', 'Kerogo Madagascar'];
+const NOMS_STRUCTURES = { 'Tunisie': 'Kerogo', 'Karlit (Madagascar)': 'Kerogo', 'Keorise (Maurice)': 'Keorise', 'Tamet': 'Cabinet Tamet', 'ECLA · EXA alliance': 'ECLA (EXA alliance)' };
+const NOMS_SITES = { 'Kerogo Tunis': 'Tunis', 'Kerogo Nabeul': 'Nabeul', 'Kerogo Bizerte': 'Bizerte', 'Kerogo Madagascar': 'Madagascar', 'Keorise': 'Île Maurice', 'Saint-Etienne': 'Saint-Étienne' };
+const nomSite = (site) => NOMS_SITES[site] || site || '';
+/* Seulement la structure choisie, jamais déduite du site : une fiche sans structure rouvre « Où travailles-tu ? » */
+const nomStructure = (cabinet) => NOMS_STRUCTURES[cabinet] || cabinet || '';
+const siteCab = (site, cabinet) => { if (!site) return ''; const s = nomStructure(cabinet, site); return s ? s + ' · ' + nomSite(site) : nomSite(site); };
+/* Le même texte, avec le nom de la structure en violet et en gras */
+const lieuHtml = (texte) => { const t = String(texte || ''), i = t.lastIndexOf(' · '); return i === -1 ? esc(t) : '<b class="structure">' + esc(t.slice(0, i)) + '</b> · ' + esc(t.slice(i + 3)); };
+/* Sites qu'une personne peut encore choisir : sa structure est verrouillée après le premier choix */
+const cabinetVerrouille = () => (ETAT.joueur.cabinet && (ETAT.implantations || []).some((x) => x[1] === ETAT.joueur.cabinet) ? ETAT.joueur.cabinet : '');
 const monSite = () => siteCab(ETAT.joueur.site, ETAT.joueur.cabinet);
 
 function statutMission(m) {
@@ -1252,7 +1299,7 @@ function rendreClassement() {
       <section class="carte entre" style="flex:1.6 1 440px;display:flex;flex-direction:column;gap:12px">
         ${lignes.map((x, i) => `<div class="site-ligne ${x.site === monSite() ? 'moi' : ''}">
           <span class="rang" style="${i < 3 && x.xp ? 'background:var(--soleil);color:var(--encre)' : ''}">${i + 1}</span>
-          <span style="flex:0 1 230px;min-width:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(x.site)}">${esc(x.site)}</span>
+          <span style="flex:0 1 230px;min-width:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(x.site)}">${lieuHtml(x.site)}</span>
           <span class="barre"><i style="width:${pourcent(x.xp, max)}%;background:${i < 3 ? 'var(--soleil)' : 'var(--violet)'}"></i></span>
           <span style="flex:0 0 auto;text-align:right;font-weight:800;font-variant-numeric:tabular-nums">${nbr(x.xp)} XP</span></div>`).join('')}
       </section>
@@ -1260,7 +1307,7 @@ function rendreClassement() {
         <section class="carte entre" style="display:flex;flex-direction:column;gap:12px">
           <div class="carte-titre"><h2 class="titre" style="font-size:24px">Kerogoat ${de}${mois}</h2>
             <svg width="36" height="30" viewBox="0 0 40 34" aria-hidden="true"><path d="M4 28L2 8l10 8 8-14 8 14 10-8-2 20z" fill="var(--soleil)"/><rect x="4" y="29" width="32" height="5" rx="2" fill="var(--soleil)"/></svg></div>
-          ${k ? `<p class="titre" style="font-size:38px;line-height:1">${esc(nomComplet(k))}</p><p class="doux" style="font-weight:600">${k.site ? esc(k.site) + ' · ' : ''}${nbr(k.xp)} XP ce mois-ci</p>` : '<p class="vide">Le titre est vacant : valide une mission ce mois-ci pour prendre la tête.</p>'}
+          ${k ? `<p class="titre" style="font-size:38px;line-height:1">${esc(nomComplet(k))}</p><p class="doux" style="font-weight:600">${k.site ? lieuHtml(k.site) + ' · ' : ''}${nbr(k.xp)} XP ce mois-ci</p>` : '<p class="vide">Le titre est vacant : valide une mission ce mois-ci pour prendre la tête.</p>'}
           <p style="font-size:14px;line-height:1.55">La personne qui gagne le plus d’XP dans le mois. Le titre est annoncé dans #kerogo-tools le premier jour ouvré du mois suivant.</p>
         </section>
         <section class="carte entre" style="display:flex;flex-direction:column;gap:10px">
@@ -1283,8 +1330,9 @@ function rendreProfil() {
     <section class="carte entre profil-entete">
       <span class="avatar avatar-grand" aria-hidden="true">${esc((j.prenom || '?').charAt(0).toUpperCase())}</span>
       <div style="flex:1 1 240px;display:flex;flex-direction:column;gap:6px"><p class="surtitre">Mon profil</p><h1 class="titre" style="font-size:40px">${esc(nomComplet(j))}</h1>
-        <p class="doux">${esc(siteCab(j.site, j.cabinet) || j.cabinet || '')}${j.cabinet || j.site ? ' · ' : ''}Niveau ${n.num} · ${esc(n.titre)}</p></div>
-      <div class="boutons"><button type="button" class="btn btn-contour" data-changer-site>Changer de cabinet ou de site</button>
+        <p class="doux">${j.site ? lieuHtml(siteCab(j.site, j.cabinet)) + ' · ' : ''}Niveau ${n.num} · ${esc(n.titre)}</p>
+        <p class="doux" style="font-size:14px">Pour changer de structure ou de site, contacte ton manager ou l’équipe Dev Ops.</p></div>
+      <div class="boutons">
         <div class="theme" role="group" aria-label="Thème" style="display:flex">
           <button type="button" data-theme-choix="sombre" aria-pressed="${j.theme !== 'jour'}" aria-label="Mode sombre">☾</button><button type="button" data-theme-choix="jour" aria-pressed="${j.theme === 'jour'}" aria-label="Mode mi-journée">☀</button></div></div>
     </section>
@@ -1378,6 +1426,7 @@ function dessinerEquipe() {
         <p class="tuile"><strong>${nbr(actifs)}</strong><span class="doux">${accord(actifs, 'actif', 'actifs')} ces 7 derniers jours</span></p>
       </div>
     </section>
+    ${blocProgressionEquipe()}
     <section class="carte" style="display:flex;flex-direction:column;gap:12px">
       <h2 class="titre" style="font-size:24px">À relancer <span class="doux" style="font-size:15px;font-weight:600">${nbr(relances.length)}</span></h2>
       ${relances.length ? `<p class="doux" style="font-size:14px;line-height:1.5">Un petit mot de ta part suffit souvent : la charte est obligatoire, et le niveau 1 prend une vingtaine de minutes.</p>
@@ -1393,7 +1442,7 @@ function dessinerEquipe() {
       <h2 class="titre" style="font-size:24px">Collaborateurs <span class="doux" style="font-size:15px;font-weight:600">${nbr(listes.length)}</span></h2>
       <div class="tableau-defilant"><table class="table-admin"><thead><tr><th>Nom</th><th>Manager</th><th>Site</th><th>Charte</th><th>Avancement</th><th>XP</th><th>Dernière visite</th></tr></thead><tbody id="equipe-lignes">
         ${listes.slice(0, EQUIPE_VUES).map((x) => `<tr><td><strong>${esc(nomComplet(x))}</strong>${x.poste ? `<br><span class="doux" style="font-size:12px">${esc(x.poste)}</span>` : ''}</td><td>${esc(x.manager || '—')}</td>
-          <td>${x.inscrit ? esc(siteCab(x.site, x.cabinet) || '—') : '<span class="pastille-statut">Pas encore inscrit</span>'}</td><td>${x.charte ? dateCourte(x.charte) + (x.charteVersion ? ' <span class="doux">(v' + esc(x.charteVersion) + ')</span>' : '') : '<span class="doux">—</span>'}</td>
+          <td>${x.inscrit ? `${lieuHtml(siteCab(x.site, x.cabinet)) || '<span class="doux">À choisir</span>'}<br><button type="button" class="btn-mini" data-corriger="${esc(x.email)}" aria-label="Modifier la structure et le site de ${esc(nomComplet(x))}">Modifier</button>` : '<span class="pastille-statut">Pas encore inscrit</span>'}</td><td>${x.charte ? dateCourte(x.charte) + (x.charteVersion ? ' <span class="doux">(v' + esc(x.charteVersion) + ')</span>' : '') : '<span class="doux">—</span>'}</td>
           <td>${x.inscrit ? esc(niveauDe(x)) + '<br><span class="doux" style="font-size:12px">' + nbr(x.missions.length) + ' ' + accord(x.missions.length, 'mission', 'missions') + '</span>' : '—'}</td><td>${x.inscrit ? nbr(x.xp) : '—'}</td><td>${x.visite ? dateCourte(x.visite) : '—'}</td></tr>`).join('') || '<tr><td colspan="7" class="doux">Personne dans ce périmètre pour l’instant.</td></tr>'}
       </tbody></table></div>
       ${listes.length > EQUIPE_VUES ? `<button type="button" class="btn btn-contour" id="equipe-suite" style="align-self:center">Afficher les suivants (${nbr(Math.min(50, listes.length - EQUIPE_VUES))} sur ${nbr(listes.length - EQUIPE_VUES)})</button>` : ''}
@@ -1418,6 +1467,66 @@ function dessinerEquipe() {
     if (window.IntersectionObserver) new IntersectionObserver((v, obs) => { if (v[0].isIntersecting) { obs.disconnect(); EQUIPE_VUES += 50; dessinerEquipe(); } }, { rootMargin: '200px' }).observe(suite);
   }
   document.getElementById('telecharger-equipe').onclick = (ev) => telechargerEquipe(listes, ev.currentTarget);
+  brancherProgressionEquipe();
+}
+
+/* Progression de l’équipe sur une période (même filtre que l’Admin) : signatures, missions validées, personnes actives,
+   limitées au périmètre du manager ; calculée par Apps Script depuis le tableur (getStatistiquesEquipe) */
+const PERIODE_EQ = { raccourci: 'lancement', debut: '', fin: '' };
+const SERIES_EQUIPE = [['signatures', 'Signatures de la charte'], ['missions', 'Missions validées'], ['actifs', 'Personnes actives']];
+const clePeriodeEq = () => PERIODE_EQ.raccourci + '|' + PERIODE_EQ.debut + '|' + PERIODE_EQ.fin;
+function statsEquipeConnues() { const D = lireDonnees('stats-equipe'); return D && D.d && D.d.cle === clePeriodeEq() ? D : null; }
+function chargerStatsEquipe() {
+  const cle = clePeriodeEq();
+  if (EN_COURS['stats-equipe|' + cle]) return EN_COURS['stats-equipe|' + cle];
+  return (EN_COURS['stats-equipe|' + cle] = appel('getStatistiquesEquipe', PERIODE_EQ.debut, PERIODE_EQ.fin)
+    .then((s) => { garderDonnees('stats-equipe', { cle: cle, s: s }); if (clePeriodeEq() === cle && EQUIPE && pageAffichee('equipe')) { document.body.classList.add('sans-anim'); dessinerEquipe(); } return s; })
+    .catch((e) => toast('Progression de l’équipe', messageErreur(e)))
+    .finally(() => { delete EN_COURS['stats-equipe|' + cle]; }));
+}
+function blocProgressionEquipe() {
+  const D = statsEquipeConnues();
+  if (!D || Date.now() - D.t >= FRAICHEUR) chargerStatsEquipe();
+  const st = D ? D.d.s : null, t = st ? st.totaux : null;
+  return `<section class="carte" style="display:flex;flex-direction:column;gap:14px" id="progression-equipe">
+      <div style="display:flex;flex-direction:column;gap:4px"><h2 class="titre" style="font-size:24px">Progression ${st ? 'du ' + esc(jourFr(st.debut)) + ' au ' + esc(jourFr(st.fin)) : 'de l’équipe'}</h2>
+        <p class="doux" style="font-size:14px">${st && st.tous ? 'Tous les collaborateurs' : 'Ton périmètre seulement'}. Ce bloc a sa propre période, indépendante des filtres de la liste.</p></div>
+      <div class="cat-filtres"><span class="libelle">Période</span>${RACCOURCIS.map(([k, l]) => `<button type="button" class="pastille-filtre" data-periode-eq="${k}" aria-pressed="${PERIODE_EQ.raccourci === k}">${l}</button>`).join('')}</div>
+      <div class="ligne-form" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end">
+        <label class="champ" style="flex:0 1 180px">Du<input type="date" id="periode-eq-debut" value="${esc(PERIODE_EQ.debut || (st ? st.debut : ''))}"></label>
+        <label class="champ" style="flex:0 1 180px">Au<input type="date" id="periode-eq-fin" value="${esc(PERIODE_EQ.fin || (st ? st.fin : ''))}"></label>
+        <button type="button" class="btn btn-contour" id="periode-eq-appliquer" style="min-height:46px">Appliquer</button></div>
+      ${st ? `<div class="tuiles">
+        <p class="tuile"><strong>${nbr(t.signatures)}</strong><span class="doux">${accord(t.signatures, 'signature', 'signatures')} de la charte</span></p>
+        <p class="tuile"><strong>${nbr(t.missions)}</strong><span class="doux">${accord(t.missions, 'mission validée', 'missions validées')}</span></p>
+        <p class="tuile"><strong>${nbr(t.actifs)}</strong><span class="doux">${accord(t.actifs, 'personne active', 'personnes actives')}</span></p>
+      </div>
+      <div class="graphique"><h3>Dans le temps (${st.pas === 'jour' ? 'par jour' : st.pas === 'semaine' ? 'par semaine' : 'par mois'})</h3><div class="toile"><canvas id="g-equipe" role="img" aria-label="Signatures de la charte, missions validées et personnes actives de l’équipe dans le temps"></canvas></div></div>`
+      : '<span class="os" style="width:100%;height:260px" aria-busy="true"></span>'}
+    </section>`;
+}
+function brancherProgressionEquipe() {
+  const redessiner = () => { document.body.classList.add('sans-anim'); dessinerEquipe(); };
+  document.querySelectorAll('[data-periode-eq]').forEach((b) => { b.onclick = () => { choisirRaccourci(b.dataset.periodeEq, PERIODE_EQ); redessiner(); }; });
+  const ap = document.getElementById('periode-eq-appliquer');
+  if (ap) ap.onclick = () => {
+    const d = document.getElementById('periode-eq-debut').value, f = document.getElementById('periode-eq-fin').value;
+    if (!d || !f) { toast('Période', 'Choisis une date de début et une date de fin.'); return; }
+    Object.assign(PERIODE_EQ, { raccourci: 'perso', debut: d <= f ? d : f, fin: d <= f ? f : d });
+    redessiner();
+  };
+  dessinerCourbeEquipe();
+}
+async function dessinerCourbeEquipe() {
+  const D = statsEquipeConnues();
+  if (!D || !document.getElementById('g-equipe')) return;
+  let Chart;
+  try { Chart = await chargerChartJs(); } catch (e) { toast('Graphiques', 'Le module de graphiques n’a pas pu se charger. Vérifie ta connexion.'); return; }
+  const c = document.getElementById('g-equipe');
+  if (!c) return;
+  const css = getComputedStyle(document.body), texte = css.getPropertyValue('--doux').trim() || '#55537A', grille = css.getPropertyValue('--ligne').trim() || 'rgba(0,0,0,.08)';
+  if (GRAPHES['g-equipe']) GRAPHES['g-equipe'].destroy();
+  GRAPHES['g-equipe'] = new Chart(c, configStats(D.d.s, 'temps', [COULEURS_ECRAN[3], COULEURS_ECRAN[2], COULEURS_ECRAN[1]], texte, grille, SERIES_EQUIPE));
 }
 
 /* Liste du périmètre filtré, en PDF : A4 paysage, en-tête Kerogo, en-tête du tableau répété, « Page x / y » */
@@ -1443,8 +1552,8 @@ async function telechargerEquipe(liste, bouton) {
     };
     doc.autoTable({
       startY: 29, margin: { top: 29, left: 14, right: 14, bottom: 16 },
-      head: [['Prénom et nom', 'Cabinet', 'Site', 'Poste', 'Charte lue le', 'Missions validées', 'Dernière mission validée', 'XP', 'Dernière visite']],
-      body: liste.map((x) => [propre(nomComplet(x)), propre(x.cabinet), propre(x.inscrit ? siteCab(x.site, x.cabinet) : 'Pas encore inscrit'), propre(x.poste),
+      head: [['Prénom et nom', 'Structure', 'Site', 'Poste', 'Charte lue le', 'Missions validées', 'Dernière mission validée', 'XP', 'Dernière visite']],
+      body: liste.map((x) => [propre(nomComplet(x)), propre(nomStructure(x.cabinet, x.site)), propre(x.inscrit ? nomSite(x.site) : 'Pas encore inscrit'), propre(x.poste),
         x.charte ? dateCourte(x.charte) + (x.charteVersion ? ' (v' + x.charteVersion + ')' : '') : '', x.inscrit ? String(x.missions.length) : '',
         propre(x.inscrit ? derniere(x) : ''), x.inscrit ? nbr(x.xp).replace(/\s/g, ' ') : '', x.visite ? dateCourte(x.visite) : '']),
       showHead: 'everyPage', theme: 'grid',
@@ -1946,7 +2055,7 @@ function rendreMissionOutils() {
         <div class="ch-outils">${CHARTE_OUTILS.map((o) => `<article class="ch-outil ${o[3] ? 'ch-prioritaire' : ''}">${o[3] ? '<span class="ch-etiquette">Prioritaire</span>' : ''}
           <p class="titre" style="font-size:20px">${o[0]}</p><p class="doux" style="line-height:1.5">${o[1]}</p><p class="ch-regle">${o[2]}</p></article>`).join('')}</div>
         <p class="ch-alerte" style="line-height:1.55;background:var(--surface)"><span class="ch-marque" style="background:var(--citron)">i</span><span>Tu utilises déjà Claude ? Slackbot fonctionne avec les mêmes modèles, et connaît en plus tes conversations, tes canaux et les compétences Kerogo Tools : commence par lui.</span></p>
-        <p class="ch-alerte ch-alerte-rouge" style="line-height:1.55"><span class="ch-marque" style="background:var(--corail)">✕</span><span><strong>Tout le reste est interdit au travail</strong> : versions grand public, gratuites ou payantes, de ChatGPT, Claude, Mistral ou Gemini (hors licences professionnelles du groupe ou de ton cabinet), comptes personnels et extensions de navigateur non validées.</span></p>
+        <p class="ch-alerte ch-alerte-rouge" style="line-height:1.55"><span class="ch-marque" style="background:var(--corail)">✕</span><span><strong>Tout le reste est interdit au travail</strong> : versions grand public, gratuites ou payantes, de ChatGPT, Claude, Mistral ou Gemini (hors licences professionnelles fournies par le groupe, en nombre limité), comptes personnels et extensions de navigateur non validées.</span></p>
       </section>
       <section class="carte" style="display:flex;flex-direction:column;gap:22px">
         <p class="surtitre">Exercice</p>
@@ -2538,7 +2647,7 @@ function dessinerCatalogue(garderFocus) {
       <div style="display:flex;flex-direction:column;gap:6px"><p class="surtitre">Les outils du groupe</p><h1 class="titre" style="font-size:40px">Catalogue Kerogo Tools</h1>
         <p class="doux" style="line-height:1.6;max-width:720px">Les compétences et les automatisations en service, en pilote ou bientôt disponibles. Chaque fiche explique à quoi sert l’outil et comment le lancer.</p></div>
       <label class="champ">Rechercher<input type="search" id="cat-recherche" value="${esc(CAT.recherche)}" placeholder="Un outil, une tâche, un mot…" autocomplete="off"></label>
-      ${cab ? `<label class="interrupteur"><input type="checkbox" id="cat-cabinet" ${CAT.monCabinet ? 'checked' : ''}>Mon cabinet seulement (${esc(cab)})</label>` : ''}
+      ${cab ? `<label class="interrupteur"><input type="checkbox" id="cat-cabinet" ${CAT.monCabinet ? 'checked' : ''}>Ma structure seulement (${esc(nomStructure(cab, ETAT.joueur.site))})</label>` : ''}
       ${pastilles('service', 'Service', valeurs('service'))}
       ${pastilles('type', 'Type', valeurs('type'))}
       ${pastilles('statut', 'Statut', ['En service', 'Pilote', 'Bientôt'].filter((x) => C.outils.some((o) => o.statut === x)))}
@@ -2555,7 +2664,7 @@ function dessinerCatalogue(garderFocus) {
           : (/^https?:/.test(o.lien || '') ? `<a class="btn btn-citron" href="${esc(o.lien)}" target="_blank" rel="noopener">Utiliser</a>`
           : `<a class="btn btn-contour" href="${esc(o.slack)}" target="_blank" rel="noopener">Voir dans Slack</a>`)}
       </div>
-      ${/^https?:/.test(o.fiche || '') ? `<a class="cat-fiche" href="${esc(o.fiche)}" target="_blank" rel="noopener">Fiche de l’outil (guide)</a>` : ''}</article>`).join('') || `<section class="carte"><p class="doux">Aucun outil ne correspond${CAT.monCabinet && cab ? ' pour ton cabinet. Désactive « Mon cabinet seulement » pour tout voir.' : '.'}</p></section>`}</div>
+      ${/^https?:/.test(o.fiche || '') ? `<a class="cat-fiche" href="${esc(o.fiche)}" target="_blank" rel="noopener">Fiche de l’outil (guide)</a>` : ''}</article>`).join('') || `<section class="carte"><p class="doux">Aucun outil ne correspond${CAT.monCabinet && cab ? ' pour ta structure. Désactive « Ma structure seulement » pour tout voir.' : '.'}</p></section>`}</div>
   </div>`;
   const r = document.getElementById('cat-recherche');
   r.oninput = () => { document.body.classList.add('sans-anim'); CAT.recherche = r.value; const pos = r.selectionStart; dessinerCatalogue(); const n = document.getElementById('cat-recherche'); n.focus(); n.setSelectionRange(pos, pos); };
@@ -2762,42 +2871,56 @@ const CHARTE_OUTILS = [
   ['Dust', 'La plateforme d’IA sécurisée du groupe : agents spécialisés et grands modèles (GPT, Claude, Mistral) dans un cadre protégé', 'Avec ton compte Kerogo', false],
   ['IA de Pennylane', 'Aider à la comptabilité dans Pennylane : saisie, rapprochement bancaire, repérage d’erreurs', 'Autorisée dans Pennylane', false],
   ['Gemini', 'Aider à écrire dans Gmail, Docs et Meet', 'Seulement avec ton compte Kerogo', false],
-  ['Claude', 'Rédiger, analyser ou synthétiser des documents', 'Seulement avec la licence professionnelle de ton cabinet', false]
+  ['Claude', 'Rédiger, analyser ou synthétiser des documents', 'Seulement avec une licence professionnelle fournie par le groupe (nombre limité)', false]
 ];
-const CHARTE_LEXIQUE = [
-  ['IA (intelligence artificielle)', 'Un programme qui comprend tes questions écrites et rédige des réponses'],
-  ['Slackbot', 'L’assistant intégré à Slack, à qui l’on pose des questions comme à un collègue. C’est l’outil d’IA prioritaire du groupe'],
-  ['Dust', 'La plateforme d’IA sécurisée du groupe, pour les usages avancés : agents spécialisés et grands modèles, avec des données hébergées en Europe'],
-  ['Claude', 'Le modèle d’IA d’Anthropic, sur lequel fonctionne Slackbot. Au travail, seulement avec la licence professionnelle du groupe ou de ton cabinet : la version grand public est interdite'],
-  ['Compétence', 'Une consigne enregistrée dans Slackbot pour refaire une même tâche en un clic'],
-  ['Label Kerogo Tools', 'La validation de l’équipe Dev Ops : l’outil a été vérifié et peut être utilisé par tous'],
-  ['Prompt (consigne)', 'Le message que tu écris à l’IA pour lui dire ce que tu veux'],
-  ['Anonymiser', 'Retirer d’un texte tout ce qui permet de reconnaître une personne ou une entreprise'],
-  ['Hallucination', 'Quand l’IA invente une réponse comme si elle était vraie'],
-  ['Biais', 'Une tendance de l’IA à pencher dans un sens, par exemple à confirmer ce que tu suggères'],
-  ['Données sensibles', 'Les informations qui peuvent nuire à une personne si elles circulent : santé, salaire, coordonnées bancaires…'],
-  ['RGPD', 'La loi européenne qui protège les informations personnelles'],
-  ['Loi européenne sur l’IA (« IA Act »)', 'La loi européenne qui encadre l’usage de l’IA selon son niveau de risque'],
-  ['MCP', 'Un connecteur qui relie Slackbot à un logiciel (Salesforce, Pennylane…) pour qu’il puisse y chercher des informations en toute sécurité']
-];
+/* Lexique : l’annexe de la charte (Google Doc), relue comme la charte : lettres (titre 3), mots (titre 4) puis leur définition */
+function lexiqueCharte(C) {
+  const res = { intro: [], lettres: [], pied: [] };
+  let lettre = null, mot = null, pied = false;
+  ((C && C.annexe && C.annexe.blocs) || []).forEach((b) => {
+    if (pied || (b.k === 'p' && /^Document vivant/i.test(texteBrut(b)))) { pied = true; res.pied.push(b); return; }
+    if (b.k === 'h' && b.n === 3) { lettre = { lettre: texteBrut(b).trim(), mots: [] }; res.lettres.push(lettre); mot = null; return; }
+    if (b.k === 'h') {
+      if (!lettre) { lettre = { lettre: '', mots: [] }; res.lettres.push(lettre); }
+      mot = { titre: b.r, blocs: [] }; lettre.mots.push(mot); return;
+    }
+    if (mot) mot.blocs.push(b); else res.intro.push(b);
+  });
+  res.lettres = res.lettres.filter((l) => l.mots.length);
+  return res;
+}
 function rendreLexique() {
   arreterMinuteur();
   navActive('lexique');
+  pageAvecCache('charte', 'getCharte', (C) => { CHARTE_OFF = C; dessinerLexique(C); }, (C) => !!(C && C.version && Array.isArray(C.sections)), 'lexique');
+}
+function dessinerLexique(C) {
+  const L = lexiqueCharte(C), n = L.lettres.reduce((a, l) => a + l.mots.length, 0);
   vue.innerHTML = `<div class="pile" style="max-width:1040px;margin:0 auto">
     <section class="carte entre ch-entete">
-      <p class="surtitre">Les mots de l’IA, sans jargon</p>
+      <p class="surtitre">Annexe de la charte · version ${esc(C.version)}</p>
       <h1 class="grand" style="font-size:64px">Lexique</h1>
-      <p class="chapo" style="max-width:640px">Les mots qu’on croise dans l’Académie, la charte et #kerogo-tools, expliqués en une phrase.</p>
+      <p class="chapo" style="max-width:640px">Les ${nbr(n)} mots de la charte d’utilisation de l’IA, avec leur définition officielle.</p>
       <label class="champ" style="max-width:460px">Chercher un mot<input type="search" id="filtre-lexique" placeholder="Ex. hallucination"></label>
+      ${L.lettres.length > 1 ? `<nav class="ch-sommaire lex-lettres" aria-label="Lettres du lexique">${L.lettres.map((l, i) => `<button type="button" data-ancre="lex-${i}">${esc(l.lettre)}</button>`).join('')}</nav>` : ''}
     </section>
-    <dl class="ch-lexique" id="liste-lexique">${CHARTE_LEXIQUE.map((l) => `<div class="carte" data-mot="${esc((l[0] + ' ' + l[1]).toLowerCase())}" style="padding:24px"><dt class="titre" style="font-size:20px;margin-bottom:8px">${l[0]}</dt><dd>${l[1]}</dd></div>`).join('')}</dl>
+    ${L.lettres.map((l, i) => `<section class="lex-groupe" id="lex-${i}" data-groupe>
+      ${l.lettre ? `<h2 class="titre lex-lettre">${esc(l.lettre)}</h2>` : ''}
+      <dl class="lex-liste">${l.mots.map((m) => `<div class="carte" data-mot="${esc(sansAccents(texteBrut({ r: m.titre }) + ' ' + m.blocs.map(texteBrut).join(' ')))}"><dt class="titre">${morceauxCharte(m.titre)}</dt><dd>${blocsCharte(m.blocs)}</dd></div>`).join('')}</dl>
+    </section>`).join('') || '<section class="carte"><p class="doux">Le lexique de la charte n’est pas disponible pour l’instant. Réessaie dans quelques minutes.</p></section>'}
     <p class="vide" id="lexique-vide" hidden>Aucun mot ne correspond. Une question ? Pose-la dans #kerogo-tools.</p>
+    ${L.pied.length ? `<section class="carte lex-pied">${blocsCharte(L.pied)}</section>` : ''}
   </div>`;
   const champ = document.getElementById('filtre-lexique');
   champ.oninput = () => {
-    const q = champ.value.trim().toLowerCase();
+    const q = sansAccents(champ.value).trim();
     let visibles = 0;
-    document.querySelectorAll('#liste-lexique [data-mot]').forEach((d) => { const ok = !q || d.dataset.mot.indexOf(q) !== -1; d.hidden = !ok; if (ok) visibles++; });
+    document.querySelectorAll('[data-groupe]').forEach((g) => {
+      let ici = 0;
+      g.querySelectorAll('[data-mot]').forEach((d) => { const ok = !q || d.dataset.mot.indexOf(q) !== -1; d.hidden = !ok; if (ok) ici++; });
+      g.hidden = !ici; visibles += ici;
+      const b = document.querySelector('.lex-lettres [data-ancre="' + g.id + '"]'); if (b) b.hidden = !ici;
+    });
     document.getElementById('lexique-vide').hidden = visibles > 0;
   };
   window.scrollTo(0, 0);
@@ -2809,7 +2932,28 @@ let CHARTE_OFF = null, LECTURE = null;
 const PASTILLES = { '🟢': ['vert', 'vert'], '🟡': ['jaune', 'jaune'], '🟠': ['orange', 'orange'], '🔴': ['rouge', 'rouge'] };
 const versionEnVigueur = () => (ETAT.charteEnVigueur && ETAT.charteEnVigueur.version) || (CHARTE_OFF && CHARTE_OFF.version) || '';
 const charteSignee = () => !!ETAT.joueur.charte && (!versionEnVigueur() || ETAT.joueur.charteVersion === versionEnVigueur());
-const minutesCharte = () => { const m = (ETAT.charteEnVigueur && ETAT.charteEnVigueur.mots) || 0; return m ? Math.max(5, Math.round(m / 230)) : 15; };
+/* Durée de lecture : une seule règle, la même que le serveur (secondesSection_) : chaque section compte ses mots à 230 par minute,
+   au moins 10 secondes ; la durée annoncée est le total arrondi à la minute supérieure, comme le temps restant au début de la lecture */
+const MOTS_PAR_MINUTE = 230;
+const secondesSection = (mots) => Math.max(10, Math.round((mots || 0) / MOTS_PAR_MINUTE * 60));
+const minutesCharte = () => {
+  const C = CHARTE_OFF && Array.isArray(CHARTE_OFF.sections) && CHARTE_OFF.sections.length ? CHARTE_OFF : null, v = ETAT.charteEnVigueur || {};
+  const sec = C ? C.sections.reduce((a, x) => a + secondesSection(x.mots), 0) : (v.secondes || 0);
+  return sec ? Math.ceil(sec / 60) : v.mots ? Math.ceil(v.mots / MOTS_PAR_MINUTE) : 15;
+};
+/* Titres de la charte en minuscules, sauf les sigles et les noms propres (« Gouvernance de l’IA chez Kerogo ») */
+const SIGLES_CHARTE = ['IA', 'RGPD', 'DPO', 'DPA', 'DPIA', 'UE', 'API', 'RPA', 'TLS', 'GPAI', 'LCB', 'FT', 'CNIL', 'OEC', 'DGFIP', 'URSSAF', 'AES', 'AI'];
+const NOMS_CHARTE = { KEROGO: 'Kerogo', FINANCE: 'Finance', SLACK: 'Slack', DUST: 'Dust', JURIA: 'JurIA', CLAUDE: 'Claude', GOOGLE: 'Google', GEMINI: 'Gemini', MICROSOFT: 'Microsoft', COPILOT: 'Copilot', MISTRAL: 'Mistral', KEOBIZ: 'Keobiz', SALESFORCE: 'Salesforce', EUROPE: 'Europe', CHATGPT: 'ChatGPT', OPENAI: 'OpenAI' };
+const titreCharte = (t) => {
+  let premier = true;
+  return String(t || '').replace(/[A-Za-zÀ-ÖØ-öø-ÿ]+/g, (m) => {
+    const u = m.toUpperCase(), r = SIGLES_CHARTE.indexOf(u) !== -1 ? u : NOMS_CHARTE[u] || (premier ? m.charAt(0).toUpperCase() + m.slice(1).toLowerCase() : m.toLowerCase());
+    premier = false;
+    return r;
+  });
+};
+/* Les quatre engagements de l’article 9.1 (version 1.1 de la charte), repris dans l’attestation d’acceptation */
+const ENGAGEMENTS_9_1 = ['as pris connaissance de l’intégralité de la charte ;', 'comprends les règles et obligations qui s’appliquent à toi ;', 't’engages à les respecter strictement ;', 'acceptes les sanctions en cas de manquement.'];
 const enVigueurDepuis = (C) => 'Version ' + esc(C.version) + (C.enVigueur ? ' · en vigueur depuis ' + esc(C.enVigueur.charAt(0).toLowerCase() + C.enVigueur.slice(1)) : '');
 const avecPastilles = (h) => h.replace(/🟢|🟡|🟠|🔴/g, (e) => `<span class="pastille-niveau ${PASTILLES[e][0]}" role="img" aria-label="${PASTILLES[e][1]}"></span>`);
 const texteBrut = (b) => (b.r || []).map((x) => x[0]).join('');
@@ -2866,19 +3010,21 @@ function dessinerCharte(C, lecture) {
       <p class="ch-version">${enVigueurDepuis(C)}</p>
       ${lecture ? `<p class="chapo" style="max-width:760px">Environ ${minutesCharte()} minutes, une seule fois, en plusieurs fois si besoin : ta lecture est gardée. Chaque section se coche quand tu as pris le temps de la lire.</p>` : ''}
       ${blocsCharte(C.preambule || [])}
-      <nav class="ch-sommaire" aria-label="Sommaire de la charte">${C.sections.map((x) => `<button type="button" data-ancre="ch-s${x.num}" data-sommaire="${x.num}">${x.num}. ${esc(x.titre.charAt(0) + x.titre.slice(1).toLowerCase())}</button>`).join('')}
+      <nav class="ch-sommaire" aria-label="Sommaire de la charte">${C.sections.map((x) => `<button type="button" data-ancre="ch-s${x.num}" data-sommaire="${x.num}">${x.num}. ${esc(titreCharte(x.titre))}</button>`).join('')}
         ${C.annexe ? '<button type="button" data-ancre="ch-annexe">Lexique</button>' : ''}</nav>
     </section>
     ${lecture && !signee ? `<div class="lecture-barre" id="lecture-barre"><strong id="lecture-texte">Lecture : 0 %</strong><span class="barre" style="height:10px;border-radius:5px;background:var(--piste);overflow:hidden"><i id="lecture-jauge" style="display:block;height:10px;width:0;background:var(--citron);animation:none"></i></span></div>` : ''}
     <div class="carte ch-corps">
       ${C.sections.map((x) => `<section id="ch-s${x.num}" class="ch-section" data-section="${x.num}"><p class="surtitre">Section ${x.num}</p>
-        <h2 class="titre ch-h2">${esc(x.titre.charAt(0) + x.titre.slice(1).toLowerCase())}</h2>${blocsCharte(x.blocs)}</section>`).join('')}
+        <h2 class="titre ch-h2">${esc(titreCharte(x.titre))}</h2>${blocsCharte(x.blocs)}</section>`).join('')}
       ${C.annexe ? `<section id="ch-annexe" class="ch-section"><p class="surtitre">Annexe · à consulter</p><h2 class="titre ch-h2">Lexique</h2>${blocsCharte(C.annexe.blocs)}</section>` : ''}
     </div>
     ${signee ? `<section class="carte"><p style="font-weight:700">Tu as signé la version ${esc(ETAT.joueur.charteVersion || C.version)}${ETAT.joueur.charteLe ? ' le ' + dateCourte(ETAT.joueur.charteLe) : ''} ✓</p></section>`
       : lecture ? `<section class="carte" style="display:flex;flex-direction:column;gap:16px">
-        <label class="engagement" id="engagement"><input type="checkbox" id="charte-signe" disabled><strong>J’ai lu la charte et je m’engage à la respecter</strong></label>
-        <p class="doux" id="engagement-aide" style="font-size:14px">La case se débloque quand les sections 1 à ${C.sections.length} sont lues. Le lexique n’est pas obligatoire.</p>
+        <div id="engagements-9-1" style="display:flex;flex-direction:column;gap:10px"><p style="font-weight:700">En signant, tu attestes que tu :</p>
+          <ul class="ch-liste">${ENGAGEMENTS_9_1.map((e) => `<li>${esc(e)}</li>`).join('')}</ul><p class="doux" style="font-size:13px">Article 9.1 de la charte · ces engagements figurent aussi sur ton attestation d’acceptation.</p></div>
+        <label class="engagement" id="engagement"><input type="checkbox" id="charte-signe" disabled><strong>J’ai lu la charte et je prends ces quatre engagements</strong></label>
+        <p class="doux" id="engagement-aide" style="font-size:14px">La case et le bouton se débloquent quand la lecture atteint 100 % : chaque section compte quand elle est restée affichée le temps de sa lecture. Le lexique n’est pas obligatoire.</p>
         <button type="button" class="btn btn-citron" id="signer-charte" disabled style="align-self:flex-start">Signer la charte</button></section>`
       : `<section class="carte etape0"><p style="font-weight:700">${ETAT.joueur.charte ? 'La charte a changé (version ' + esc(ETAT.charteEnVigueur ? ETAT.charteEnVigueur.version : '') + ') : relis-la et signe la nouvelle version, comme le prévoit son article 8.3.' : 'Prêt à la signer ? C’est l’étape 0, environ ' + minutesCharte() + ' minutes.'}</p><button type="button" class="btn btn-citron" data-aller="etape0">Commencer l’étape 0</button></section>`}
   </div>`;
@@ -2887,13 +3033,12 @@ function dessinerCharte(C, lecture) {
 
 /* Lecture vérifiée : le temps d'une section ne compte que si elle est à l'écran (40 % d'elle, ou 60 % de la hauteur
    de l'écran), que l'onglet est actif et que la personne a bougé dans les 45 dernières secondes. */
-const MOTS_PAR_MINUTE = 230;
 function demarrerLecture(C) {
   arreterLecture();
   const cle = 'kta-lecture-' + (utilisateurConnu() || 'inconnu') + '-' + C.version;
   const etat = Object.assign({ lus: {}, secondes: 0 }, relire(cle) || {});
   const minimum = {};
-  C.sections.forEach((x) => { minimum[x.num] = Math.max(10, Math.round(x.mots / MOTS_PAR_MINUTE * 60)); });
+  C.sections.forEach((x) => { minimum[x.num] = secondesSection(x.mots); });
   let actif = Date.now();
   const bouger = () => { actif = Date.now(); };
   const evenements = ['scroll', 'mousemove', 'keydown', 'touchstart', 'wheel', 'pointerdown'];
@@ -2917,8 +3062,9 @@ function demarrerLecture(C) {
   LECTURE = { C, cle, etat, minimum, arreter: () => { clearInterval(tic); obs.disconnect(); evenements.forEach((e) => window.removeEventListener(e, bouger)); } };
   majLecture();
   const caseSigne = document.getElementById('charte-signe'), bouton = document.getElementById('signer-charte');
-  caseSigne.onchange = () => { bouton.disabled = !caseSigne.checked; };
-  bouton.onclick = () => signerCharte(C);
+  /* « Signer » reste verrouillé tant que la lecture n’atteint pas 100 % : défiler jusqu’en bas ne suffit pas */
+  caseSigne.onchange = () => { bouton.disabled = !(caseSigne.checked && etatLecture().pct === 100); };
+  bouton.onclick = () => { if (LECTURE && etatLecture().pct === 100 && caseSigne.checked) signerCharte(C); };
 }
 function arreterLecture() { if (LECTURE) { LECTURE.arreter(); LECTURE = null; } }
 function etatLecture() {
@@ -2935,8 +3081,11 @@ function majLecture() {
   document.querySelectorAll('[data-sommaire]').forEach((b) => b.classList.toggle('lu', e.lues.indexOf(b.dataset.sommaire) !== -1));
   const c = document.getElementById('charte-signe');
   if (c) {
-    const tout = e.lues.length === e.toutes;
+    const tout = e.lues.length === e.toutes && e.pct === 100;
     c.disabled = !tout;
+    if (!tout) c.checked = false;
+    const b = document.getElementById('signer-charte');
+    if (b) b.disabled = !(tout && c.checked);
     const aide = document.getElementById('engagement-aide');
     if (aide && tout) aide.textContent = 'Toutes les sections sont lues. Tu peux signer.';
   }
@@ -2951,16 +3100,26 @@ function signerCharte(C) {
   if (!aDoc('accuse', C.version)) ETAT.documents.push({ type: 'accuse', version: C.version, date: maintenant, pret: false });
   if (n1.complet && !aDoc('certification')) ETAT.documents.push({ type: 'certification', version: C.version, date: maintenant, pret: false });
   if (premiere && n1.complet) { ETAT.joueur.xp += 100; toast('Badge ' + n1.badge + ' obtenu !', '+100 XP : ta charte est signée et ton niveau 1 terminé.'); }
-  else toast('Charte signée', 'Merci ! Version ' + C.version + '.');
   majEntete();
   arreterLecture();
-  dessinerCharte(C, true);
+  dessinerSignatureFaite(C);
   window.scrollTo(0, 0);
   ecrireServeur('signerCharte', [C.version], nouvelleCle('charte'), (frais) => { if (frais && frais.joueur) { ETAT = frais; majEntete(); } }, (e) => {
     ETAT = avant; majEntete();
     toast('Signature non enregistrée', messageErreur(e));
     if (pageAffichee('charte')) rendreCharteComplete(true);
   });
+}
+/* Après la signature : confirmation, puis l’accueil ou la mission 1.1 */
+function dessinerSignatureFaite(C) {
+  const m11 = toutesMissions().find((m) => m.id === '1.1');
+  vue.innerHTML = `<div class="pile" style="max-width:760px;margin:0 auto"><section class="carte entre" id="signature-faite" style="display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+    <p class="surtitre">Étape 0 · terminée</p>
+    <h1 class="titre" style="font-size:clamp(32px,6vw,44px)">Charte signée ✓</h1>
+    <p style="line-height:1.6">Ton attestation est disponible dans Mon profil. Tu as signé la version ${esc(C.version)} de la charte.</p>
+    <div class="boutons"><button type="button" class="btn btn-citron" data-mission="1.1">${m11 && m11.reussie ? 'Refaire la mission 1.1' : 'Commencer la mission 1.1'}</button>
+      <button type="button" class="btn btn-contour" data-aller="accueil">Retour à l’accueil</button></div>
+    <button type="button" class="lien-discret" data-aller="profil">Voir mon attestation dans Mon profil</button></section></div>`;
 }
 /* Carte de l'accueil : étape 0, tant que la charte en vigueur n'est pas signée */
 function carteEtape0() {
@@ -3069,11 +3228,12 @@ function adminVue(A) {
 
 /* ---------- Statistiques sur une période : calculées par Apps Script depuis le tableur (jamais dans Firestore) ---------- */
 const PERIODE = { raccourci: 'lancement', debut: '', fin: '' };
+window.PERIODE_ADMIN = PERIODE;
 const RACCOURCIS = [['7', '7 jours'], ['30', '30 jours'], ['mois', 'Mois en cours'], ['lancement', 'Depuis le lancement']];
 const jourLocal = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 const jourFr = (j) => j ? new Date(j + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
-function choisirRaccourci(r) {
-  const auj = new Date(), f = jourLocal(auj), moins = (n) => jourLocal(new Date(auj.getTime() - n * 86400000));
+function choisirRaccourci(r, P) {
+  const PERIODE = P || window.PERIODE_ADMIN, auj = new Date(), f = jourLocal(auj), moins = (n) => jourLocal(new Date(auj.getTime() - n * 86400000));
   PERIODE.raccourci = r;
   if (r === '7') Object.assign(PERIODE, { debut: moins(6), fin: f });
   else if (r === '30') Object.assign(PERIODE, { debut: moins(29), fin: f });
@@ -3118,11 +3278,11 @@ function blocStatistiques(c) {
     </section>
     <div class="graphiques graphiques-larges">
       <div class="graphique"><h3>Dans le temps (${st.pas === 'jour' ? 'par jour' : st.pas === 'semaine' ? 'par semaine' : 'par mois'})</h3><div class="toile"><canvas id="g-temps" aria-label="Inscriptions, personnes actives, missions validées et signatures dans le temps" role="img"></canvas></div></div>
-      <div class="graphique"><h3>Par cabinet</h3><div class="toile" style="height:${Math.max(220, 34 * st.parCabinet.length + 70)}px"><canvas id="g-cabinets" role="img" aria-label="Statistiques par cabinet"></canvas></div></div>
+      <div class="graphique"><h3>Par structure</h3><div class="toile" style="height:${Math.max(220, 34 * st.parCabinet.length + 70)}px"><canvas id="g-cabinets" role="img" aria-label="Statistiques par structure"></canvas></div></div>
       <div class="graphique"><h3>Par site</h3><div class="toile" style="height:${Math.max(220, 30 * st.parSite.length + 70)}px"><canvas id="g-sites" role="img" aria-label="Statistiques par site"></canvas></div></div>
     </div>
     <section class="carte" style="display:flex;flex-direction:column;gap:14px">
-      <h2 class="sous-titre-admin">Par cabinet</h2>${tableauStats(st.parCabinet, 'Cabinet')}
+      <h2 class="sous-titre-admin">Par structure</h2>${tableauStats(st.parCabinet, 'Structure')}
       <h2 class="sous-titre-admin">Par site</h2>${tableauStats(st.parSite, 'Site')}
     </section>
     <section class="carte" style="display:flex;flex-direction:column;gap:16px">
@@ -3151,11 +3311,11 @@ const SERIES_STATS = [['inscriptions', 'Nouvelles inscriptions'], ['actifs', 'Pe
 const COULEURS_ECRAN = ['#A793F6', '#BBE756', '#37CEEF', '#EFBC36'];
 const COULEURS_KEROGO = ['#2A286B', '#433FC1', '#9594B5', '#F6C832'];   /* jaune : une seule courbe fine, jamais en aplat */
 const GRAPHES = {};
-function configStats(st, quoi, couleurs, texte, grille) {
+function configStats(st, quoi, couleurs, texte, grille, series) {
   const base = { responsive: true, maintainAspectRatio: false, animation: false,
     plugins: { legend: { position: 'bottom', labels: { color: texte, boxWidth: 12, font: { family: 'Inter, Arial, sans-serif', size: 12 } } } },
     scales: { x: { ticks: { color: texte, font: { family: 'Inter, Arial, sans-serif' } }, grid: { color: grille } }, y: { beginAtZero: true, ticks: { color: texte, precision: 0, font: { family: 'Inter, Arial, sans-serif' } }, grid: { color: grille } } } };
-  if (quoi === 'temps') return { type: 'line', options: base, data: { labels: st.courbes.labels, datasets: SERIES_STATS.map(([k, l], i) => ({ label: l, data: st.courbes[k], borderColor: couleurs[i], backgroundColor: couleurs[i], tension: 0.25, pointRadius: st.courbes.labels.length > 40 ? 0 : 3, borderWidth: 2.5 })) } };
+  if (quoi === 'temps') return { type: 'line', options: base, data: { labels: st.courbes.labels, datasets: (series || SERIES_STATS).map(([k, l], i) => ({ label: l, data: st.courbes[k], borderColor: couleurs[i], backgroundColor: couleurs[i], tension: 0, pointRadius: st.courbes.labels.length > 40 ? 0 : 3, borderWidth: 2.5 })) } };
   const liste = quoi === 'cabinets' ? st.parCabinet : st.parSite;
   return { type: 'bar', options: Object.assign({}, base, { indexAxis: 'y' }), data: { labels: liste.map((x) => x.nom),
     datasets: [['inscrits', 'Inscrits'], ['actifs', 'Actifs'], ['signatures', 'Signatures']].map(([k, l], i) => ({ label: l, data: liste.map((x) => x[k]), backgroundColor: couleurs[i], borderRadius: 4, barPercentage: 0.85 })) } };
@@ -3222,7 +3382,7 @@ async function exporterRapport(bouton) {
     titre('Dans le temps (' + (st.pas === 'jour' ? 'par jour' : st.pas === 'semaine' ? 'par semaine' : 'par mois') + ')', 93);
     doc.addImage(image('temps', 910, 400), 'PNG', 14, 97, 182, 80);
     const hCab = Math.max(60, Math.min(120, 7 * st.parCabinet.length + 20));
-    titre('Par cabinet', 187);
+    titre('Par structure', 187);
     doc.addImage(image('cabinets', 910, Math.round(hCab * 5)), 'PNG', 14, 191, 182, hCab);
     doc.addPage();
     const hSite = Math.max(60, Math.min(170, 6 * st.parSite.length + 20));
@@ -3231,7 +3391,7 @@ async function exporterRapport(bouton) {
     const tableau = (tete, liste, y) => doc.autoTable({ startY: y, margin: { left: 14, right: 14, bottom: 18 }, head: [[tete, 'Inscrits', 'Nouveaux', 'Actifs', 'Missions validées', 'Signatures']],
       body: liste.map((x) => [propre(x.nom), x.inscrits, x.nouveaux, x.actifs, x.missions, x.signatures]), theme: 'grid',
       styles: { font: 'helvetica', fontSize: 8.5, cellPadding: 2, textColor: [0, 0, 0], lineColor: FILET }, headStyles: { fillColor: BLEU, textColor: [255, 255, 255], fontStyle: 'bold' }, alternateRowStyles: { fillColor: [243, 243, 248] } });
-    doc.addPage(); titre('Tableau par cabinet', 20); tableau('Cabinet', st.parCabinet, 24);
+    doc.addPage(); titre('Tableau par structure', 20); tableau('Structure', st.parCabinet, 24);
     titre('Tableau par site', doc.lastAutoTable.finalY + 12); tableau('Site', st.parSite, doc.lastAutoTable.finalY + 16);
     titre('Missions sur la période', doc.lastAutoTable.finalY + 12);
     doc.autoTable({ startY: doc.lastAutoTable.finalY + 16, margin: { left: 14, right: 14, bottom: 18 }, head: [['Mission', 'Validées', 'Jugée utile']],
@@ -3250,7 +3410,7 @@ async function exporterRapport(bouton) {
 }
 
 /* ---------- Publications : brouillons de l'IA, publication écrite à la main, calendrier ---------- */
-/* Charte non signée après 14 jours : par cabinet puis par manager, avec « Relancer » */
+/* Charte non signée après 14 jours : par structure puis par manager, avec « Relancer » */
 let ALERTES_VUES = 50;
 function blocAlertesCharte(c) {
   if (!c.lancement) return `<section class="carte" style="display:flex;flex-direction:column;gap:8px"><h2 class="sous-titre-admin">Charte non signée après 14 jours</h2>
@@ -3258,7 +3418,7 @@ function blocAlertesCharte(c) {
   const l = c.alertesCharte || [];
   return `<section class="carte" style="display:flex;flex-direction:column;gap:14px">
     <h2 class="sous-titre-admin">Charte non signée après 14 jours : ${nbr(l.length)}</h2>
-    ${l.length ? `<div class="tableau-defilant"><table class="table-admin"><thead><tr><th>Cabinet</th><th>Manager</th><th>Nom</th><th>Depuis</th><th></th></tr></thead><tbody>
+    ${l.length ? `<div class="tableau-defilant"><table class="table-admin"><thead><tr><th>Structure</th><th>Manager</th><th>Nom</th><th>Depuis</th><th></th></tr></thead><tbody>
       ${l.slice(0, ALERTES_VUES).map((x) => `<tr><td>${esc(x.cabinet || '—')}</td><td>${esc(x.manager || '—')}</td><td><strong>${esc(x.nom)}</strong>${x.inscrit ? '' : ' <span class="pastille-statut">Jamais venu</span>'}</td>
         <td>${nbr(x.jours)} j</td><td><button type="button" class="btn btn-contour" data-relancer-charte="${esc(x.email)}" style="min-height:38px;padding:0 14px;font-size:13px">Relancer</button></td></tr>`).join('')}
     </tbody></table></div>${l.length > ALERTES_VUES ? '<button type="button" class="btn btn-contour" id="alertes-suite" style="align-self:center">Afficher les suivants</button>' : ''}`
@@ -3372,10 +3532,28 @@ function adminMissions(A) {
 }
 
 /* ---------- Accès : administrateurs, managers, domaines ---------- */
+let CORR_RECHERCHE = '';
+/* Admin : corriger la structure et le site de n'importe quel collaborateur (liste de tous les inscrits, celle de Mon équipe) */
+function blocCorrections() {
+  const D = lireDonnees('equipe');
+  if (!D || donneesVieilles('equipe')) chargerDonnees('equipe', 'getEquipe').then(() => { if (pageAffichee('admin') && ADMIN_ONGLET === 'acces') { document.body.classList.add('sans-anim'); dessinerAdmin(ADMIN, true); } }).catch(() => {});
+  const q = sansAccents(CORR_RECHERCHE).trim();
+  const tous = collaborateursConnus().filter((x) => x.inscrit);
+  const trouves = q ? tous.filter((x) => sansAccents(nomComplet(x) + ' ' + x.email).indexOf(q) !== -1).slice(0, 12) : [];
+  return `<section class="carte" style="display:flex;flex-direction:column;gap:14px">
+      <h2 class="sous-titre-admin">Structure et site d’un collaborateur</h2>
+      <p class="doux" style="font-size:14px;line-height:1.55">Après son premier choix, un collaborateur ne peut plus changer sa structure ni son site. Corrige-les ici en cas d’erreur ou de changement de poste : la correction est écrite dans le tableur et dans Firestore, et notée dans l’onglet « Journal des corrections ».</p>
+      <label class="champ" style="max-width:460px">Chercher un collaborateur<input type="search" id="corr-recherche" value="${esc(CORR_RECHERCHE)}" placeholder="Nom ou adresse" autocomplete="off"></label>
+      ${D ? (q ? `<div class="liste-admin">${trouves.map((x) => `<div class="item-admin"><span style="flex:1 1 auto;min-width:0"><strong>${esc(nomComplet(x) || x.email)}</strong><br><span class="doux" style="font-size:13px">${esc(x.email)} · ${lieuHtml(siteCab(x.site, x.cabinet)) || 'structure et site à choisir'}</span></span>
+        <button type="button" class="btn btn-contour" style="min-height:40px;padding:0 14px;font-size:14px" data-corriger="${esc(x.email)}">Modifier</button></div>`).join('') || '<p class="vide">Aucun collaborateur inscrit ne correspond.</p>'}</div>` : '')
+        : '<span class="os" style="width:100%;height:60px" aria-busy="true"></span>'}
+    </section>`;
+}
 function adminAcces(A) {
   const ac = A.acces || { admins: [], managers: {}, domaines: [] };
   const sites = A.sites.map((s) => s.nom);
-  return `<section class="carte" style="display:flex;flex-direction:column;gap:14px">
+  return `${blocCorrections()}
+    <section class="carte" style="display:flex;flex-direction:column;gap:14px">
       <h2 class="sous-titre-admin">Administrateurs</h2>
       <p class="doux" style="font-size:14px">Accès complet : admin, statistiques de tous les sites, tests.</p>
       <div class="chips-sites">${ac.admins.map((e) => `<span class="chip-site">${esc(e)}<button type="button" title="Retirer" aria-label="Retirer ${esc(e)}" data-retirer-admin="${esc(e)}">✕</button></span>`).join('')}</div>
@@ -3535,6 +3713,8 @@ function brancherAdmin(A) {
   const on = (sel, fn) => document.querySelectorAll(sel).forEach((b) => { b.onclick = (ev) => fn(b, ev); });
   const ex = $('exporter-admin'); if (ex) ex.onclick = (ev) => exporterAttestations(ev.currentTarget);
   if (ADMIN_ONGLET === 'vue') brancherStatistiques();
+  const cr = $('corr-recherche');
+  if (cr) cr.oninput = () => { document.body.classList.add('sans-anim'); CORR_RECHERCHE = cr.value; const pos = cr.selectionStart; dessinerAdmin(ADMIN, true); const n = $('corr-recherche'); if (n) { n.focus(); n.setSelectionRange(pos, pos); } };
   // Publications
   const gen = $('generer');
   if (gen) gen.onclick = async () => {
@@ -3612,21 +3792,41 @@ function brancherAdmin(A) {
 
 /* ----------------------------- Choix du site ----------------------------- */
 
-function ouvrirModaleSite() {
-  const modale = document.getElementById('modale-site'), valider = document.getElementById('valider-site');
-  let site = ETAT.joueur.site || null, cabinet = ETAT.joueur.cabinet || null;
-  document.getElementById('site-a-preciser').hidden = !ETAT.joueur.siteAPreciser;
-  const pret = () => { valider.disabled = !(site && cabinet); };
-  /* Un seul choix « Ville · Cabinet » (implantations du groupe), par ordre alphabétique ; les sites offshore gardent leur seul nom */
-  const choix = (ETAT.implantations || []).map(([s, c]) => ({ site: s, cabinet: c, libelle: siteCab(s, c) }))
-    .sort((a, b) => a.libelle.localeCompare(b.libelle, 'fr', { sensitivity: 'base' }));
+/* « Où travailles-tu ? » : la structure (Kerogo pour le groupe, ou un cabinet), puis le site.
+   Pour soi : seulement tant que la structure ou le site manque (ou si le site n'existe plus, comme « Tunisie ») ; ensuite, plus rien ne change.
+   cible = { email, nom, site, cabinet } : correction par un manager (Mon équipe) ou un administrateur (Admin), notée dans le journal. */
+function ouvrirModaleSite(cible) {
+  const modale = document.getElementById('modale-site'), valider = document.getElementById('valider-site'), annuler = document.getElementById('annuler-site');
+  const zoneS = document.getElementById('liste-structures'), zone = document.getElementById('liste-cabinets');
+  const imp = (ETAT.implantations || []).map(([s, c], i) => ({ site: s, cabinet: c, structure: nomStructure(c), lieu: nomSite(s) }));
+  const ordreCab = (c) => imp.findIndex((x) => x.cabinet === c);
+  const verrou = cible ? '' : cabinetVerrouille();
+  let site = (cible ? cible.site : ETAT.joueur.site) || null, cabinet = (cible ? cible.cabinet : ETAT.joueur.cabinet) || null;
+  let structure = verrou ? nomStructure(verrou) : (cabinet && imp.some((x) => x.cabinet === cabinet) ? nomStructure(cabinet) : null);
+  document.getElementById('site-intro').hidden = !!cible;
+  document.getElementById('site-a-preciser').hidden = !!cible || !ETAT.joueur.siteAPreciser;
+  document.getElementById('surtitre-site').textContent = cible ? (cible.admin ? 'Admin · correction' : 'Mon équipe · correction') : 'Bienvenue';
+  document.getElementById('titre-site').textContent = cible ? 'Structure et site de ' + cible.nom : 'Où travailles-tu ?';
+  document.getElementById('etape-structure').textContent = cible ? '1. Structure' : '1. Ta structure';
+  document.getElementById('etape-site').textContent = cible ? '2. Site' : '2. Ton site';
+  document.getElementById('site-verrou').textContent = cible ? 'La correction est notée dans le journal des corrections, avec ton nom, la date, l’ancien et le nouveau choix.'
+    : verrou ? 'Ta structure est déjà enregistrée : choisis ton site.' : 'Ta structure et ton site ne se changent plus ensuite.';
+  const fr = (a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' });
+  const structures = [...new Set(imp.map((x) => x.structure))].sort((a, b) => (a === 'Kerogo' ? -1 : b === 'Kerogo' ? 1 : fr(a, b)));
   const dessiner = () => {
-    const zone = document.getElementById('liste-cabinets');
-    zone.innerHTML = choix.map((x) => `<button type="button" aria-pressed="${x.site === site && x.cabinet === cabinet}" data-valeur="${esc(x.site + '|' + x.cabinet)}">${esc(x.libelle)}</button>`).join('');
+    zoneS.innerHTML = (verrou ? [structure] : structures).map((st) => `<button type="button" aria-pressed="${st === structure}"${verrou ? ' disabled' : ''} data-structure="${esc(st)}"><b class="structure">${esc(st)}</b></button>`).join('');
+    zoneS.querySelectorAll('button:not([disabled])').forEach((b) => { b.onclick = () => { if (structure !== b.dataset.structure) { structure = b.dataset.structure; site = null; cabinet = null; } dessiner(); }; });
+    /* Sites d'une structure : par cabinet dans l'ordre des implantations, puis par nom (Kerogo : Bizerte, Nabeul, Tunis, puis Madagascar) */
+    const liste = structure ? imp.filter((x) => x.structure === structure && (!verrou || x.cabinet === verrou)).sort((a, b) => ordreCab(a.cabinet) - ordreCab(b.cabinet) || fr(a.lieu, b.lieu)) : [];
+    if (liste.length === 1) { site = liste[0].site; cabinet = liste[0].cabinet; }
+    if (!liste.some((x) => x.site === site && x.cabinet === cabinet)) { site = null; cabinet = verrou || null; }
+    document.getElementById('etape-site').hidden = zone.hidden = !structure;
+    zone.innerHTML = liste.map((x) => `<button type="button" aria-pressed="${x.site === site && x.cabinet === cabinet}" data-valeur="${esc(x.site + '|' + x.cabinet)}"><b class="structure">${esc(x.structure)}</b> · ${esc(x.lieu)}</button>`).join('');
     zone.querySelectorAll('button').forEach((b) => { b.onclick = () => { [site, cabinet] = b.dataset.valeur.split('|'); dessiner(); }; });
-    pret();
+    valider.disabled = !(site && cabinet) || (!!cible && site === cible.site && cabinet === cible.cabinet);
   };
   valider.onclick = () => {
+    if (cible) { enregistrerCorrection(cible, site, cabinet); return; }
     const avant = { site: ETAT.joueur.site, cabinet: ETAT.joueur.cabinet };
     ETAT.joueur.site = site; ETAT.joueur.cabinet = cabinet; ETAT.joueur.siteAPreciser = false; modale.hidden = true; majEntete();
     if (pageAffichee('accueil') || !document.querySelector('.nav [aria-current="page"]')) rendreAccueil(); else if (document.querySelector('.profil-entete')) rendreProfil();
@@ -3637,8 +3837,40 @@ function ouvrirModaleSite() {
       if (!avant.site || !avant.cabinet) ouvrirModaleSite();
     });
   };
+  /* « Annuler » et Échap : pour une correction (le premier choix d'un collaborateur, lui, est obligatoire) */
+  annuler.hidden = !cible;
+  annuler.onclick = () => { modale.hidden = true; };
+  valider.textContent = 'Valider';
   dessiner();
   modale.hidden = false;
+}
+
+/* ---------- Corrections de la structure et du site : manager (Mon équipe, son périmètre) ou administrateur (Admin, tout le monde) ---------- */
+const collaborateursConnus = () => { const D = lireDonnees('equipe'); return D && D.d ? deplier(D.d.collaborateurs) : []; };
+function ouvrirCorrection(email) {
+  const x = ((EQUIPE && EQUIPE.collaborateurs) || []).concat(collaborateursConnus()).find((c) => String(c.email).toLowerCase() === String(email).toLowerCase());
+  if (!x) return;
+  ouvrirModaleSite({ email: x.email, nom: nomComplet(x) || x.email, site: x.site || '', cabinet: x.cabinet || '', admin: pageAffichee('admin') });
+}
+async function enregistrerCorrection(cible, site, cabinet) {
+  const modale = document.getElementById('modale-site'), valider = document.getElementById('valider-site');
+  valider.disabled = true; valider.textContent = 'Enregistrement…';
+  try {
+    await appel('corrigerSite', cible.email, site, cabinet);
+    /* Liste à jour tout de suite, dans Mon équipe comme dans l'Admin */
+    const maj = (c) => { if (String(c.email).toLowerCase() === String(cible.email).toLowerCase()) { c.site = site; c.cabinet = cabinet; } };
+    if (EQUIPE && EQUIPE.collaborateurs) EQUIPE.collaborateurs.forEach(maj);
+    const D = lireDonnees('equipe');
+    if (D && D.d && D.d.collaborateurs && D.d.collaborateurs.colonnes) {
+      const t = D.d.collaborateurs, iE = t.colonnes.indexOf('email'), iS = t.colonnes.indexOf('site'), iC = t.colonnes.indexOf('cabinet');
+      t.lignes.forEach((l) => { if (String(l[iE]).toLowerCase() === String(cible.email).toLowerCase()) { l[iS] = site; l[iC] = cabinet; } });
+      garderDonnees('equipe', D.d);
+    }
+    modale.hidden = true;
+    toast('Correction enregistrée', cible.nom + ' : ' + siteCab(site, cabinet) + '. Elle est notée dans le journal des corrections.');
+    document.body.classList.add('sans-anim');
+    if (pageAffichee('equipe')) dessinerEquipe(); else if (pageAffichee('admin')) dessinerAdmin(ADMIN, true);
+  } catch (e) { toast('Correction non enregistrée', messageErreur(e)); valider.disabled = false; valider.textContent = 'Valider'; }
 }
 
 /* ------------------------------- Démarrage ------------------------------- */
@@ -3686,7 +3918,8 @@ document.addEventListener('click', (ev) => {
   if (ancre) { const cible = document.getElementById(ancre.dataset.ancre); if (cible) cible.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
   if (ev.target.closest('#volet-fond')) { fermerMenu(); return; }
   if (ev.target.closest('#bouton-menu')) { ouvrirMenu(); return; }
-  if (ev.target.closest('[data-changer-site]') && ETAT) { ouvrirModaleSite(); return; }
+  const corriger = ev.target.closest('[data-corriger]');
+  if (corriger && ETAT) { ouvrirCorrection(corriger.dataset.corriger); return; }
   const theme = ev.target.closest('[data-theme-choix]');
   if (theme) {
     const choix = theme.dataset.themeChoix, avant = ETAT ? ETAT.joueur.theme : null;
@@ -3711,7 +3944,12 @@ function fermerMenu() {
   nav.classList.remove('ouverte'); document.getElementById('volet-fond').hidden = true;
   document.getElementById('bouton-menu').setAttribute('aria-expanded', 'false');
 }
-document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') fermerMenu(); });
+document.addEventListener('keydown', (ev) => {
+  if (ev.key !== 'Escape') return;
+  fermerMenu();
+  const m = document.getElementById('modale-site'), a = document.getElementById('annuler-site');
+  if (m && !m.hidden && a && !a.hidden) m.hidden = true;
+});
 
 let PAGE_DEMANDEE_FAITE = false;
 /* #webinaire-<id> : gardé le temps de la connexion Google (la page peut se recharger), puis ouvert */
