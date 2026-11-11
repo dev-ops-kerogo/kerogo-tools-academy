@@ -19,7 +19,7 @@ var KTA_CONFIG = {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
-var KTA_VERSION = 'hébergée 11/11 · 6';
+var KTA_VERSION = 'hébergée 11/11 · 7';
 var KTA_ERREURS = [];
 window.addEventListener('error', function (e) {
   KTA_ERREURS.push((e && e.message ? e.message : 'Erreur inconnue') + (e && e.lineno ? ' (ligne ' + e.lineno + ')' : ''));
@@ -166,6 +166,8 @@ p{margin:0}
 .site-ligne{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:18px;border:1.5px solid var(--ligne)}
 .site-ligne.moi{border-color:var(--citron);background:var(--surface)}
 .modale .btn[hidden]{display:none}
+.mission-formulaire{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:16px 18px;border-radius:16px;background:var(--surface)}
+.mission-formulaire p{flex:1 1 280px;margin:0}
 .btn-mini{margin-top:6px;min-height:30px;padding:0 12px;border-radius:999px;border:1.5px solid var(--ligne);background:transparent;color:inherit;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
 .btn-mini:hover,.btn-mini:focus-visible{border-color:var(--violet)}
 .site-intro p{margin:0}.site-intro ul{margin:6px 0 8px;padding-left:22px;display:flex;flex-direction:column;gap:4px}
@@ -2205,7 +2207,7 @@ const MISSIONS_DEF = {
   },
 
   '3.3': {
-    titre: 'Bien utiliser une compétence', seuil: 5,
+    titre: 'Bien utiliser une compétence', seuil: 5, formulaire: true,
     chapo: 'Laisser Slackbot choisir la bonne compétence, ou la choisir toi-même, lui donner ce qu’elle attend, et faire remonter tes idées. 5 minutes, +50 XP.',
     lecons: [['Laisser Slackbot choisir', 'Décris ton besoin : Slackbot trouve tout seul la compétence adaptée parmi celles que tu as ajoutées.'],
       ['Ou la choisir toi-même', 'Clique sur « Compétences » au-dessus de la zone de message pour joindre une compétence précise à ta demande, comme un fichier.'],
@@ -2300,7 +2302,7 @@ const MISSIONS_DEF = {
   },
 
   '4.4': {
-    titre: 'Proposer une automatisation', seuil: 5,
+    titre: 'Proposer une automatisation', seuil: 5, formulaire: true,
     chapo: 'Une tâche te prend du temps chaque semaine ? Décris-la bien, et l’équipe Dev Ops pourra l’automatiser pour tout le monde. 5 minutes, +50 XP.',
     lecons: [['Repérer le bon candidat', 'Une tâche répétitive, régulière, qui prend du temps : c’est elle qu’il faut proposer.'],
       ['La décrire', 'Avec le formulaire « Proposer une automatisation ou amélioration » de #kerogo-tools : le problème, le temps passé, la fréquence, les outils actuels et les logiciels à connecter.'],
@@ -2409,7 +2411,7 @@ const MISSIONS_DEF = {
   },
 
   '6.2': {
-    titre: 'Obtenir le label Kerogo Tools', seuil: 5,
+    titre: 'Obtenir le label Kerogo Tools', seuil: 5, formulaire: true,
     chapo: 'Ta compétence marche bien ? Pour qu’elle serve à tout le groupe, elle passe une revue en trois axes. 5 minutes, +50 XP.',
     lecons: [['Demander la revue', 'Dépose ta compétence dans le catalogue Kerogo Tools, en demande de validation. La revue est rendue en général sous 48 heures.'],
       ['Trois axes, neuf critères', 'Sécurité, fiabilité, capacité à servir tout le groupe : trois critères par axe.'],
@@ -2444,7 +2446,7 @@ const MISSIONS_DEF = {
       { q: 'Une question te dépasse. Tu…', bonne: 1, choix: ['Inventes une réponse', 'Orientes vers #kerogo-tools', 'Ignores la question'], explication: 'Orienter, c’est aussi savoir où poser la question.' }]
   },
   '6.4': {
-    titre: 'Animer un atelier IA', seuil: 5,
+    titre: 'Animer un atelier IA', seuil: 5, formulaire: true,
     chapo: 'Une heure, quelques collègues, de vrais irritants : un atelier IA peut faire naître la prochaine compétence du groupe. 5 minutes, +50 XP.',
     lecons: [['Partir des vrais irritants', 'Recueille avant l’atelier les tâches qui font perdre du temps à ton équipe.'],
       ['Une heure en trois temps', 'Dix minutes de démo sur un cas réel, quarante minutes en petits groupes (un irritant chacun), dix minutes pour partager ce qui a marché.'],
@@ -2483,6 +2485,7 @@ function rendreMissionFiche(id) {
           : `<div class="${d.lecons.length === 4 ? 'lecons-duo' : 'ch-trio'}">${d.lecons.map((l) => `<div class="ch-carte"><p class="titre" style="font-size:18px">${l[0]}</p><p class="doux" style="line-height:1.55">${l[1]}</p></div>`).join('')}</div>`}
         ${d.exemple ? `<div class="exemple-duo"><div class="exemple ex-flou"><p class="surtitre">${d.exemple[0][0]}</p><p>« ${d.exemple[0][1]} »</p></div><div class="exemple ex-net"><p class="surtitre">${d.exemple[1][0]}</p><p>« ${d.exemple[1][1]} »</p></div></div>` : ''}
         ${d.note ? `<p class="doux" style="font-size:14px;line-height:1.55">${d.note}</p>` : ''}
+        ${d.formulaire ? `<div class="mission-formulaire"><p style="line-height:1.55"><strong>Le formulaire Kerogo Tools</strong> : une idée de compétence, une amélioration ou un problème avec un outil ? Il s’ouvre dans Slack.</p>${boutonFormulaire('btn-contour')}</div>` : ''}
       </section>
       <section class="carte" style="display:flex;flex-direction:column;gap:22px">
         <p class="surtitre">Exercice</p>
@@ -2605,6 +2608,10 @@ async function rendreQuizMois(moisTest) {
   window.scrollTo(0, 0);
 }
 
+/* Formulaire Kerogo Tools (raccourci Slack) : proposer une idée ou signaler un problème */
+const LIEN_FORMULAIRE = 'https:' + '/' + '/slack.com/shortcuts/Ft0BSRJTS38U/351bba1a2a9a268c6b4016840bc382b1';
+const boutonFormulaire = (cls) => `<a class="btn ${cls || 'btn-citron'}" href="${LIEN_FORMULAIRE}" target="_blank" rel="noopener" data-formulaire>Proposer une idée ou signaler un problème</a>`;
+
 /* ------------------------------- Catalogue Kerogo Tools ------------------------------- */
 let CATALOGUE = null;
 const CAT = { recherche: '', service: '', type: '', statut: '', monCabinet: true };
@@ -2634,20 +2641,23 @@ function dispoCabinets(o, tous) {
 }
 function dessinerCatalogue(garderFocus) {
   const C = CATALOGUE, cab = ETAT.joueur.cabinet || '';
+  /* Kerogo (le groupe) : « Ma structure seulement » montre tous les outils, quelle que soit la colonne « Pour qui » */
+  const vueGroupe = nomStructure(cab) === 'Kerogo';
   const valeurs = (k) => [...new Set(C.outils.map((o) => o[k]).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
   const cherche = sansAccents(CAT.recherche).trim();
   const liste = C.outils.filter((o) => (!CAT.service || o.service === CAT.service) && (!CAT.type || o.type === CAT.type) && (!CAT.statut || o.statut === CAT.statut)
-    && (!CAT.monCabinet || !cab || !o.pourQui || nomsCabinet(cab).some((n) => sansAccents(o.pourQui).indexOf(sansAccents(n)) !== -1) || /tous/i.test(o.pourQui))
+    && (!CAT.monCabinet || !cab || vueGroupe || !o.pourQui || nomsCabinet(cab).some((n) => sansAccents(o.pourQui).indexOf(sansAccents(n)) !== -1) || /tous/i.test(o.pourQui))
     && (!cherche || sansAccents([o.titre, o.service, o.role, o.lancer, o.outil].join(' ')).indexOf(cherche) !== -1));
   const pastilles = (cle, titre, liste) => liste.length < 2 ? '' : `<div class="cat-filtres"><span class="libelle">${titre}</span>
     <button type="button" class="pastille-filtre" data-cat="${cle}" data-valeur="" aria-pressed="${!CAT[cle]}">Tous</button>
     ${liste.map((v) => `<button type="button" class="pastille-filtre" data-cat="${cle}" data-valeur="${esc(v)}" aria-pressed="${CAT[cle] === v}">${esc(v)}</button>`).join('')}</div>`;
   vue.innerHTML = `<div class="pile">
     <section class="carte entre" style="display:flex;flex-direction:column;gap:18px">
-      <div style="display:flex;flex-direction:column;gap:6px"><p class="surtitre">Les outils du groupe</p><h1 class="titre" style="font-size:40px">Catalogue Kerogo Tools</h1>
+      <div class="carte-titre" style="align-items:flex-start"><div style="display:flex;flex-direction:column;gap:6px"><p class="surtitre">Les outils du groupe</p><h1 class="titre" style="font-size:40px">Catalogue Kerogo Tools</h1>
         <p class="doux" style="line-height:1.6;max-width:720px">Les compétences et les automatisations en service, en pilote ou bientôt disponibles. Chaque fiche explique à quoi sert l’outil et comment le lancer.</p></div>
+        ${boutonFormulaire()}</div>
       <label class="champ">Rechercher<input type="search" id="cat-recherche" value="${esc(CAT.recherche)}" placeholder="Un outil, une tâche, un mot…" autocomplete="off"></label>
-      ${cab ? `<label class="interrupteur"><input type="checkbox" id="cat-cabinet" ${CAT.monCabinet ? 'checked' : ''}>Ma structure seulement (${esc(nomStructure(cab, ETAT.joueur.site))})</label>` : ''}
+      ${cab ? `<label class="interrupteur"><input type="checkbox" id="cat-cabinet" ${CAT.monCabinet ? 'checked' : ''}>Ma structure seulement (${esc(nomStructure(cab))}${vueGroupe ? ' : tous les outils du groupe' : ''})</label>` : ''}
       ${pastilles('service', 'Service', valeurs('service'))}
       ${pastilles('type', 'Type', valeurs('type'))}
       ${pastilles('statut', 'Statut', ['En service', 'Pilote', 'Bientôt'].filter((x) => C.outils.some((o) => o.statut === x)))}
@@ -3781,7 +3791,12 @@ function brancherAdmin(A) {
   const suiteAlertes = $('alertes-suite'); if (suiteAlertes) suiteAlertes.onclick = () => { ALERTES_VUES += 50; document.body.classList.add('sans-anim'); dessinerAdmin(ADMIN, true); };
   const dl = $('definir-lancement'); if (dl) dl.onclick = (ev) => agirAdmin(ev.currentTarget, 'definirLancement', [$('date-lancement').value], ['Date de lancement enregistrée', '']);
   const dd = $('definir-dossiers'); if (dd) dd.onclick = (ev) => agirAdmin(ev.currentTarget, 'definirReglagesDocuments', [{ DOSSIER_ACCUSES_CHARTE: $('dossier-accuses').value, DOSSIER_CERTIFICATIONS: $('dossier-certifications').value }], ['Dossiers enregistrés', '']);
-  const mc = $('maj-catalogue'); if (mc) mc.onclick = (ev) => { oublierDonnees('catalogue'); agirAdmin(ev.currentTarget, 'mettreAJourCatalogue', [], ['Catalogue mis à jour', 'Les collaborateurs voient la liste à jour.']); };
+  // « Mettre à jour le catalogue » : réponse immédiate, la lecture de la liste Slack se fait en arrière-plan (visible d'ici une minute)
+  const mc = $('maj-catalogue');
+  if (mc) mc.onclick = () => {
+    toast('Mise à jour lancée', 'Le catalogue à jour sera visible d’ici une minute.');
+    appel('mettreAJourCatalogue').then(() => { setTimeout(() => oublierDonnees('catalogue'), 70000); }).catch((e) => toast('Mise à jour impossible', messageErreur(e)));
+  };
   const ro2 = $('rafraichir-organigramme'); if (ro2) ro2.onclick = (ev) => agirAdmin(ev.currentTarget, 'rafraichirOrganigramme', [], ['Organigramme relu', '']);
   const dch = $('definir-changements'); if (dch) dch.onclick = (ev) => agirAdmin(ev.currentTarget, 'definirChangementsCharte', [$('charte-changements').value], ['Changements enregistrés', 'Ils figureront dans l’annonce de la nouvelle version.']);
   const rc = $('relire-charte'); if (rc) rc.onclick = (ev) => { oublierDonnees('charte'); agirAdmin(ev.currentTarget, 'relireCharte', [], ['Charte relue', 'Les collaborateurs voient la version à jour.']); };
@@ -3852,25 +3867,33 @@ function ouvrirCorrection(email) {
   if (!x) return;
   ouvrirModaleSite({ email: x.email, nom: nomComplet(x) || x.email, site: x.site || '', cabinet: x.cabinet || '', admin: pageAffichee('admin') });
 }
-async function enregistrerCorrection(cible, site, cabinet) {
-  const modale = document.getElementById('modale-site'), valider = document.getElementById('valider-site');
-  valider.disabled = true; valider.textContent = 'Enregistrement…';
-  try {
-    await appel('corrigerSite', cible.email, site, cabinet);
-    /* Liste à jour tout de suite, dans Mon équipe comme dans l'Admin */
-    const maj = (c) => { if (String(c.email).toLowerCase() === String(cible.email).toLowerCase()) { c.site = site; c.cabinet = cabinet; } };
-    if (EQUIPE && EQUIPE.collaborateurs) EQUIPE.collaborateurs.forEach(maj);
+/* Réponse immédiate (12 novembre 2026) : la liste se met à jour et « Enregistré ✓ » s'affiche tout de suite ; le serveur confirme
+   en arrière-plan. En cas de refus, l'ancien choix revient et le message d'erreur s'affiche. Durées dans la console du navigateur. */
+function enregistrerCorrection(cible, site, cabinet) {
+  const modale = document.getElementById('modale-site');
+  const memeEmail = (e) => String(e).toLowerCase() === String(cible.email).toLowerCase();
+  const appliquer = (s1, c1) => {
+    if (EQUIPE && EQUIPE.collaborateurs) EQUIPE.collaborateurs.forEach((c) => { if (memeEmail(c.email)) { c.site = s1; c.cabinet = c1; } });
     const D = lireDonnees('equipe');
     if (D && D.d && D.d.collaborateurs && D.d.collaborateurs.colonnes) {
       const t = D.d.collaborateurs, iE = t.colonnes.indexOf('email'), iS = t.colonnes.indexOf('site'), iC = t.colonnes.indexOf('cabinet');
-      t.lignes.forEach((l) => { if (String(l[iE]).toLowerCase() === String(cible.email).toLowerCase()) { l[iS] = site; l[iC] = cabinet; } });
+      t.lignes.forEach((l) => { if (memeEmail(l[iE])) { l[iS] = s1; l[iC] = c1; } });
       garderDonnees('equipe', D.d);
     }
-    modale.hidden = true;
-    toast('Correction enregistrée', cible.nom + ' : ' + siteCab(site, cabinet) + '. Elle est notée dans le journal des corrections.');
     document.body.classList.add('sans-anim');
     if (pageAffichee('equipe')) dessinerEquipe(); else if (pageAffichee('admin')) dessinerAdmin(ADMIN, true);
-  } catch (e) { toast('Correction non enregistrée', messageErreur(e)); valider.disabled = false; valider.textContent = 'Valider'; }
+  };
+  modale.hidden = true;
+  appliquer(site, cabinet);
+  toast('Enregistré ✓', cible.nom + ' : ' + siteCab(site, cabinet) + '. La correction est notée dans le journal des corrections.');
+  const t0 = performance.now();
+  appel('corrigerSite', cible.email, site, cabinet).then((r) => {
+    const total = Math.round(performance.now() - t0), serveur = r && r.duree != null ? r.duree : null;
+    console.info('corrigerSite : ' + total + ' ms au total' + (serveur != null ? ', dont ' + serveur + ' ms de travail du serveur (le reste : démarrage et réseau)' : ''));
+  }).catch((e) => {
+    appliquer(cible.site, cible.cabinet);
+    toast('Correction non enregistrée', messageErreur(e));
+  });
 }
 
 /* ------------------------------- Démarrage ------------------------------- */
